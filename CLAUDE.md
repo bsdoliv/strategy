@@ -50,5 +50,7 @@ Este folder (`strategy/`) é a base de coordenação, gestão e execução da em
 - Dono: [só Andre] · [quant: Andre] · [misto] · [delegável]
 - Flag: #urgente
 - Done = concluída: task em `## Done` é sempre `- [x]`, e `- [x]` só existe em Done (o dashboard move/marca sozinho)
-- Sub-itens sempre como `  - [ ] ...` (o dashboard descarta bullets simples e subtítulos ###)
-- Prioridade: PRIORITIES.md (I/U/E 1–5 + por quê, casado pelo título exato da tarefa); Score = 20×(0,5·I + 0,35·U + 0,15·(6−E))
+- Granularidade: cada item é uma task própria — nada de listas em texto corrido na nota nem subtarefas. Task desmembrada de outra leva `↳ <task de origem>` na nota e herda dono/frente/flags; a task de origem fica como agrupadora. Hierarquia mais funda vai no título com `›` (ex.: `Metaoxengine › Backup diário`)
+- Se precisar de sub-itens: `  - [ ] ...` (o dashboard descarta bullets simples e subtítulos ###)
+- Títulos únicos (o score casa pelo título) e sem `*` ou `|` (quebram o negrito e a tabela)
+- Prioridade: PRIORITIES.md (I/U/E 1–5 + por quê, casado pelo título exato da tarefa); Score = 20×(0,5·I + 0,35·U + 0,15·(6−E)). Toda task nova recebe score próprio, calibrado pelas tasks semelhantes já pontuadas por Andre — não copiar o da origem
