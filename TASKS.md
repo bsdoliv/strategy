@@ -16,11 +16,10 @@
 - [ ] **clearfxai control-plane: atualizar OS c/ detalhes dos clientes; rfqd** - [delegável] #platforms/cfx
 - [ ] **Atualizar OS com solicitação dos detalhes dos clientes** - ↳ clearfxai control-plane: atualizar OS c/ detalhes dos clientes; rfqd [delegável] #platforms/cfx
 - [ ] **rfqd / Integrar Braza API** - ↳ clearfxai control-plane: atualizar OS c/ detalhes dos clientes; rfqd [delegável] #platforms/cfx
-- [ ] **Integrar Braza API** - backlog CFX [delegável] #platforms/cfx
 - [ ] **Bugfix: deletar conta-company demora demais** - Customer/Doc mgmt [delegável] #platforms/cfx
 - [ ] **Overhaul do data-store de docs** - [delegável] #platforms/cfx
 - [ ] **Data-store layers: (1) blobs, (2) metadados** - ↳ Overhaul do data-store de docs [delegável] #platforms/cfx
-- [ ] **cloud-storage** - ↳ Overhaul do data-store de docs [delegável] #platforms/cfx
+- [ ] **cloud-storage** - ↳ Overhaul do data-store de docs [delegável] #platforms/quartix-intel
 - [ ] **docstored (engine)** - ↳ Overhaul do data-store de docs [delegável] #platforms/cfx
 - [ ] **docstored › libs** - ↳ Overhaul do data-store de docs [delegável] #platforms/cfx
 - [ ] **docstored › mini-exec** - ↳ Overhaul do data-store de docs [delegável] #platforms/cfx
@@ -30,7 +29,6 @@
 - [ ] **Escrever testes de UI (Playwright)** - ↳ Testes: UI (Playwright), API, API mock, autotests das libs [delegável] #platforms/cfx
 - [ ] **Escrever testes de API** - ↳ Testes: UI (Playwright), API, API mock, autotests das libs [delegável] #platforms/cfx
 - [ ] **API mock** - ↳ Testes: UI (Playwright), API, API mock, autotests das libs [delegável] #platforms/cfx
-- [ ] **UI + api-mock** - ↳ Testes: UI (Playwright), API, API mock, autotests das libs [delegável] #platforms/cfx
 - [ ] **Escrever autotests (libs)** - ↳ Testes: UI (Playwright), API, API mock, autotests das libs [delegável] #platforms/cfx
 - [ ] **Platform overhaul** - [delegável] #platforms/cfx
 - [ ] **Email orch › mailsend-d** - ↳ Platform overhaul [delegável] #platforms/cfx
@@ -86,7 +84,7 @@
 - [ ] **Chat prototype / isabel** - #platforms/cfx
 - [ ] **Avaliar chat no quartix-markets** - ↳ Chat prototype / isabel #platforms/cfx
 - [ ] **QA do chat** - ↳ Chat prototype / isabel #platforms/cfx
-- [ ] **Tutorial para marcar mensagens como importantes** - ↳ Chat prototype / isabel #platforms/cfx
+- [ ] **Tutorial para marcar mensagens gmail como importantes** - ↳ Chat prototype / isabel #platforms/cfx
 - [ ] **octaxpro addon / excel-plugin** - #platforms/oxpro
 - [ ] **Organizar repos** - #platforms/quartix-intel
 - [ ] **marketdata** - ↳ Organizar repos #platforms/quartix-intel
@@ -144,3 +142,5 @@
 ## Done
 - [x] **Advisory: material de apoio a terceiro (estratégia financeira cross-border)** - WIP [só Andre] #advisory
 - [x] **ajustar suspend octax-api** - #platforms/oxpro
+- [x] **Integrar Braza API** - backlog CFX [delegável] #platforms/cfx
+- [x] **UI + api-mock** - ↳ Testes: UI (Playwright), API, API mock, autotests das libs [delegável] #platforms/cfx
