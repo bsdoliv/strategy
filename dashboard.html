@@ -1278,6 +1278,9 @@
     .rank-subs-toggle:hover { color: var(--accent); background: var(--bg-card); }
     .rank-subs-toggle.empty { opacity: 0; }
     .rank-table tr:hover .rank-subs-toggle.empty, .rank-subs-toggle.empty:focus-within { opacity: 1; }
+    .rank-subs-count { display: inline-block; margin: 3px 0 0 30px; font-size: 11px; color: var(--text-muted); }
+    .rank-sub-add.on-hover { display: none; }
+    .rank-table tr:hover .rank-sub-add.on-hover, .rank-sub-add.on-hover:focus, .rank-sub-add.on-hover:not(:placeholder-shown) { display: block; }
     .rank-subs { margin: 4px 0 2px 30px; display: flex; flex-direction: column; gap: 2px; }
     .rank-sub { display: flex; align-items: center; gap: 6px; font-size: 12px; }
     .rank-sub input[type=checkbox] { margin: 0; cursor: pointer; }
@@ -1290,6 +1293,12 @@
     .rank-sub-del:hover { color: #c92a2a; }
     .rank-sub-add { font: inherit; font-size: 12px; border: 1px dashed var(--border); border-radius: 4px; background: transparent; color: var(--text-primary); padding: 2px 6px; margin-top: 2px; width: 100%; max-width: 360px; }
     .rank-sub-add:focus { outline: none; border: 1px solid var(--accent); background: var(--bg-card); }
+    .rank-del {
+      flex: none; align-self: center; border: none; background: transparent; color: var(--text-muted); cursor: pointer; font-size: 12px; line-height: 1;
+      padding: 2px 4px; border-radius: 4px; opacity: 0;
+    }
+    .rank-table tr:hover .rank-del, .rank-del:focus { opacity: 1; }
+    .rank-del:hover { color: #c92a2a; background: #fff5f5; }
     .rank-flag.on { opacity: 1; background: #fff5f5; color: #c92a2a; border: 1px solid #ffc9c9; }
     .rank-add {
       display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; padding: 10px 12px;
@@ -3165,9 +3174,12 @@
       const key = priorityKey(t.title);
       const n = t.subtasks.length;
       const done = t.subtasks.filter(st => st.checked).length;
-      const open = rankSubsOpen.has(key);
-      const label = n ? `${open ? '▾' : '▸'} ${done}/${n} subtarefa${n > 1 ? 's' : ''}` : (open ? '▾ subtarefas' : '+ subtarefa');
-      let html = `<span class="rank-subs-toggle ${n || open ? '' : 'empty'}" tabindex="0">${label}</span>`;
+      // Subtarefas existentes ficam sempre visíveis; "+ subtarefa" abre o campo nas tasks que ainda não têm
+      const adding = rankSubsOpen.has(key);
+      const open = n > 0 || adding;
+      let html = n
+        ? `<span class="rank-subs-count">${done}/${n} subtarefa${n > 1 ? 's' : ''}</span>`
+        : `<span class="rank-subs-toggle ${adding ? '' : 'empty'}" tabindex="0">${adding ? '× fechar' : '+ subtarefa'}</span>`;
       if (open) {
         html += '<div class="rank-subs">' + t.subtasks.map((st, idx) => `
           <div class="rank-sub ${st.checked ? 'checked' : ''}">
@@ -3175,7 +3187,7 @@
             <span class="rank-sub-text" contenteditable="true" spellcheck="false" data-sub-text="${idx}" title="Clique para editar; apague o texto para remover">${escapeHtml(st.text)}</span>
             <button class="rank-sub-del" data-sub-del="${idx}" title="Remover subtarefa">×</button>
           </div>`).join('') +
-          `<input class="rank-sub-add" data-key="${escapeHtml(key)}" placeholder="Nova subtarefa… (Enter adiciona)"></div>`;
+          `<input class="rank-sub-add ${n && !adding ? 'on-hover' : ''}" data-key="${escapeHtml(key)}" placeholder="Nova subtarefa… (Enter adiciona)"></div>`;
       }
       return html;
     }
@@ -3184,11 +3196,13 @@
       const toggle = tr.querySelector('.rank-subs-toggle');
       const flip = () => {
         rankSubsOpen.has(key) ? rankSubsOpen.delete(key) : rankSubsOpen.add(key);
-        if (rankSubsOpen.has(key) && !t.subtasks.length) rankSubFocus = key;
+        if (rankSubsOpen.has(key)) rankSubFocus = key;
         renderRanking();
       };
-      toggle.addEventListener('click', flip);
-      toggle.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); } });
+      if (toggle) {
+        toggle.addEventListener('click', flip);
+        toggle.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); } });
+      }
       tr.querySelectorAll('[data-sub-check]').forEach(box => box.addEventListener('change', () => {
         t.subtasks[+box.dataset.subCheck].checked = box.checked;
         markChanged();
@@ -3309,7 +3323,7 @@
         tr.innerHTML = `
           <td class="rank-num">${idx + 1}</td>
           <td><div class="rank-score">${score ?? '–'}<div class="bar"><div style="width:${(score ?? 0) / 10}%;background:${scoreColor(score ?? 0)}"></div></div></div></td>
-          <td><div class="rank-title" style="--cat-color:${categoryColor(cat)}"><button class="rank-flag ${urgent ? 'on' : ''}" title="${urgent ? 'Desmarcar urgente' : 'Marcar como urgente'}">${urgent ? 'urgente' : '⚑'}</button><span class="rank-title-text" contenteditable="true" spellcheck="false" title="Clique para editar">${escapeHtml(t.title)}</span></div>${rankSubsHtml(t)}</td>
+          <td><div class="rank-title" style="--cat-color:${categoryColor(cat)}"><button class="rank-flag ${urgent ? 'on' : ''}" title="${urgent ? 'Desmarcar urgente' : 'Marcar como urgente'}">${urgent ? 'urgente' : '⚑'}</button><button class="rank-del" title="Excluir tarefa (e o score dela)">🗑</button><span class="rank-title-text" contenteditable="true" spellcheck="false" title="Clique para editar">${escapeHtml(t.title)}</span></div>${rankSubsHtml(t)}</td>
           <td><select class="rank-cat-edit" title="Mudar a frente" style="background:${categoryColor(cat)}">${catOptions(cat)}</select></td>
           <td>${owner ? `<span class="owner-pill ${owner}">${OWNER_META[owner].label}</span>` : ''}</td>
           <td><select class="rank-status-edit" title="Mudar o status">${sections.map(x => `<option value="${escapeHtml(x.id)}" ${x.id === sec.id ? 'selected' : ''}>${escapeHtml(x.name)}</option>`).join('')}</select></td>
@@ -3340,6 +3354,19 @@
           renderTasks();
         });
         bindRankSubs(tr, t);
+        tr.querySelector('.rank-del').addEventListener('click', async () => {
+          const subs = t.subtasks.length ? ` e ${t.subtasks.length} subtarefa${t.subtasks.length > 1 ? 's' : ''}` : '';
+          if (!confirm(`Excluir "${t.title}"${subs}?\n\nSai do TASKS.md e o score sai do PRIORITIES.md.`)) return;
+          tasks[t.section] = (tasks[t.section] || []).filter(x => x.id !== t.id);
+          rankSubsOpen.delete(priorityKey(t.title));
+          markChanged();
+          if (priorities[priorityKey(t.title)]) {
+            delete priorities[priorityKey(t.title)];
+            await savePriorities();
+          }
+          renderTasks();
+          showStatus(`Excluída: ${t.title}`);
+        });
         const titleEl = tr.querySelector('.rank-title-text');
         titleEl.addEventListener('keydown', e => {
           if (e.key === 'Enter') { e.preventDefault(); titleEl.blur(); }
