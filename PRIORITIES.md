@@ -43,7 +43,7 @@ A coluna Tarefa precisa ser igual ao título no TASKS.md. Ajuste I/U/E aqui ou n
 | Ambiente de integração octaxpro + quartix-markets | 3 | 3 | 4 |  | Apoia Pine e deploy do quartix-markets |
 | Tela de apuração / earnings do partner (UX) | 3 | 2 | 2 |  | Transparência para parceiros |
 | Bugfix: deletar conta-company demora demais | 2 | 3 | 1 |  | Bug visível, correção barata |
-| clearfxai control-plane: atualizar OS c/ detalhes dos clientes; rfqd | 3 | 2 | 2 | -1 | Operação do cfx |
+| clearfxai control-plane | 3 | 2 | 2 | -1 | Operação do cfx |
 | Atualizar OS com solicitação dos detalhes dos clientes | 3 | 2 | 2 | -2 | Operação do cfx; barato |
 | rfqd / Integrar Braza API | 3 | 2 | 3 | 27 | Serviço de RFQ do cfx; escopo a confirmar |
 | Sangria diária de dados de produção (octaxpro → plataforma de dados) | 3 | 2 | 3 |  | Base de dados p/ analytics/intelligence; sem prazo; reclassificado de "data leak" |

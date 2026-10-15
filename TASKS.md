@@ -13,8 +13,9 @@
 - [ ] **Tela de apuração / earnings do partner (UX)** - quartix-markets #platforms/cfx
 - [ ] **Design do ambiente quartix-markets live (market.desk?)** - #produto/quartix-markets
 - [ ] **News + calendar** - data #produto/quartix-markets
-- [ ] **clearfxai control-plane: atualizar OS c/ detalhes dos clientes; rfqd** - [delegável] #platforms/cfx
-- [ ] **Atualizar OS com solicitação dos detalhes dos clientes** - ↳ clearfxai control-plane: atualizar OS c/ detalhes dos clientes; rfqd [delegável] #platforms/cfx
+- [ ] **clearfxai control-plane** - [delegável] #platforms/cfx
+  - [ ] atualizar OS c/ detalhes dos clientes; rfqd
+- [ ] **Atualizar OS com solicitação dos detalhes dos clientes** - ↳ clearfxai control-plane: atualizar OS c/ detalhes dos clientes; rfqd [delegável] #produto/cfx
 - [ ] **rfqd / Integrar Braza API** - ↳ clearfxai control-plane: atualizar OS c/ detalhes dos clientes; rfqd [delegável] #platforms/cfx
 - [ ] **Bugfix: deletar conta-company demora demais** - Customer/Doc mgmt [delegável] #platforms/cfx
 - [ ] **Overhaul do data-store de docs** - [delegável] #platforms/cfx
