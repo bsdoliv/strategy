@@ -1729,7 +1729,7 @@
       card.addEventListener('click', (e) => {
         const action = e.target.dataset.action;
         if (action === 'toggle') {
-          task.checked = !task.checked;
+          setTaskChecked(task, !task.checked);
           markChanged();
           renderTasks();
         } else if (action === 'toggle-sub') {
@@ -2042,7 +2042,7 @@
               id: Date.now() + Math.random(),
               title,
               note: '',
-              checked: false,
+              checked: isDoneSection(sectionId),
               subtasks: [],
               section: sectionId
             });
@@ -2078,7 +2078,9 @@
         }
       }
       if (!task) return;
+      if (isDoneSection(toSectionId) && task.section !== toSectionId) task.prevSection = task.section;
       task.section = toSectionId;
+      task.checked = isDoneSection(toSectionId);
       if (!tasks[toSectionId]) tasks[toSectionId] = [];
       if (dropIndex >= 0 && dropIndex <= tasks[toSectionId].length) {
         tasks[toSectionId].splice(dropIndex, 0, task);
@@ -2133,6 +2135,17 @@
 
     async function checkForExternalChanges() {
       if (!taskFileHandle || hasChanges || isSaving) return;
+      // PRIORITIES.md também pode mudar por fora (Claude, editor): recarrega para não sobrescrever com dados velhos
+      if (priorityFileHandle) {
+        try {
+          const pf = await priorityFileHandle.getFile();
+          if (pf.lastModified > priorityLastModified) {
+            priorityLastModified = pf.lastModified;
+            priorities = parsePriorities(await pf.text());
+            renderTasks();
+          }
+        } catch (e) { console.log('Watch error:', e); }
+      }
       try {
         const file = await taskFileHandle.getFile();
         if (file.lastModified > lastModified) {
@@ -2141,6 +2154,7 @@
           const result = parseTaskMarkdown(content);
           sections = result.sections;
           tasks = result.tasks;
+          if (reconcileDone()) markChanged();
           renderTasks();
           showStatus('Reloaded');
         }
@@ -2211,7 +2225,7 @@
             id: Date.now() + Math.random(),
             title,
             note: '',
-            checked: false,
+            checked: isDoneSection(quickAddSection),
             subtasks: [],
             section: quickAddSection
           });
@@ -2407,7 +2421,7 @@
       checkbox.className = `checkbox ${task.checked ? 'checked' : ''}`;
       checkbox.addEventListener('click', (e) => {
         e.stopPropagation();
-        task.checked = !task.checked;
+        setTaskChecked(task, !task.checked);
         markChanged();
         renderTasks();
       });
@@ -2766,6 +2780,40 @@
       return [...grouped, ...(present.has(NO_CATEGORY) ? [NO_CATEGORY] : [])];
     }
     function isDoneSection(id) { return id === 'done'; }
+    // Done e concluída são a mesma coisa: estar na seção Done <=> checkbox [x]
+    function ensureDoneSection() {
+      if (!sections.some(s => isDoneSection(s.id))) sections.push({ id: 'done', name: 'Done' });
+      if (!tasks['done']) tasks['done'] = [];
+      return 'done';
+    }
+    function setTaskSection(task, to, dropIndex = -1) {
+      if (task.section !== to) {
+        if (isDoneSection(to)) task.prevSection = task.section;
+        tasks[task.section] = (tasks[task.section] || []).filter(x => x.id !== task.id);
+        task.section = to;
+        if (!tasks[to]) tasks[to] = [];
+        if (dropIndex >= 0 && dropIndex <= tasks[to].length) tasks[to].splice(dropIndex, 0, task);
+        else tasks[to].push(task);
+      }
+      task.checked = isDoneSection(to);
+    }
+    function setTaskChecked(task, done) {
+      if (done) return setTaskSection(task, ensureDoneSection());
+      const back = task.prevSection && !isDoneSection(task.prevSection) && sections.some(s => s.id === task.prevSection)
+        ? task.prevSection
+        : (sections.find(s => isActiveSection(s.id)) || sections.find(s => !isDoneSection(s.id)) || {}).id;
+      if (back) setTaskSection(task, back);
+      else task.checked = false;
+    }
+    // Acerta arquivos editados fora do dashboard: [x] fora de Done vai para Done; tudo em Done fica [x]
+    function reconcileDone() {
+      let changed = false;
+      sections.forEach(sec => (tasks[sec.id] || []).slice().forEach(t => {
+        if (isDoneSection(sec.id)) { if (!t.checked) { t.checked = true; changed = true; } }
+        else if (t.checked) { setTaskChecked(t, true); changed = true; }
+      }));
+      return changed;
+    }
     function isActiveSection(id) { return id === 'active'; }
     function sortForNow(list) {
       return [...list].sort((a, b) =>
@@ -2780,6 +2828,7 @@
     let priorityFileHandle = null;
     let priorityHeader = '# Priorities\n\nScore = 20 × (0,5·I + 0,35·U + 0,15·(6 − E)) → 0 a 100\n\n';
     let priorities = {};
+    let priorityLastModified = 0;
 
     function priorityKey(title) { return title.trim().toLowerCase(); }
     function priorityOf(task) { return priorities[priorityKey(task.title)] || null; }
@@ -2806,7 +2855,9 @@
     async function loadPriorities(root) {
       try {
         priorityFileHandle = await root.getFileHandle(PRIORITY_FILE);
-        priorities = parsePriorities(await (await priorityFileHandle.getFile()).text());
+        const f = await priorityFileHandle.getFile();
+        priorityLastModified = f.lastModified;
+        priorities = parsePriorities(await f.text());
       } catch (e) { priorityFileHandle = null; priorities = {}; }
     }
     async function savePriorities() {
@@ -2816,6 +2867,7 @@
         const w = await priorityFileHandle.createWritable();
         await w.write(prioritiesToMarkdown());
         await w.close();
+        priorityLastModified = (await priorityFileHandle.getFile()).lastModified;
         showStatus('Saved ' + PRIORITY_FILE);
       } catch (e) { showStatus('Save failed: ' + e.message); }
     }
@@ -3068,7 +3120,7 @@
           showStatus('Já existe uma tarefa com esse título');
           return;
         }
-        const task = { id: Date.now() + Math.random(), title, note: '', checked: false, subtasks: [], section: d.section };
+        const task = { id: Date.now() + Math.random(), title, note: '', checked: isDoneSection(d.section), subtasks: [], section: d.section };
         setTaskCategory(task, d.cat);
         if (d.urgent) setTaskFlag(task, 'urgente', true);
         tasks[d.section].push(task);
@@ -3181,9 +3233,7 @@
         tr.querySelector('.rank-status-edit').addEventListener('change', e => {
           const to = e.target.value;
           if (to === t.section) return;
-          tasks[t.section] = tasks[t.section].filter(x => x.id !== t.id);
-          t.section = to;
-          tasks[to].push(t);
+          setTaskSection(t, to);
           markChanged();
           renderTasks();
         });
@@ -3241,7 +3291,7 @@
 
     // Shared filters for Tabela/Mapa
     // quick: '' | 'active' | 'mine' | 'team' | 'urgent' (toggled by the stat cards)
-    const viewFilters = { quick: '', hideDone: true, hideChecked: false };
+    const viewFilters = { quick: '', hideDone: true };
     const QUICK_FILTERS = {
       active: t => isActiveSection(t.section),
       mine: t => dependsOnAndre(t),
@@ -3250,7 +3300,7 @@
     };
     function passesFilters(task) {
       if (viewFilters.quick && !QUICK_FILTERS[viewFilters.quick](task)) return false;
-      if (viewFilters.hideChecked && task.checked) return false;
+      if (viewFilters.hideDone && isDoneSection(task.section)) return false;
       return true;
     }
     function buildToolbar(container, extraStats) {
@@ -3269,8 +3319,7 @@
         ${statCard('urgent', 'urgentes', urgent)}
         ${extraStats || ''}
         <span style="flex:1"></span>
-        <label><input type="checkbox" data-f="hideDone" ${viewFilters.hideDone ? 'checked' : ''}> Ocultar Done</label>
-        <label><input type="checkbox" data-f="hideChecked" ${viewFilters.hideChecked ? 'checked' : ''}> Ocultar concluídas</label>`;
+        <label><input type="checkbox" data-f="hideDone" ${viewFilters.hideDone ? 'checked' : ''}> Ocultar Done</label>`;
       bar.querySelectorAll('[data-q]').forEach(el => el.addEventListener('click', () => {
         viewFilters.quick = viewFilters.quick === el.dataset.q ? '' : el.dataset.q;
         renderTasks();
@@ -3347,11 +3396,7 @@
             const t = matrixDragTask;
             matrixDragTask = null;
             setTaskCategory(t, cat);
-            if (t.section !== sec.id) {
-              tasks[t.section] = tasks[t.section].filter(x => x.id !== t.id);
-              t.section = sec.id;
-              tasks[sec.id].push(t);
-            }
+            if (t.section !== sec.id) setTaskSection(t, sec.id);
             markChanged();
             renderTasks();
           });
@@ -3380,7 +3425,7 @@
             id: Date.now() + Math.random(),
             title,
             note: cat === NO_CATEGORY ? '' : '#' + cat,
-            checked: false,
+            checked: isDoneSection(sectionId),
             subtasks: [],
             section: sectionId,
           });
@@ -3415,7 +3460,7 @@
         ${(flags || ownerPill || subCount || score !== null) ? `<div class="matrix-chip-meta">${score !== null ? `<span class="owner-pill score-pill" title="Score de prioridade">${score}</span>` : ''}${flags}${ownerPill}${subCount}</div>` : ''}
         <div class="matrix-chip-detail">${escapeHtml(note)}${subs}</div>`;
       chip.querySelector('input').addEventListener('change', e => {
-        task.checked = e.target.checked;
+        setTaskChecked(task, e.target.checked);
         markChanged();
         renderTasks();
       });
@@ -3537,12 +3582,14 @@
         const result = parseTaskMarkdown(content);
         sections = result.sections;
         tasks = result.tasks;
+        const fixedDone = reconcileDone();
         let savedView = 'board';
         try { savedView = localStorage.getItem('taskView') || 'board'; } catch (e) {}
         switchTaskView(savedView);
         startWatching();
         taskFileName = file.name;
         filePathEl.textContent = file.name;
+        if (fixedDone) markChanged();
         showStatus('Loaded ' + file.name);
       } catch (e) {
         if (e.name !== 'AbortError') { showStatus('Error: ' + e.message); }

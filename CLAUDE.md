@@ -49,5 +49,6 @@ Este folder (`strategy/`) é a base de coordenação, gestão e execução da em
 - Frente (coluna na Tabela/Mapa, cor no Board): uma tag na nota. Grupos com subcategoria: #platforms/{quartix-markets,oxpro,cfx,quartix-intel,sre} e #produto/{quartix-markets,cfx} (gestão de produto). Outras: #ceo #release #advisory #marketing #explorar. Tag nova vira categoria nova (#grupo/sub cria subcategoria)
 - Dono: [só Andre] · [quant: Andre] · [misto] · [delegável]
 - Flag: #urgente
+- Done = concluída: task em `## Done` é sempre `- [x]`, e `- [x]` só existe em Done (o dashboard move/marca sozinho)
 - Sub-itens sempre como `  - [ ] ...` (o dashboard descarta bullets simples e subtítulos ###)
 - Prioridade: PRIORITIES.md (I/U/E 1–5 + por quê, casado pelo título exato da tarefa); Score = 20×(0,5·I + 0,35·U + 0,15·(6−E))
