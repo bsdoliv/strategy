@@ -1256,6 +1256,53 @@
     .rank-why { color: var(--text-secondary); min-width: 220px; outline: none; border-radius: 4px; padding: 2px 4px; }
     .rank-why:focus { background: var(--bg-card); box-shadow: 0 0 0 2px var(--accent); }
     .rank-why:empty::before { content: '+ por quê'; color: var(--text-muted); font-style: italic; }
+    .rank-table select.rank-cat-edit {
+      color: #fff; border: none; border-radius: 999px; font-size: 11px; font-weight: 600;
+      padding: 3px 6px; cursor: pointer; max-width: 210px;
+    }
+    .rank-table select.rank-cat-edit option { color: var(--text-primary); background: var(--bg-card); }
+    .rank-title { display: flex; align-items: baseline; gap: 6px; }
+    .rank-title-text { flex: 1; outline: none; border-radius: 4px; padding: 1px 3px; cursor: text; }
+    .rank-title-text:hover { background: var(--bg-card); box-shadow: 0 0 0 1px var(--border); }
+    .rank-title-text:focus { background: var(--bg-card); box-shadow: 0 0 0 2px var(--accent); }
+    .rank-flag {
+      flex: none; font-size: 10px; font-weight: 600; line-height: 1; padding: 3px 6px; border-radius: 999px; cursor: pointer;
+      border: 1px dashed var(--border); background: transparent; color: var(--text-muted); opacity: .35;
+    }
+    .rank-table tr:hover .rank-flag { opacity: 1; }
+    .rank-flag.on { opacity: 1; background: #fff5f5; color: #c92a2a; border: 1px solid #ffc9c9; }
+    .rank-add {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; padding: 10px 12px;
+      background: var(--bg-card); border: 1px dashed var(--border); border-radius: 10px; font-size: 13px;
+    }
+    .rank-add-label { font-weight: 700; color: var(--accent); }
+    .rank-add input[type=text], .rank-add input:not([type]) {
+      font: inherit; padding: 4px 8px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg-card); color: var(--text-primary);
+    }
+    .rank-add-title { flex: 2 1 260px; }
+    .rank-add-why { flex: 1 1 200px; }
+    .rank-add select { font: inherit; border: 1px solid var(--border); border-radius: 4px; background: var(--bg-card); color: var(--text-primary); padding: 2px; }
+    .rank-add select.rank-cat-edit { color: #fff; border: none; border-radius: 999px; font-size: 11px; font-weight: 600; padding: 3px 6px; }
+    .rank-add label { display: inline-flex; align-items: center; gap: 4px; color: var(--text-secondary); }
+    .rank-cat-menu { position: relative; display: inline-block; margin-left: 6px; text-transform: none; letter-spacing: 0; }
+    .rank-cat-toggle {
+      font-size: 12px; font-weight: 500; padding: 2px 8px; border: 1px solid var(--border); border-radius: 4px;
+      background: var(--bg-card); color: var(--text-primary); cursor: pointer;
+    }
+    .rank-cat-toggle.filtered { border-color: var(--accent); color: var(--accent); font-weight: 700; }
+    .rank-cat-pop {
+      display: none; position: absolute; top: calc(100% + 4px); left: 0; z-index: 10; min-width: 230px;
+      max-height: 60vh; overflow: auto; background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 8px; box-shadow: 0 8px 24px var(--shadow-hover); padding: 6px; font-size: 13px; color: var(--text-primary);
+    }
+    .rank-cat-menu.open .rank-cat-pop { display: block; }
+    .rank-cat-pop label { display: flex; align-items: center; gap: 6px; padding: 4px 6px; border-radius: 4px; cursor: pointer; white-space: nowrap; }
+    .rank-cat-pop label:hover { background: var(--bg-secondary); }
+    .rank-cat-pop label.group { font-weight: 700; margin-top: 4px; }
+    .rank-cat-pop label.sub { padding-left: 24px; }
+    .rank-cat-pop label i { width: 10px; height: 10px; border-radius: 2px; flex: none; }
+    .rank-cat-actions { display: flex; gap: 6px; padding: 2px 4px 6px; border-bottom: 1px solid var(--border-light); margin-bottom: 4px; }
+    .rank-cat-actions button { font-size: 11px; padding: 2px 8px; }
     .rank-legend { font-size: 12px; color: var(--text-muted); margin: -6px 0 12px; }
 
     /* ===== Tabela (status x categoria) ===== */
@@ -1287,6 +1334,16 @@
       border: 1px solid var(--border-light); border-left: 3px solid var(--cat-color, var(--border));
       border-radius: 6px; padding: 6px 8px; margin-bottom: 6px; background: var(--bg-card);
       font-size: 12.5px; cursor: grab; box-shadow: 0 1px 2px var(--shadow);
+    }
+    .matrix-add {
+      font-size: 12px; color: var(--text-muted); padding: 4px 6px; border-radius: 6px; cursor: pointer; opacity: 0;
+      transition: opacity .15s ease;
+    }
+    .matrix-table td:hover .matrix-add { opacity: 1; }
+    .matrix-add:hover { background: var(--bg-secondary); color: var(--accent); }
+    .matrix-add-input {
+      width: 100%; font: inherit; font-size: 12.5px; padding: 6px 8px; border: 2px solid var(--accent);
+      border-radius: 6px; outline: none; background: var(--bg-card); color: var(--text-primary);
     }
     .matrix-chip.done { opacity: .5; text-decoration: line-through; }
     .matrix-chip-head { display: flex; align-items: flex-start; gap: 6px; }
@@ -2601,6 +2658,7 @@
       'platforms/quartix-markets': { label: 'quartix-markets', color: '#0c8599' },
       'platforms/oxpro':           { label: 'oxpro',           color: '#4263eb' },
       'platforms/cfx':             { label: 'cfx',             color: '#e64980' },
+      'platforms/quartix-intel':   { label: 'quartix-intel',   color: '#74b816' },
       'platforms/sre':             { label: 'sre',             color: '#d9480f' },
       'produto/quartix-markets':   { label: 'quartix-markets', color: '#7048e8' },
       'produto/cfx':               { label: 'cfx',             color: '#ae3ec9' },
@@ -2679,6 +2737,11 @@
       if (cat !== NO_CATEGORY) html += `<span class="cat-pill" style="background:${categoryColor(cat)}">${escapeHtml(categoryLabel(cat))}</span>`;
       if (owner) html += `<span class="owner-pill ${owner}">${OWNER_META[owner].label}</span>`;
       return html;
+    }
+    function setTaskFlag(task, flag, on) {
+      let note = (task.note || '').replace(new RegExp('\\s*#' + flag + '(?![\\p{L}\\p{N}_/-])', 'giu'), '');
+      if (on) note += ' #' + flag;
+      task.note = note.replace(/\s{2,}/g, ' ').trim();
     }
     function setTaskCategory(task, cat) {
       const current = taskCategory(task);
@@ -2945,6 +3008,79 @@
 
     // ===== Ranking: todas as tarefas ordenadas por score =====
     const rankView = document.getElementById('rankView');
+    // Frentes desmarcadas no menu de checkboxes (novas frentes aparecem por padrão)
+    let rankCatHidden = new Set();
+    try { rankCatHidden = new Set(JSON.parse(localStorage.getItem('rankCatHidden') || '[]')); } catch (e) {}
+    let rankCatMenuOpen = false;
+    function setRankCatHidden(next) {
+      rankCatHidden = next;
+      try { localStorage.setItem('rankCatHidden', JSON.stringify([...next])); } catch (e) {}
+      renderRanking();
+    }
+    function matchesRankCat(task) {
+      return !rankCatHidden.has(taskCategory(task));
+    }
+    document.addEventListener('click', e => {
+      if (rankCatMenuOpen && !e.target.closest('.rank-cat-menu')) {
+        rankCatMenuOpen = false;
+        document.querySelector('.rank-cat-menu')?.classList.remove('open');
+      }
+    });
+
+    // Formulário "nova tarefa" do Ranking: cria a tarefa no TASKS.md e o score no PRIORITIES.md
+    let rankAddDraft = null;
+    function buildRankAddForm(cats, catOptions) {
+      const visible = cats.filter(c => !rankCatHidden.has(c) && c !== NO_CATEGORY);
+      const d = rankAddDraft || {
+        title: '', cat: visible[0] || cats.find(c => c !== NO_CATEGORY) || NO_CATEGORY,
+        section: sections.find(x => isActiveSection(x.id))?.id || sections[0]?.id, i: 3, u: 3, e: 3, why: '', urgent: false,
+      };
+      rankAddDraft = d;
+      const form = document.createElement('form');
+      form.className = 'rank-add';
+      const nums = field => `<label>${field.toUpperCase()} <select data-f="${field}">${[1, 2, 3, 4, 5].map(n => `<option ${d[field] === n ? 'selected' : ''}>${n}</option>`).join('')}</select></label>`;
+      form.innerHTML = `
+        <span class="rank-add-label">+ Nova tarefa</span>
+        <input data-f="title" class="rank-add-title" placeholder="Título da tarefa" value="${escapeHtml(d.title)}">
+        <select data-f="cat" class="rank-cat-edit" style="background:${categoryColor(d.cat)}">${catOptions(d.cat)}</select>
+        <select data-f="section">${sections.map(x => `<option value="${escapeHtml(x.id)}" ${x.id === d.section ? 'selected' : ''}>${escapeHtml(x.name)}</option>`).join('')}</select>
+        ${nums('i')}${nums('u')}${nums('e')}
+        <label><input type="checkbox" data-f="urgent" ${d.urgent ? 'checked' : ''}> urgente</label>
+        <input data-f="why" class="rank-add-why" placeholder="Por quê (opcional)" value="${escapeHtml(d.why)}">
+        <button type="submit" class="primary">Adicionar</button>`;
+      form.querySelectorAll('[data-f]').forEach(el => el.addEventListener(el.tagName === 'INPUT' && el.type !== 'checkbox' ? 'input' : 'change', async () => {
+        const f = el.dataset.f;
+        if (f === 'cat' && el.value === '__new__') {
+          const typed = prompt('Nova frente (ex.: produto/pricing ou marketing):', '');
+          const next = (typed || '').trim().toLowerCase().replace(/^#/, '').replace(/\s+/g, '-');
+          if (next) d.cat = next;
+          renderRanking();
+          return;
+        }
+        d[f] = el.type === 'checkbox' ? el.checked : ['i', 'u', 'e'].includes(f) ? +el.value : el.value;
+        if (f === 'cat') el.style.background = categoryColor(d.cat);
+      }));
+      form.addEventListener('submit', async e => {
+        e.preventDefault();
+        const title = d.title.replace(/\s+/g, ' ').replace(/\|/g, '/').replace(/\*/g, '').trim();
+        if (!title) { form.querySelector('.rank-add-title').focus(); return; }
+        if (priorities[priorityKey(title)] || sections.some(x => (tasks[x.id] || []).some(t => priorityKey(t.title) === priorityKey(title)))) {
+          showStatus('Já existe uma tarefa com esse título');
+          return;
+        }
+        const task = { id: Date.now() + Math.random(), title, note: '', checked: false, subtasks: [], section: d.section };
+        setTaskCategory(task, d.cat);
+        if (d.urgent) setTaskFlag(task, 'urgente', true);
+        tasks[d.section].push(task);
+        priorities[priorityKey(title)] = { title, i: d.i, u: d.u, e: d.e, why: d.why.replace(/\|/g, '/').trim() };
+        rankAddDraft = { ...d, title: '', why: '', urgent: false };
+        markChanged();
+        await savePriorities();
+        renderTasks();
+        rankView.querySelector('.rank-add-title')?.focus();
+      });
+      return form;
+    }
 
     function renderRanking() {
       rankView.innerHTML = '';
@@ -2954,30 +3090,81 @@
       legend.textContent = 'Score = 20 × (0,5·Impacto + 0,35·Urgência + 0,15·(6 − Esforço)). Ajuste I/U/E e o "por quê" aqui mesmo — salva em PRIORITIES.md.';
       rankView.appendChild(legend);
 
+      const cats = orderedCategories(sections.flatMap(sec => tasks[sec.id] || []));
+      const visibleCount = cats.filter(c => !rankCatHidden.has(c)).length;
+      const menuLabel = visibleCount === cats.length ? 'Todas' : `${visibleCount} de ${cats.length}`;
+      let menuItems = '';
+      const seenGroups = new Set();
+      cats.forEach(cat => {
+        const g = cat !== NO_CATEGORY ? categoryGroup(cat) : null;
+        if (g && !seenGroups.has(g)) {
+          seenGroups.add(g);
+          menuItems += `<label class="group"><input type="checkbox" data-group="${escapeHtml(g)}"> ${escapeHtml(groupLabel(g))}</label>`;
+        }
+        menuItems += `<label class="${g ? 'sub' : ''}"><input type="checkbox" data-cat="${escapeHtml(cat)}" ${rankCatHidden.has(cat) ? '' : 'checked'}><i style="background:${categoryColor(cat)}"></i>${escapeHtml(g ? categoryShortLabel(cat) : categoryLabel(cat))}</label>`;
+      });
+      const catMenu = `<span class="rank-cat-menu ${rankCatMenuOpen ? 'open' : ''}">
+          <button class="rank-cat-toggle ${visibleCount < cats.length ? 'filtered' : ''}">${menuLabel} ▾</button>
+          <div class="rank-cat-pop">
+            <div class="rank-cat-actions"><button data-all="1">Todas</button><button data-all="0">Nenhuma</button></div>
+            ${menuItems}
+          </div>
+        </span>`;
+
+      const catOptions = current => cats.filter(c => c !== NO_CATEGORY)
+        .map(c => `<option value="${escapeHtml(c)}" ${c === current ? 'selected' : ''}>${escapeHtml(categoryLabel(c))}</option>`).join('') +
+        `<option value="${NO_CATEGORY}" ${current === NO_CATEGORY ? 'selected' : ''}>Sem categoria</option>` +
+        '<option value="__new__">+ nova frente…</option>';
+
       const list = sections.filter(sec => !(viewFilters.hideDone && isDoneSection(sec.id)))
         .flatMap(sec => (tasks[sec.id] || []).map(t => ({ t, sec })))
-        .filter(({ t }) => passesFilters(t))
+        .filter(({ t }) => passesFilters(t) && matchesRankCat(t))
         .sort((a, b) => ((taskScore(b.t) ?? -1) - (taskScore(a.t) ?? -1)));
 
       const table = document.createElement('table');
       table.className = 'rank-table';
-      table.innerHTML = '<thead><tr><th>#</th><th>Score</th><th>Tarefa</th><th>Frente</th><th>Dono</th><th>Status</th><th title="Impacto">I</th><th title="Urgência">U</th><th title="Esforço">E</th><th>Por quê</th></tr></thead>';
+      table.innerHTML = `<thead><tr><th>#</th><th>Score</th><th>Tarefa</th><th>Frente ${catMenu}</th><th>Dono</th><th>Status</th><th title="Impacto">I</th><th title="Urgência">U</th><th title="Esforço">E</th><th>Por quê</th></tr></thead>`;
+      const menu = table.querySelector('.rank-cat-menu');
+      menu.querySelector('.rank-cat-toggle').addEventListener('click', () => {
+        rankCatMenuOpen = !rankCatMenuOpen;
+        menu.classList.toggle('open', rankCatMenuOpen);
+      });
+      menu.querySelectorAll('input[data-group]').forEach(box => {
+        const subs = cats.filter(c => c !== NO_CATEGORY && categoryGroup(c) === box.dataset.group);
+        const shown = subs.filter(c => !rankCatHidden.has(c)).length;
+        box.checked = shown === subs.length;
+        box.indeterminate = shown > 0 && shown < subs.length;
+        box.addEventListener('change', () => {
+          const next = new Set(rankCatHidden);
+          subs.forEach(c => box.checked ? next.delete(c) : next.add(c));
+          setRankCatHidden(next);
+        });
+      });
+      menu.querySelectorAll('input[data-cat]').forEach(box => box.addEventListener('change', () => {
+        const next = new Set(rankCatHidden);
+        box.checked ? next.delete(box.dataset.cat) : next.add(box.dataset.cat);
+        setRankCatHidden(next);
+      }));
+      menu.querySelectorAll('[data-all]').forEach(btn => btn.addEventListener('click', () => {
+        setRankCatHidden(btn.dataset.all === '1' ? new Set() : new Set(cats));
+      }));
       const tbody = document.createElement('tbody');
       list.forEach(({ t, sec }, idx) => {
         const p = priorityOf(t);
         const score = p ? priorityScore(p) : null;
         const cat = taskCategory(t);
         const owner = taskOwner(t);
+        const urgent = taskFlags(t).includes('urgente');
         const tr = document.createElement('tr');
         if (t.checked) tr.className = 'done';
         const sel = (field) => `<select data-field="${field}">${p ? '' : '<option value="">–</option>'}${[1, 2, 3, 4, 5].map(n => `<option ${p && p[field] === n ? 'selected' : ''}>${n}</option>`).join('')}</select>`;
         tr.innerHTML = `
           <td class="rank-num">${idx + 1}</td>
           <td><div class="rank-score">${score ?? '–'}<div class="bar"><div style="width:${score ?? 0}%;background:${scoreColor(score ?? 0)}"></div></div></div></td>
-          <td><div class="rank-title" style="--cat-color:${categoryColor(cat)}">${taskFlags(t).map(f => `<span class="flag-pill">${escapeHtml(f)}</span> `).join('')}${escapeHtml(t.title)}</div></td>
-          <td>${cat !== NO_CATEGORY ? `<span class="cat-pill" style="background:${categoryColor(cat)}">${escapeHtml(categoryLabel(cat))}</span>` : ''}</td>
+          <td><div class="rank-title" style="--cat-color:${categoryColor(cat)}"><button class="rank-flag ${urgent ? 'on' : ''}" title="${urgent ? 'Desmarcar urgente' : 'Marcar como urgente'}">${urgent ? 'urgente' : '⚑'}</button><span class="rank-title-text" contenteditable="true" spellcheck="false" title="Clique para editar">${escapeHtml(t.title)}</span></div></td>
+          <td><select class="rank-cat-edit" title="Mudar a frente" style="background:${categoryColor(cat)}">${catOptions(cat)}</select></td>
           <td>${owner ? `<span class="owner-pill ${owner}">${OWNER_META[owner].label}</span>` : ''}</td>
-          <td>${escapeHtml(sec.name)}</td>
+          <td><select class="rank-status-edit" title="Mudar o status">${sections.map(x => `<option value="${escapeHtml(x.id)}" ${x.id === sec.id ? 'selected' : ''}>${escapeHtml(x.name)}</option>`).join('')}</select></td>
           <td>${sel('i')}</td><td>${sel('u')}</td><td>${sel('e')}</td>
           <td><div class="rank-why" contenteditable="true">${escapeHtml(p?.why || '')}</div></td>`;
         const ensure = () => {
@@ -2991,6 +3178,52 @@
           await savePriorities();
           renderTasks();
         }));
+        tr.querySelector('.rank-status-edit').addEventListener('change', e => {
+          const to = e.target.value;
+          if (to === t.section) return;
+          tasks[t.section] = tasks[t.section].filter(x => x.id !== t.id);
+          t.section = to;
+          tasks[to].push(t);
+          markChanged();
+          renderTasks();
+        });
+        tr.querySelector('.rank-flag').addEventListener('click', () => {
+          setTaskFlag(t, 'urgente', !urgent);
+          markChanged();
+          renderTasks();
+        });
+        const titleEl = tr.querySelector('.rank-title-text');
+        titleEl.addEventListener('keydown', e => {
+          if (e.key === 'Enter') { e.preventDefault(); titleEl.blur(); }
+          if (e.key === 'Escape') { titleEl.textContent = t.title; titleEl.blur(); }
+        });
+        titleEl.addEventListener('blur', async () => {
+          // "|" breaks the PRIORITIES.md table and "*" the bold title in TASKS.md
+          const next = titleEl.textContent.replace(/\s+/g, ' ').replace(/\|/g, '/').replace(/\*/g, '').trim();
+          if (!next || next === t.title) { titleEl.textContent = t.title; return; }
+          const oldKey = priorityKey(t.title);
+          const entry = priorities[oldKey];
+          t.title = next;
+          if (entry) {
+            delete priorities[oldKey];
+            entry.title = next;
+            priorities[priorityKey(next)] = entry;
+            await savePriorities();
+          }
+          markChanged();
+          renderTasks();
+        });
+        tr.querySelector('.rank-cat-edit').addEventListener('change', e => {
+          let next = e.target.value;
+          if (next === '__new__') {
+            const typed = prompt('Nova frente (ex.: produto/pricing ou marketing):', '');
+            next = (typed || '').trim().toLowerCase().replace(/^#/, '').replace(/\s+/g, '-');
+            if (!next) { renderRanking(); return; }
+          }
+          setTaskCategory(t, next);
+          markChanged();
+          renderTasks();
+        });
         const why = tr.querySelector('.rank-why');
         why.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); why.blur(); } });
         why.addEventListener('blur', async () => {
@@ -3002,6 +3235,7 @@
         tbody.appendChild(tr);
       });
       table.appendChild(tbody);
+      rankView.appendChild(buildRankAddForm(cats, catOptions));
       rankView.appendChild(table);
     }
 
@@ -3099,6 +3333,11 @@
         cats.forEach(cat => {
           const td = document.createElement('td');
           sortForNow(secTasks.filter(t => taskCategory(t) === cat)).forEach(t => td.appendChild(createMatrixChip(t)));
+          const add = document.createElement('div');
+          add.className = 'matrix-add';
+          add.textContent = '+ nova tarefa';
+          add.addEventListener('click', () => startMatrixAdd(add, sec.id, cat));
+          td.appendChild(add);
           td.addEventListener('dragover', e => { e.preventDefault(); td.classList.add('drop-target'); });
           td.addEventListener('dragleave', () => td.classList.remove('drop-target'));
           td.addEventListener('drop', e => {
@@ -3122,6 +3361,38 @@
       });
       table.appendChild(tbody);
       matrixView.appendChild(table);
+    }
+
+    function startMatrixAdd(addEl, sectionId, cat) {
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'matrix-add-input';
+      input.placeholder = 'Título da tarefa… (Enter salva, Esc cancela)';
+      addEl.replaceWith(input);
+      input.focus();
+      let done = false;
+      const finish = save => {
+        if (done) return;
+        done = true;
+        const title = input.value.replace(/\s+/g, ' ').replace(/\|/g, '/').replace(/\*/g, '').trim();
+        if (save && title) {
+          tasks[sectionId].push({
+            id: Date.now() + Math.random(),
+            title,
+            note: cat === NO_CATEGORY ? '' : '#' + cat,
+            checked: false,
+            subtasks: [],
+            section: sectionId,
+          });
+          markChanged();
+        }
+        renderTasks();
+      };
+      input.addEventListener('keydown', e => {
+        if (e.key === 'Enter') { e.preventDefault(); finish(true); }
+        else if (e.key === 'Escape') { finish(false); }
+      });
+      input.addEventListener('blur', () => finish(true));
     }
 
     function createMatrixChip(task) {

@@ -46,7 +46,7 @@ Este folder (`strategy/`) é a base de coordenação, gestão e execução da em
 - Features quant passam por Andre (gargalo conhecido) — sinalizar quando uma tarefa depende dele
 
 ## TASKS.md — convenções
-- Frente (coluna na Tabela/Mapa, cor no Board): uma tag na nota. Grupos com subcategoria: #platforms/{quartix-markets,oxpro,cfx,sre} e #produto/{quartix-markets,cfx} (gestão de produto). Outras: #ceo #release #advisory #marketing #explorar. Tag nova vira categoria nova (#grupo/sub cria subcategoria)
+- Frente (coluna na Tabela/Mapa, cor no Board): uma tag na nota. Grupos com subcategoria: #platforms/{quartix-markets,oxpro,cfx,quartix-intel,sre} e #produto/{quartix-markets,cfx} (gestão de produto). Outras: #ceo #release #advisory #marketing #explorar. Tag nova vira categoria nova (#grupo/sub cria subcategoria)
 - Dono: [só Andre] · [quant: Andre] · [misto] · [delegável]
 - Flag: #urgente
 - Sub-itens sempre como `  - [ ] ...` (o dashboard descarta bullets simples e subtítulos ###)
