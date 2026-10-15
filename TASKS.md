@@ -7,66 +7,134 @@
 - [ ] **Integração oxpro / plexus-backend / octaxpro** - #platforms/quartix-markets
 - [ ] **settings-apps-spotlight** - #release
 - [ ] **flow.sight: análise period-over-period, flow.sight spot, ideias** - [quant: Andre] #platforms/quartix-markets
+- [ ] **Análise period-over-period** - ↳ flow.sight: análise period-over-period, flow.sight spot, ideias [quant: Andre] #platforms/quartix-markets
+- [ ] **flow.sight spot** - ↳ flow.sight: análise period-over-period, flow.sight spot, ideias [quant: Andre] #platforms/quartix-markets
+- [ ] **Ideias para o flow.sight** - ↳ flow.sight: análise period-over-period, flow.sight spot, ideias [quant: Andre] #platforms/quartix-markets
 - [ ] **Tela de apuração / earnings do partner (UX)** - quartix-markets #platforms/cfx
 - [ ] **Design do ambiente quartix-markets live (market.desk?)** - #produto/quartix-markets
 - [ ] **News + calendar** - data #produto/quartix-markets
 - [ ] **clearfxai control-plane: atualizar OS c/ detalhes dos clientes; rfqd** - [delegável] #platforms/cfx
+- [ ] **Atualizar OS com solicitação dos detalhes dos clientes** - ↳ clearfxai control-plane: atualizar OS c/ detalhes dos clientes; rfqd [delegável] #platforms/cfx
+- [ ] **rfqd / Integrar Braza API** - ↳ clearfxai control-plane: atualizar OS c/ detalhes dos clientes; rfqd [delegável] #platforms/cfx
 - [ ] **Integrar Braza API** - backlog CFX [delegável] #platforms/cfx
 - [ ] **Bugfix: deletar conta-company demora demais** - Customer/Doc mgmt [delegável] #platforms/cfx
-- [ ] **Overhaul do data-store de docs** - camadas blobs + metadados, cloud-storage, docstored, dbentity2 [delegável] #platforms/cfx
+- [ ] **Overhaul do data-store de docs** - [delegável] #platforms/cfx
+- [ ] **Data-store layers: (1) blobs, (2) metadados** - ↳ Overhaul do data-store de docs [delegável] #platforms/cfx
+- [ ] **cloud-storage** - ↳ Overhaul do data-store de docs [delegável] #platforms/cfx
+- [ ] **docstored (engine)** - ↳ Overhaul do data-store de docs [delegável] #platforms/cfx
+- [ ] **docstored › libs** - ↳ Overhaul do data-store de docs [delegável] #platforms/cfx
+- [ ] **docstored › mini-exec** - ↳ Overhaul do data-store de docs [delegável] #platforms/cfx
+- [ ] **docstored › autotests (libs)** - ↳ Overhaul do data-store de docs [delegável] #platforms/cfx
+- [ ] **dbentity2** - ↳ Overhaul do data-store de docs [delegável] #platforms/cfx
 - [ ] **Testes: UI (Playwright), API, API mock, autotests das libs** - [delegável] #platforms/cfx
-- [ ] **Platform overhaul** - email orch (mailsend-d, emailorchd), dbentities, rabbitmq, api-auth [delegável] #platforms/cfx
+- [ ] **Escrever testes de UI (Playwright)** - ↳ Testes: UI (Playwright), API, API mock, autotests das libs [delegável] #platforms/cfx
+- [ ] **Escrever testes de API** - ↳ Testes: UI (Playwright), API, API mock, autotests das libs [delegável] #platforms/cfx
+- [ ] **API mock** - ↳ Testes: UI (Playwright), API, API mock, autotests das libs [delegável] #platforms/cfx
+- [ ] **UI + api-mock** - ↳ Testes: UI (Playwright), API, API mock, autotests das libs [delegável] #platforms/cfx
+- [ ] **Escrever autotests (libs)** - ↳ Testes: UI (Playwright), API, API mock, autotests das libs [delegável] #platforms/cfx
+- [ ] **Platform overhaul** - [delegável] #platforms/cfx
+- [ ] **Email orch › mailsend-d** - ↳ Platform overhaul [delegável] #platforms/cfx
+- [ ] **Email orch › emailorchd** - ↳ Platform overhaul [delegável] #platforms/cfx
+- [ ] **dbentities** - ↳ Platform overhaul [delegável] #platforms/cfx
+- [ ] **rabbitmq** - ↳ Platform overhaul [delegável] #platforms/cfx
+- [ ] **api-auth** - ↳ Platform overhaul [delegável] #platforms/cfx
 - [ ] **messaging-integration** - [delegável] #platforms/cfx
-- [ ] **CI/CD** - metaox-next como orquestrador; ambiente de integração octaxpro + quartix-markets; pipeline octaxpro; ambiente dev/beta e pipeline cfx [delegável] #platforms/sre
+- [ ] **CI/CD** - [delegável] #platforms/sre
+- [ ] **metaox-next como orquestrador dos pipelines de CI/CD** - ↳ CI/CD [delegável] #platforms/sre
+- [ ] **Ambiente de integração octaxpro + quartix-markets** - ↳ CI/CD [delegável] #platforms/sre
+- [ ] **Ajustar pipeline de CI/CD do octaxpro** - ↳ CI/CD [delegável] #platforms/sre
+- [ ] **Ambiente dev/beta do cfx** - ↳ CI/CD [delegável] #platforms/sre
+- [ ] **Pipeline de CI/CD do cfx** - ↳ CI/CD [delegável] #platforms/sre
 - [ ] **bpipe cortesia** - [delegável] #platforms/sre
-- [ ] **Alvos hedgeOS** - Campanelli, Giba/Santander, Giva, FK Partners, instituições de ensino [só Andre] #ceo
+- [ ] **Alvos hedgeOS** - [só Andre] #ceo
+- [ ] **Damke** - ↳ Alvos hedgeOS [só Andre] #ceo
+- [ ] **Campanelli** - ↳ Alvos hedgeOS [só Andre] #ceo
+- [ ] **Giba / Santander** - ↳ Alvos hedgeOS [só Andre] #ceo
+- [ ] **Giva** - ↳ Alvos hedgeOS [só Andre] #ceo
+- [ ] **FK Partners** - ↳ Alvos hedgeOS [só Andre] #ceo
+- [ ] **Instituições de ensino** - ↳ Alvos hedgeOS [só Andre] #ceo
 - [ ] **Integração com Port.AR** - #ceo
-- [ ] **clearfxai / quartix advisory** - integração bancos, automação de workflows, chery #advisory
+- [ ] **clearfxai / quartix advisory** - #advisory
+- [ ] **Integração com bancos** - ↳ clearfxai / quartix advisory #advisory
+- [ ] **Automação de workflows** - ↳ clearfxai / quartix advisory #advisory
+- [ ] **chery** - ↳ clearfxai / quartix advisory #advisory
 - [ ] **Frentes Marcos I9DC** - [só Andre] #ceo
 - [ ] **MOU empresa nova / QUARTIX ADVISORY** - estava em postponed [só Andre] #ceo
-- [ ] **Pitch e segmentos** - FP&A p/ comex, ferramentas de execução, tesouraria institucional/corretoras, commodities, renda fixa, crédito de carbono, moedas #marketing
-- [ ] **Manifesto / blog planning** - Blog AutoFlow post, AutoFlow one pager, estruturar marketing #marketing
-- [ ] **Marketing farm / Braindump marketing** - social media agent, marketing agent, estudantes, seguidores #marketing
+- [ ] **Pitch e segmentos** - #marketing
+- [ ] **Plataforma FP&A para empresas comex** - ↳ Pitch e segmentos #marketing
+- [ ] **Enfoque ferramentas para execução** - ↳ Pitch e segmentos #marketing
+- [ ] **Tesouraria institucional e corretoras › Commodities** - ↳ Pitch e segmentos #marketing
+- [ ] **Tesouraria institucional e corretoras › Renda fixa** - ↳ Pitch e segmentos #marketing
+- [ ] **Tesouraria institucional e corretoras › Crédito de carbono** - ↳ Pitch e segmentos #marketing
+- [ ] **Tesouraria institucional e corretoras › Moedas** - ↳ Pitch e segmentos #marketing
+- [ ] **Manifesto / blog planning** - #marketing
+- [ ] **Marketing farm / Braindump marketing** - #marketing
+- [ ] **Blog › AutoFlow Post** - ↳ Marketing farm / Braindump marketing #marketing
+- [ ] **Estruturar marketing / blogposts** - ↳ Marketing farm / Braindump marketing #marketing
+- [ ] **AutoFlow / One Pager** - ↳ Marketing farm / Braindump marketing #marketing
+- [ ] **Social Media Agent** - ↳ Marketing farm / Braindump marketing #marketing
+- [ ] **Marketing Agent** - ↳ Marketing farm / Braindump marketing #marketing
+- [ ] **Estudantes de curso, etc** - ↳ Marketing farm / Braindump marketing #marketing
+- [ ] **Seguidores página enfoque** - ↳ Marketing farm / Braindump marketing #marketing
 - [ ] **Opensource Fernando** - #marketing
-- [ ] **quartix-intelligence: datalake** - taxonomia, ingestão LinkedIn, eventos (logs, preços), outros dados #platforms/quartix-intel
+- [ ] **quartix-intelligence: datalake** - #platforms/quartix-intel
+- [ ] **Taxonomia** - ↳ quartix-intelligence: datalake #platforms/quartix-intel
+- [ ] **Acolher dados do LinkedIn** - ↳ quartix-intelligence: datalake #platforms/quartix-intel
+- [ ] **Acolher dados de eventos (logs, preços)** - ↳ quartix-intelligence: datalake #platforms/quartix-intel
+- [ ] **Acolher outros dados** - ↳ quartix-intelligence: datalake #platforms/quartix-intel
 - [ ] **Content publishing platform** - acesso de clientes ao conteúdo #platforms/quartix-intel
-- [ ] **Chat prototype / isabel** - avaliar chat no quartix-markets, QA, tutorial p/ marcar mensagens #platforms/cfx
+- [ ] **Chat prototype / isabel** - #platforms/cfx
+- [ ] **Avaliar chat no quartix-markets** - ↳ Chat prototype / isabel #platforms/cfx
+- [ ] **QA do chat** - ↳ Chat prototype / isabel #platforms/cfx
+- [ ] **Tutorial para marcar mensagens como importantes** - ↳ Chat prototype / isabel #platforms/cfx
 - [ ] **octaxpro addon / excel-plugin** - #platforms/oxpro
-- [ ] **Organizar repos** - marketdata, oxpro etc. #platforms/quartix-intel
+- [ ] **Organizar repos** - #platforms/quartix-intel
+- [ ] **marketdata** - ↳ Organizar repos #platforms/quartix-intel
+- [ ] **oxpro etc.** - ↳ Organizar repos #platforms/quartix-intel
 - [ ] **Research / opensource** - #explorar
-- [ ] **Transformar livro em skill** - notebooklm, beautiful data #platforms/quartix-intel
+- [ ] **Transformar livro em skill** - #platforms/quartix-intel
+- [ ] **notebooklm** - ↳ Transformar livro em skill #platforms/quartix-intel
+- [ ] **beautiful data** - ↳ Transformar livro em skill #platforms/quartix-intel
+- [ ] **Pegar skills prontas, treinar notebooklm com um livro teste** - ↳ Transformar livro em skill #platforms/quartix-intel
 - [ ] **Deploy quartix-markets** - WIP [delegável] #platforms/sre
-  - [ ] Deploy da plataforma
-  - [ ] Login do flow.sight
+- [ ] **Deploy da plataforma** - ↳ Deploy quartix-markets [delegável] #platforms/sre
+- [ ] **Login do flow.sight** - ↳ Deploy quartix-markets [delegável] #platforms/sre
 - [ ] **Release Plexus (valorpro): integrar à plataforma qxmarkets** - [misto] #release
 - [ ] **Release hedgeOS (Damke)** - quartix-markets release [quant: Andre] #release
-  - [ ] Integração hedgeOS ↔ nexus, port.ar, plexus
+- [ ] **Integração hedgeOS ↔ nexus** - ↳ Release hedgeOS (Damke) [quant: Andre] #release
+- [ ] **Integração hedgeOS ↔ port.ar** - ↳ Release hedgeOS (Damke) [quant: Andre] #release
+- [ ] **Integração hedgeOS ↔ plexus** - ↳ Release hedgeOS (Damke) [quant: Andre] #release
 - [ ] **Revisar taxonomia** - WIP, quartix-intelligence #explorar
-- [ ] **Ask for strategic capital** - captação; e-mail no estilo Dropbox; ligado às Frentes Marcos I9DC [só Andre] #ceo
+- [ ] **Ask for strategic capital** - captação; ligado às Frentes Marcos I9DC [só Andre] #ceo
+- [ ] **E-mail no estilo Dropbox** - ↳ Ask for strategic capital [só Andre] #ceo
 - [ ] **Convite Damke: apresentar hedgeOS** - estava em postponed [só Andre] #ceo
 - [ ] **Follow up Fernando Silveira** - estava em postponed [só Andre] #ceo
 - [ ] **Ajustes de pricing no auto-quote** - [quant: Andre] #platforms/oxpro
-  - [ ] minimum spread
-  - [ ] manual-quote
-  - [ ] split off spreads do customer-import CSV
+- [ ] **split off spreads do customer-import CSV** - ↳ Ajustes de pricing no auto-quote [quant: Andre] #platforms/oxpro
 - [ ] **aumentar streaming workers** - #platforms/oxpro
 - [ ] **mail alerts pulse** - #platforms/oxpro
 - [ ] **criar conta de cliente por tela** - #platforms/oxpro
-- [x] **ajustar suspend octax-api** - #platforms/oxpro
 - [ ] **ajustar suspend octax-api, operations on tradingsettings_api** - #platforms/oxpro
 
 ## Active
 - [ ] **Sangria diária de dados de produção (octaxpro → plataforma de dados)** - extração diária dos dados das instâncias octaxpro em produção para a plataforma de dados [só Andre] #platforms/oxpro
 - [ ] **Rotacionar certificados TLS Safra** - risco de indisponibilidade em cliente [delegável] #platforms/sre #urgente
-  - [ ] safra tls rotate / certificados safra
-  - [ ] bpipe zfp tls-cert
-  - [ ] Solução de governança TLS built-in no octaxpro
+- [ ] **safra tls rotate / certificados safra** - ↳ Rotacionar certificados TLS Safra [delegável] #platforms/sre #urgente
+- [ ] **bpipe zfp tls-cert** - ↳ Rotacionar certificados TLS Safra [delegável] #platforms/sre #urgente
+- [ ] **Solução de governança TLS built-in no octaxpro** - ↳ Rotacionar certificados TLS Safra [delegável] #platforms/sre #urgente
 - [ ] **Integração Banco Pine: auto-quote / quartix-markets / octaxpro** - WIP, receita [quant: Andre] #platforms/quartix-markets
 - [ ] **SRE / metaox: painel de monitoração, cron tasks, CI/CD** - WIP [delegável] #platforms/sre
-  - [ ] Ajustar Jenkins build com metaox
-  - [ ] Metaoxengine: backup diário, trigger de VMs p/ build e deploy, pulse count, pulseclean, infra monitor
-  - [ ] prodsafra: duas máquinas, principal desliga 19h30 e liga 7h30, sobe a secundária (testar antes em prodfibra)
-  - [ ] Design do oxpro sandbox sobre Cloud Run
+- [ ] **Ajustar Jenkins build com metaox** - ↳ SRE / metaox: painel de monitoração, cron tasks, CI/CD [delegável] #platforms/sre
+- [ ] **Metaoxengine › Backup diário** - ↳ SRE / metaox: painel de monitoração, cron tasks, CI/CD [delegável] #platforms/sre
+- [ ] **Metaoxengine › Trigger de VMs p/ build e deploy** - ↳ SRE / metaox: painel de monitoração, cron tasks, CI/CD [delegável] #platforms/sre
+- [ ] **Metaoxengine › Pulse count** - ↳ SRE / metaox: painel de monitoração, cron tasks, CI/CD [delegável] #platforms/sre
+- [ ] **Metaoxengine › Pulseclean** - ↳ SRE / metaox: painel de monitoração, cron tasks, CI/CD [delegável] #platforms/sre
+- [ ] **Metaoxengine › Infra monitor** - ↳ SRE / metaox: painel de monitoração, cron tasks, CI/CD [delegável] #platforms/sre
+- [ ] **prodsafra › Duas máquinas** - ↳ SRE / metaox: painel de monitoração, cron tasks, CI/CD [delegável] #platforms/sre
+- [ ] **prodsafra › Principal desliga 19h30 e liga 7h30** - ↳ SRE / metaox: painel de monitoração, cron tasks, CI/CD [delegável] #platforms/sre
+- [ ] **prodsafra › Sobe a secundária** - ↳ SRE / metaox: painel de monitoração, cron tasks, CI/CD [delegável] #platforms/sre
+- [ ] **prodsafra › Testar antes em prodfibra** - ↳ SRE / metaox: painel de monitoração, cron tasks, CI/CD [delegável] #platforms/sre
+- [ ] **Design do oxpro sandbox sobre Cloud Run** - ↳ SRE / metaox: painel de monitoração, cron tasks, CI/CD [delegável] #platforms/sre
 - [ ] **Operacional** - timeout ngrok safra, aumentar streaming workers, mail alerts pulse, criar conta de cliente por tela, ajustar suspend octax-api, operations on tradingsettings_api [delegável] #platforms/oxpro
 - [ ] **Minimum spread** - #platforms/oxpro
 - [ ] **manual-quote** - #platforms/oxpro
@@ -74,4 +142,5 @@
 ## Waiting On
 
 ## Done
-- [ ] **Advisory: material de apoio a terceiro (estratégia financeira cross-border)** - WIP [só Andre] #advisory
+- [x] **Advisory: material de apoio a terceiro (estratégia financeira cross-border)** - WIP [só Andre] #advisory
+- [x] **ajustar suspend octax-api** - #platforms/oxpro
