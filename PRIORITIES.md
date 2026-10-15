@@ -23,6 +23,8 @@ A coluna Tarefa precisa ser igual ao título no TASKS.md. Ajuste I/U/E aqui ou n
 | Integrar Braza API | 4 | 2 | 3 | Nova integração/receita no cfx; sem prazo conhecido |
 | Operacional | 3 | 3 | 2 | Atritos operacionais em clientes (Safra, alertas, contas) |
 | clearfxai whitelabel / PRX | 4 | 2 | 4 | Canal whitelabel; esforço alto |
+| Minimum spread | 3 | 3 | 3 |  |
+| manual-quote | 3 | 3 | 3 |  |
 | SRE / metaox: painel de monitoração, cron tasks, CI/CD | 3 | 3 | 4 | Reduz trabalho manual e risco; delegável |
 | Tela de apuração / earnings do partner (UX) | 3 | 2 | 2 | Transparência para parceiros |
 | clearfxai control-plane: atualizar OS c/ detalhes dos clientes; rfqd | 3 | 2 | 2 | Operação do cfx |

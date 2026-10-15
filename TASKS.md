@@ -68,6 +68,8 @@
   - [ ] prodsafra: duas máquinas, principal desliga 19h30 e liga 7h30, sobe a secundária (testar antes em prodfibra)
   - [ ] Design do oxpro sandbox sobre Cloud Run
 - [ ] **Operacional** - timeout ngrok safra, aumentar streaming workers, mail alerts pulse, criar conta de cliente por tela, ajustar suspend octax-api, operations on tradingsettings_api [delegável] #platforms/oxpro
+- [ ] **Minimum spread** - #platforms/oxpro
+- [ ] **manual-quote** - #platforms/oxpro
 
 ## Waiting On
 
