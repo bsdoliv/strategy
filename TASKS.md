@@ -3,7 +3,6 @@
 ## Someday
 - [ ] **timeout ngrok safra #platforms/oxpro** - #platforms/oxpro #urgente
 - [ ] **Release cherry / PortAR** - #release
-- [ ] **clearfxai whitelabel / PRX** - #platforms/cfx
 - [ ] **Integração oxpro / plexus-backend / octaxpro** - #platforms/quartix-markets
 - [ ] **settings-apps-spotlight** - #release
 - [ ] **flow.sight: análise period-over-period, flow.sight spot, ideias** - [quant: Andre] #platforms/quartix-markets
@@ -13,10 +12,11 @@
 - [ ] **Tela de apuração / earnings do partner (UX)** - quartix-markets #platforms/cfx
 - [ ] **Design do ambiente quartix-markets live (market.desk?)** - #produto/quartix-markets
 - [ ] **News + calendar** - data #produto/quartix-markets
-- [ ] **clearfxai control-plane** - [delegável] #platforms/cfx
-  - [ ] atualizar OS c/ detalhes dos clientes; rfqd
+- [ ] **Control Plane** - [delegável] #platforms/cfx
 - [ ] **Atualizar OS com solicitação dos detalhes dos clientes** - ↳ clearfxai control-plane: atualizar OS c/ detalhes dos clientes; rfqd [delegável] #produto/cfx
-- [ ] **rfqd / Integrar Braza API** - ↳ clearfxai control-plane: atualizar OS c/ detalhes dos clientes; rfqd [delegável] #platforms/cfx
+- [ ] **rfqd** - ↳ clearfxai control-plane: atualizar OS c/ detalhes dos clientes; rfqd [delegável] #platforms/cfx
+  - [ ] base
+  - [ ] Integrar Braza API
 - [ ] **Bugfix: deletar conta-company demora demais** - Customer/Doc mgmt [delegável] #platforms/cfx
 - [ ] **Overhaul do data-store de docs** - [delegável] #platforms/cfx
 - [ ] **Data-store layers: (1) blobs, (2) metadados** - ↳ Overhaul do data-store de docs [delegável] #platforms/cfx
@@ -24,19 +24,21 @@
 - [ ] **docstored (engine)** - ↳ Overhaul do data-store de docs [delegável] #platforms/cfx
 - [ ] **docstored › libs** - ↳ Overhaul do data-store de docs [delegável] #platforms/cfx
 - [ ] **docstored › mini-exec** - ↳ Overhaul do data-store de docs [delegável] #platforms/cfx
-- [ ] **docstored › autotests (libs)** - ↳ Overhaul do data-store de docs [delegável] #platforms/cfx
 - [ ] **dbentity2** - ↳ Overhaul do data-store de docs [delegável] #platforms/cfx
-- [ ] **Testes: UI (Playwright), API, API mock, autotests das libs** - [delegável] #platforms/cfx
-- [ ] **Escrever testes de UI (Playwright)** - ↳ Testes: UI (Playwright), API, API mock, autotests das libs [delegável] #platforms/cfx
-- [ ] **Escrever testes de API** - ↳ Testes: UI (Playwright), API, API mock, autotests das libs [delegável] #platforms/cfx
-- [ ] **API mock** - ↳ Testes: UI (Playwright), API, API mock, autotests das libs [delegável] #platforms/cfx
-- [ ] **Escrever autotests (libs)** - ↳ Testes: UI (Playwright), API, API mock, autotests das libs [delegável] #platforms/cfx
+- [ ] **Auto Tests** - ↳ Testes: UI (Playwright), API, API mock, autotests das libs [delegável] #platforms/cfx
+  - [ ] Quote API
+  - [ ] libs
+  - [ ] Docstore API
+  - [ ] Escrever testes de UI (Playwright)
+  - [ ] Testes: UI (Playwright), API, API mock, autotests das libs
 - [ ] **Platform overhaul** - [delegável] #platforms/cfx
-- [ ] **Email orch › mailsend-d** - ↳ Platform overhaul [delegável] #platforms/cfx
-- [ ] **Email orch › emailorchd** - ↳ Platform overhaul [delegável] #platforms/cfx
+  - [ ] API mock
+  - [ ] api-auth
+  - [ ] rabbitmq
+- [ ] **Email orch** - ↳ Platform overhaul [delegável] #platforms/cfx
+  - [ ] › mailsend-d
+  - [ ] emailorchd
 - [ ] **dbentities** - ↳ Platform overhaul [delegável] #platforms/cfx
-- [ ] **rabbitmq** - ↳ Platform overhaul [delegável] #platforms/cfx
-- [ ] **api-auth** - ↳ Platform overhaul [delegável] #platforms/cfx
 - [ ] **messaging-integration** - [delegável] #platforms/cfx
 - [ ] **CI/CD** - [delegável] #platforms/sre
 - [ ] **metaox-next como orquestrador dos pipelines de CI/CD** - ↳ CI/CD [delegável] #platforms/sre

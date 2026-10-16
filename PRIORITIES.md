@@ -35,7 +35,6 @@ A coluna Tarefa precisa ser igual ao título no TASKS.md. Ajuste I/U/E aqui ou n
 | prodsafra › Sobe a secundária | 3 | 3 | 2 |  | Parte do esquema de duas máquinas |
 | prodsafra › Testar antes em prodfibra | 3 | 3 | 2 |  | Pré-requisito seguro do prodsafra |
 | split off spreads do customer-import CSV | 3 | 3 | 2 |  | Pricing do auto-quote; similar a Minimum spread |
-| clearfxai whitelabel / PRX | 4 | 2 | 4 |  | Canal whitelabel; esforço alto |
 | Minimum spread | 3 | 3 | 3 |  |  |
 | manual-quote | 3 | 3 | 3 |  |  |
 | Solução de governança TLS built-in no octaxpro | 4 | 2 | 4 |  | Evita a próxima crise de certificado; estrutural, mais esforço |
@@ -43,9 +42,9 @@ A coluna Tarefa precisa ser igual ao título no TASKS.md. Ajuste I/U/E aqui ou n
 | Ambiente de integração octaxpro + quartix-markets | 3 | 3 | 4 |  | Apoia Pine e deploy do quartix-markets |
 | Tela de apuração / earnings do partner (UX) | 3 | 2 | 2 |  | Transparência para parceiros |
 | Bugfix: deletar conta-company demora demais | 2 | 3 | 1 |  | Bug visível, correção barata |
-| clearfxai control-plane | 3 | 2 | 2 | -1 | Operação do cfx |
+| Control Plane | 3 | 2 | 2 | -1 | Operação do cfx |
 | Atualizar OS com solicitação dos detalhes dos clientes | 3 | 2 | 2 | -2 | Operação do cfx; barato |
-| rfqd / Integrar Braza API | 3 | 2 | 3 | 27 | Serviço de RFQ do cfx; escopo a confirmar |
+| rfqd | 3 | 2 | 3 | 27 | Serviço de RFQ do cfx; escopo a confirmar |
 | Sangria diária de dados de produção (octaxpro → plataforma de dados) | 3 | 2 | 3 |  | Base de dados p/ analytics/intelligence; sem prazo; reclassificado de "data leak" |
 | Release cherry / PortAR | 3 | 2 | 3 |  | Integração de parceiro; sem prazo conhecido |
 | flow.sight: análise period-over-period, flow.sight spot, ideias | 3 | 2 | 3 |  | Melhora produto existente; depende do seu quant |
@@ -61,12 +60,7 @@ A coluna Tarefa precisa ser igual ao título no TASKS.md. Ajuste I/U/E aqui ou n
 | metaox-next como orquestrador dos pipelines de CI/CD | 3 | 2 | 4 |  | Como o pai: produtividade; esforço alto |
 | Integração com bancos | 3 | 2 | 4 |  | Serviço de advisory; integração pesada |
 | bpipe cortesia | 2 | 2 | 1 |  | Pequeno; contexto pouco claro |
-| Testes: UI (Playwright), API, API mock, autotests das libs | 3 | 2 | 3 | -41 | Reduz regressões; delegável |
-| Escrever testes de API | 3 | 2 | 2 | -72 | Maior retorno por esforço entre os testes |
-| Escrever autotests (libs) | 3 | 2 | 2 | -73 | Barato e protege as libs compartilhadas |
-| docstored › autotests (libs) | 2 | 1 | 2 | 96 | Testes baratos, alinhado a "Escrever autotests (libs)" |
-| Escrever testes de UI (Playwright) | 3 | 2 | 3 | -45 | Como o pai: reduz regressões; delegável |
-| API mock | 2 | 2 | 2 | 24 | Habilita testes isolados |
+| Auto Tests | 3 | 2 | 2 | -72 | Maior retorno por esforço entre os testes |
 | UI + api-mock | 2 | 1 | 3 | 123 | Depende de API mock e testes de UI |
 | Revisar taxonomia | 2 | 2 | 2 |  | Base do quartix-intelligence, que está em modo exploratório |
 | Opensource Fernando | 2 | 2 | 2 |  | Visibilidade/comunidade |
@@ -106,10 +100,7 @@ A coluna Tarefa precisa ser igual ao título no TASKS.md. Ajuste I/U/E aqui ou n
 | Social Media Agent | 2 | 1 | 3 |  | Automação de marketing; exploratório |
 | Marketing Agent | 2 | 1 | 3 |  | Automação de marketing; exploratório |
 | Platform overhaul | 3 | 1 | 5 | -51 | Refatoração grande; adiar até depois dos releases |
-| api-auth | 3 | 2 | 3 | -182 | Segurança de API; o item mais relevante do overhaul |
-| Email orch › mailsend-d | 2 | 1 | 4 | 17 | Parte do Platform overhaul; adiar |
-| Email orch › emailorchd | 2 | 1 | 4 | 16 | Parte do Platform overhaul; adiar |
-| rabbitmq | 2 | 1 | 4 | 15 | Infra de mensageria; adiar |
+| Email orch | 2 | 1 | 4 | 17 | Parte do Platform overhaul; adiar |
 | messaging-integration | 2 | 1 | 3 | -16 | Sem demanda clara |
 | dbentities | 2 | 1 | 5 | 43 | Refatoração grande; adiar |
 | dbentity2 | 2 | 1 | 4 | 9 | Refatoração de entidades |
