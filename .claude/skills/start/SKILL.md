@@ -14,14 +14,14 @@ Initialize the task and memory systems, then open the unified dashboard.
 ### 1. Check What Exists
 
 Check the working directory for:
-- `TASKS.md` — task list
+- `tasks.csv` — task list with priority scores (format in the task-management skill)
 - `CLAUDE.md` — working memory
 - `.claude/memory/` — deep memory directory
 - `dashboard.html` — the visual UI
 
 ### 2. Create What's Missing
 
-**If `TASKS.md` doesn't exist:** Create it with the standard template (see task-management skill). Place it in the current working directory.
+**If `tasks.csv` doesn't exist:** Create it with just the header line (see task-management skill). Place it in the current working directory.
 
 **If `dashboard.html` doesn't exist:** Restore it from git (`git checkout -- dashboard.html`); it is the only copy and is versioned there.
 
@@ -143,7 +143,7 @@ From everything gathered, create:
 
 ```
 Productivity system ready:
-- Tasks: TASKS.md (X items)
+- Tasks: tasks.csv (X items)
 - Memory: X people, X terms, X projects
 - Dashboard: open in browser
 

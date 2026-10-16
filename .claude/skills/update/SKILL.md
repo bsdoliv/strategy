@@ -1,6 +1,6 @@
 ---
 name: update
-description: Sync tasks and refresh memory from your current activity. Use when pulling new assignments from your project tracker into TASKS.md, triaging stale or overdue tasks, filling memory gaps for unknown people or projects, or running a comprehensive scan to catch todos buried in chat and email.
+description: Sync tasks and refresh memory from your current activity. Use when pulling new assignments from your project tracker into tasks.csv, triaging stale or overdue tasks, filling memory gaps for unknown people or projects, or running a comprehensive scan to catch todos buried in chat and email.
 argument-hint: "[--comprehensive]"
 ---
 
@@ -24,7 +24,7 @@ Keep your task list and memory current. Two modes:
 
 ### 1. Load Current State
 
-Read `TASKS.md` and `.claude/memory/` directory. If they don't exist, suggest `/start` first.
+Read `tasks.csv` and `.claude/memory/` directory. If they don't exist, suggest `/start` first.
 
 ### 2. Sync Tasks from External Sources
 
@@ -34,20 +34,20 @@ Check for available task sources:
 
 If no sources are available, skip to Step 3.
 
-**Fetch tasks assigned to the user** (open/in-progress). Compare against TASKS.md:
+**Fetch tasks assigned to the user** (open/in-progress). Compare against tasks.csv:
 
-| External task | TASKS.md match? | Action |
-|---------------|-----------------|--------|
-| Found, not in TASKS.md | No match | Offer to add |
-| Found, already in TASKS.md | Match by title (fuzzy) | Skip |
-| In TASKS.md, not in external | No match | Flag as potentially stale |
-| Completed externally | In Active section | Offer to mark done |
+| External task | tasks.csv match? | Action |
+|---------------|------------------|--------|
+| Found, not in tasks.csv | No match | Offer to add |
+| Found, already in tasks.csv | Match by title (fuzzy) | Skip |
+| In tasks.csv, not in external | No match | Flag as potentially stale |
+| Completed externally | status = Active | Offer to mark done |
 
 Present diff and let user decide what to add/complete.
 
 ### 3. Triage Stale Items
 
-Review Active tasks in TASKS.md and flag:
+Review Active tasks in tasks.csv and flag:
 - Tasks with due dates in the past
 - Tasks in Active for 30+ days
 - Tasks with no context (no person, no project)
@@ -115,7 +115,7 @@ Gather data from available MCP sources:
 
 ### Extra Step: Flag Missed Todos
 
-Compare activity against TASKS.md. Surface action items that aren't tracked:
+Compare activity against tasks.csv. Surface action items that aren't tracked:
 
 ```
 ## Possible Missing Tasks
@@ -124,7 +124,7 @@ From your activity, these look like todos you haven't captured:
 
 1. From chat (Jan 18):
    "I'll send the updated mockups by Friday"
-   → Add to TASKS.md?
+   → Add to tasks.csv?
 
 2. From meeting "Phoenix Standup" (Jan 17):
    You have a recurring meeting but no Phoenix tasks active
@@ -132,7 +132,7 @@ From your activity, these look like todos you haven't captured:
 
 3. From email (Jan 16):
    "I'll review the API spec this week"
-   → Add to TASKS.md?
+   → Add to tasks.csv?
 ```
 
 Let user pick which to add.

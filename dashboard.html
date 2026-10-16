@@ -1446,8 +1446,8 @@
     <div class="mindmap-view" id="mindmapView" style="display: none;"></div>
     <div class="board" id="board">
       <div class="empty-state" id="boardEmptyState" style="width: 100%;">
-        <p style="margin-bottom: 24px; font-size: 18px; font-weight: 600; color: var(--text-primary);">Select your TASKS.md file</p>
-        <button id="openBtnLarge">Select TASKS.md</button>
+        <p style="margin-bottom: 24px; font-size: 18px; font-weight: 600; color: var(--text-primary);">Conecte a pasta strategy/ (lê o tasks.csv)</p>
+        <button id="openBtnLarge">Conectar pasta strategy/</button>
       </div>
     </div>
   </div>
@@ -1513,10 +1513,9 @@
 
       async function loadProject(root) {
         projectRoot = root;
-        await loadPriorities(root);
         try {
-          await loadTaskHandle(await root.getFileHandle('TASKS.md'));
-        } catch (e) { showStatus('TASKS.md not found in ' + root.name); }
+          await loadTaskHandle(await root.getFileHandle(TASKS_FILE));
+        } catch (e) { showStatus(TASKS_FILE + ' não encontrado em ' + root.name); }
         await loadMemoryDirectory(root);
       }
 
@@ -1616,86 +1615,128 @@
       return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
     }
 
-    function parseTaskMarkdown(content) {
-      const resultSections = [];
-      const resultTasks = {};
-      let currentSection = null;
-      let currentSectionId = null;
+    // ===== tasks.csv: uma linha por task (e uma por subtarefa, com parent = id da task) =====
+    // Colunas: id, parent, status, title, frente, dono, urgente, i, u, e, por_que, nota, done.
+    // Arquivo em Latin-1, sem BOM. O score não é gravado: sai de I/U/E. Internamente frente/dono/urgente viram tags na nota,
+    // que é o que as abas já usam.
+    const TASKS_FILE = 'tasks.csv';
+    const CSV_COLUMNS = ['id', 'parent', 'status', 'title', 'frente', 'dono', 'urgente', 'i', 'u', 'e', 'por_que', 'nota', 'done'];
+    const DEFAULT_SECTIONS = ['Someday', 'Active', 'Waiting On', 'Done'];
 
-      const lines = content.split('\n');
-      let currentTask = null;
-
-      for (const line of lines) {
-        const headerMatch = line.match(/^## \*{0,2}(.+?)\*{0,2}$/);
-        if (headerMatch) {
-          if (currentTask && currentSectionId) {
-            resultTasks[currentSectionId].push(currentTask);
-            currentTask = null;
-          }
-
-          const sectionName = headerMatch[1].trim();
-          currentSectionId = taskSectionId(sectionName);
-          currentSection = sectionName;
-
-          if (!resultTasks[currentSectionId]) {
-            resultSections.push({ id: currentSectionId, name: sectionName });
-            resultTasks[currentSectionId] = [];
-          }
-        } else if (currentSectionId && line.match(/^- \[[ xX]\]/)) {
-          if (currentTask) {
-            resultTasks[currentSectionId].push(currentTask);
-          }
-          const checked = line.match(/\[[xX]\]/) !== null;
-          let text = line.replace(/^- \[[ xX]\]\s*/, '');
-          let title = text;
-          let note = '';
-
-          const boldMatch = text.match(/^\*\*(.+?)\*\*(.*)$/);
-          if (boldMatch) {
-            title = boldMatch[1];
-            note = boldMatch[2].replace(/^\s*-\s*/, '').trim();
-          }
-
-          currentTask = {
-            id: Date.now() + Math.random(),
-            title,
-            note,
-            checked,
-            subtasks: [],
-            section: currentSectionId
-          };
-        } else if (currentTask && line.match(/^\s+- \[[ xX]\]/)) {
-          const checked = line.match(/\[[xX]\]/) !== null;
-          const text = line.replace(/^\s+- \[[ xX]\]\s*/, '');
-          currentTask.subtasks.push({ text, checked });
-        }
+    function parseCsv(text) {
+      const rows = [];
+      let row = [], field = '', quoted = false;
+      text = text.replace(/^\uFEFF/, '');
+      for (let i = 0; i < text.length; i++) {
+        const ch = text[i];
+        if (quoted) {
+          if (ch === '"') {
+            if (text[i + 1] === '"') { field += '"'; i++; } else quoted = false;
+          } else field += ch;
+        } else if (ch === '"') quoted = true;
+        else if (ch === ',') { row.push(field); field = ''; }
+        else if (ch === '\n' || ch === '\r') {
+          if (ch === '\r' && text[i + 1] === '\n') i++;
+          row.push(field); field = '';
+          rows.push(row); row = [];
+        } else field += ch;
       }
-
-      if (currentTask && currentSectionId) {
-        resultTasks[currentSectionId].push(currentTask);
-      }
-
-      return { sections: resultSections, tasks: resultTasks };
+      if (field !== '' || row.length) { row.push(field); rows.push(row); }
+      return rows.filter(r => r.some(c => c.trim() !== ''));
+    }
+    // O arquivo é Latin-1 (ISO-8859-1): acentos sim, símbolos não. Símbolos comuns viram texto/ASCII
+    // e o resto fora do Latin-1 é removido antes de gravar.
+    let csvSanitized = false;
+    function toLatin1Text(v) {
+      const out = String(v)
+        .replace(/[\u2018\u2019]/g, "'").replace(/[\u201C\u201D]/g, '"').replace(/[\u2013\u2014]/g, '-').replace(/\u2026/g, '...')
+        .replace(/\u21b3\s*/g, 'origem: ').replace(/\s*\u203a\s*/g, ' - ').replace(/\s*\u2194\s*/g, ' com ').replace(/\s*\u2192\s*/g, ' para ')
+        .replace(/[^\x00-\x7F\xA0-\xFF]/g, '')
+        .replace(/^\s*-\s+/, '').replace(/ {2,}/g, ' ').trim();
+      if (out !== String(v).trim()) csvSanitized = true;
+      return out;
+    }
+    function latin1Bytes(str) {
+      const bytes = new Uint8Array(str.length);
+      for (let i = 0; i < str.length; i++) bytes[i] = str.charCodeAt(i);
+      return bytes;
+    }
+    // Lê Latin-1; se o arquivo vier em UTF-8 (ex.: salvo por uma planilha), aceita e a próxima gravação converte
+    async function readTasksFile(file) {
+      const buf = await file.arrayBuffer();
+      try { return new TextDecoder('utf-8', { fatal: true }).decode(buf).replace(/^\uFEFF/, ''); }
+      catch (e) { return new TextDecoder('iso-8859-1').decode(buf); }
+    }
+    function csvField(v) {
+      v = v == null ? '' : toLatin1Text(v);
+      return /[",\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
     }
 
-    function toMarkdown() {
-      let md = '# Tasks\n';
-
-      sections.forEach((section, idx) => {
-        md += `\n## ${section.name}\n`;
-        const sectionTasks = tasks[section.id] || [];
-        sectionTasks.forEach(t => {
-          const checkbox = t.checked ? '[x]' : '[ ]';
-          const note = t.note ? ` - ${t.note}` : '';
-          md += `- ${checkbox} **${t.title}**${note}\n`;
-          t.subtasks.forEach(st => {
-            const stCheckbox = st.checked ? '[x]' : '[ ]';
-            md += `  - ${stCheckbox} ${st.text}\n`;
-          });
-        });
+    function parseTasksCsv(content) {
+      const rows = parseCsv(content);
+      const head = (rows.shift() || []).map(h => h.trim().toLowerCase());
+      const get = (r, name) => { const i = head.indexOf(name); return i >= 0 ? (r[i] || '').trim() : ''; };
+      const resultSections = [], resultTasks = {}, resultPriorities = {}, byId = {};
+      const ensureSection = name => {
+        const id = taskSectionId(name);
+        if (!resultTasks[id]) { resultSections.push({ id, name }); resultTasks[id] = []; }
+        return id;
+      };
+      DEFAULT_SECTIONS.forEach(ensureSection);
+      const subRows = [];
+      rows.forEach(r => {
+        if (get(r, 'parent')) { subRows.push(r); return; }
+        const title = get(r, 'title');
+        if (!title) return;
+        const sectionId = ensureSection(get(r, 'status') || 'Someday');
+        const dono = get(r, 'dono'), frente = get(r, 'frente').replace(/^#/, '');
+        const note = [get(r, 'nota'), dono ? `[${dono}]` : '', frente ? '#' + frente : '', get(r, 'urgente') ? '#urgente' : '']
+          .filter(Boolean).join(' ');
+        const task = {
+          id: Date.now() + Math.random(), uid: get(r, 'id'), title, note,
+          checked: isDoneSection(sectionId) || !!get(r, 'done'), subtasks: [], section: sectionId,
+        };
+        resultTasks[sectionId].push(task);
+        if (task.uid) byId[task.uid] = task;
+        const [i, u, e] = ['i', 'u', 'e'].map(k => get(r, k));
+        if ([i, u, e].every(x => /^[1-5]$/.test(x))) resultPriorities[priorityKey(title)] = { title, i: +i, u: +u, e: +e, why: get(r, 'por_que') };
       });
+      subRows.forEach(r => {
+        const parent = byId[get(r, 'parent')];
+        if (parent && get(r, 'title')) parent.subtasks.push({ text: get(r, 'title'), checked: !!get(r, 'done') });
+      });
+      return { sections: resultSections, tasks: resultTasks, priorities: resultPriorities };
+    }
 
-      return md.trimEnd() + '\n';
+    // Separa da nota interna o que vira coluna: frente (#tag), dono ([...]) e #urgente
+    function noteColumns(task) {
+      const cat = taskCategory(task);
+      const frente = cat === NO_CATEGORY ? '' : cat;
+      let nota = task.note || '';
+      const dono = nota.match(/\[([^\]]+)\]/);
+      if (dono) nota = nota.replace(dono[0], '');
+      if (frente) nota = nota.replace(new RegExp('#' + frente.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?![\\p{L}\\p{N}_/-])', 'iu'), '');
+      nota = nota.replace(/#urgente(?![\p{L}\p{N}_\/-])/giu, '');
+      return { frente, dono: dono ? dono[1].trim() : '', urgente: taskFlags(task).includes('urgente'), nota: nota.replace(/\s{2,}/g, ' ').trim() };
+    }
+
+    function tasksToCsv() {
+      const all = sections.flatMap(sec => tasks[sec.id] || []);
+      let next = Math.max(0, ...all.map(t => parseInt(t.uid, 10) || 0)) + 1;
+      const seen = new Set();
+      const lines = [CSV_COLUMNS.join(',')];
+      sections.forEach(sec => (tasks[sec.id] || []).forEach(t => {
+        if (!t.uid || seen.has(String(t.uid))) t.uid = String(next++);
+        seen.add(String(t.uid));
+        const c = noteColumns(t);
+        const p = priorityOf(t);
+        lines.push([t.uid, '', sec.name, t.title, c.frente, c.dono, c.urgente ? 'x' : '',
+          p ? p.i : '', p ? p.u : '', p ? p.e : '', p ? p.why || '' : '', c.nota, t.checked ? 'x' : ''].map(csvField).join(','));
+        t.subtasks.forEach((st, k) => {
+          lines.push([`${t.uid}.${k + 1}`, t.uid, sec.name, st.text, '', '', '', '', '', '', '', '', st.checked ? 'x' : ''].map(csvField).join(','));
+        });
+      }));
+      return lines.join('\n') + '\n';
     }
 
     function createCard(task) {
@@ -2134,55 +2175,62 @@
     let lastModified = 0;
     let watchInterval = null;
     let isSaving = false;
+    let changeSeq = 0;
+    let writeChain = Promise.resolve();
 
     function markChanged() {
       hasChanges = true;
+      changeSeq++;
       saveBtn.disabled = false;
       if (saveTimeout) clearTimeout(saveTimeout);
       saveTimeout = setTimeout(autoSave, 500);
     }
 
+    // Gravações em fila: Ranking (scores) e demais abas (tasks) escrevem o mesmo tasks.csv
+    function writeTasksFile() {
+      writeChain = writeChain.then(async () => {
+        if (!taskFileHandle) return;
+        isSaving = true;
+        const seq = changeSeq;
+        try {
+          csvSanitized = false;
+          const csv = tasksToCsv();
+          const writable = await taskFileHandle.createWritable();
+          await writable.write(latin1Bytes(csv));
+          await writable.close();
+          lastModified = (await taskFileHandle.getFile()).lastModified;
+          if (seq === changeSeq) { hasChanges = false; saveBtn.disabled = true; }
+          // Algum texto perdeu símbolos ao gravar: recarrega para a tela mostrar o que ficou no arquivo
+          if (csvSanitized && seq === changeSeq) { applyTasksCsv(csv); renderTasks(); }
+          showStatus('Saved');
+        } catch (e) {
+          showStatus('Save failed: ' + e.message);
+        }
+        isSaving = false;
+      });
+      return writeChain;
+    }
+
     async function autoSave() {
-      if (!taskFileHandle || !hasChanges || isSaving) return;
-      isSaving = true;
-      try {
-        const writable = await taskFileHandle.createWritable();
-        const content = toMarkdown();
-        await writable.write(content);
-        await writable.close();
-        const file = await taskFileHandle.getFile();
-        lastModified = file.lastModified;
-        hasChanges = false;
-        saveBtn.disabled = true;
-        showStatus('Saved');
-      } catch (e) {
-        showStatus('Save failed: ' + e.message);
-      }
-      isSaving = false;
+      if (!taskFileHandle || !hasChanges) return;
+      await writeTasksFile();
+    }
+
+    function applyTasksCsv(content) {
+      const result = parseTasksCsv(content);
+      sections = result.sections;
+      tasks = result.tasks;
+      priorities = result.priorities;
+      return reconcileDone();
     }
 
     async function checkForExternalChanges() {
       if (!taskFileHandle || hasChanges || isSaving) return;
-      // PRIORITIES.md também pode mudar por fora (Claude, editor): recarrega para não sobrescrever com dados velhos
-      if (priorityFileHandle) {
-        try {
-          const pf = await priorityFileHandle.getFile();
-          if (pf.lastModified > priorityLastModified) {
-            priorityLastModified = pf.lastModified;
-            priorities = parsePriorities(await pf.text());
-            renderTasks();
-          }
-        } catch (e) { console.log('Watch error:', e); }
-      }
       try {
         const file = await taskFileHandle.getFile();
         if (file.lastModified > lastModified) {
           lastModified = file.lastModified;
-          const content = await file.text();
-          const result = parseTaskMarkdown(content);
-          sections = result.sections;
-          tasks = result.tasks;
-          if (reconcileDone()) markChanged();
+          if (applyTasksCsv(await readTasksFile(file))) markChanged();
           renderTasks();
           showStatus('Reloaded');
         }
@@ -2849,14 +2897,9 @@
         (taskFlags(b).length - taskFlags(a).length) || (dependsOnAndre(b) - dependsOnAndre(a)));
     }
 
-    // ===== Priorities (PRIORITIES.md: | Tarefa | I | U | E | Por quê |) =====
-    const PRIORITY_FILE = 'PRIORITIES.md';
-    const PRIORITY_TABLE_HEAD = '| Tarefa | I | U | E | Por quê |\n|---|---|---|---|---|\n';
+    // ===== Prioridade: colunas i/u/e/por_que do tasks.csv (mapa por título, em memória) =====
     let projectRoot = null;
-    let priorityFileHandle = null;
-    let priorityHeader = '# Priorities\n\nScore = 200 × (0,5·I + 0,35·U + 0,15·(6 − E)) → 0 a 1000\n\n';
     let priorities = {};
-    let priorityLastModified = 0;
 
     function priorityKey(title) { return title.trim().toLowerCase(); }
     function priorityOf(task) { return priorities[priorityKey(task.title)] || null; }
@@ -2864,40 +2907,9 @@
     function taskScore(task) { const p = priorityOf(task); return p ? priorityScore(p) : null; }
     function scoreColor(score) { return score >= 750 ? '#e03131' : score >= 550 ? '#f08c00' : '#868e96'; }
 
-    function parsePriorities(md) {
-      const out = {};
-      const headIdx = md.indexOf('| Tarefa');
-      if (headIdx > 0) priorityHeader = md.slice(0, headIdx);
-      md.split('\n').forEach(line => {
-        const c = line.split('|').map(x => x.trim());
-        if (c.length < 7 || !/^[1-5]$/.test(c[2]) || !/^[1-5]$/.test(c[3]) || !/^[1-5]$/.test(c[4])) return;
-        out[priorityKey(c[1])] = { title: c[1], i: +c[2], u: +c[3], e: +c[4], why: c.slice(5, -1).join('|').trim() };
-      });
-      return out;
-    }
-    function prioritiesToMarkdown() {
-      const rows = Object.values(priorities).sort((a, b) => priorityScore(b) - priorityScore(a))
-        .map(p => `| ${p.title} | ${p.i} | ${p.u} | ${p.e} | ${(p.why || '').replace(/\|/g, '/')} |`);
-      return priorityHeader + PRIORITY_TABLE_HEAD + rows.join('\n') + '\n';
-    }
-    async function loadPriorities(root) {
-      try {
-        priorityFileHandle = await root.getFileHandle(PRIORITY_FILE);
-        const f = await priorityFileHandle.getFile();
-        priorityLastModified = f.lastModified;
-        priorities = parsePriorities(await f.text());
-      } catch (e) { priorityFileHandle = null; priorities = {}; }
-    }
     async function savePriorities() {
-      try {
-        if (!priorityFileHandle && projectRoot) priorityFileHandle = await projectRoot.getFileHandle(PRIORITY_FILE, { create: true });
-        if (!priorityFileHandle) { showStatus('Conecte a pasta para salvar o ranking'); return; }
-        const w = await priorityFileHandle.createWritable();
-        await w.write(prioritiesToMarkdown());
-        await w.close();
-        priorityLastModified = (await priorityFileHandle.getFile()).lastModified;
-        showStatus('Saved ' + PRIORITY_FILE);
-      } catch (e) { showStatus('Save failed: ' + e.message); }
+      if (!taskFileHandle) { showStatus('Conecte a pasta para salvar o ranking'); return; }
+      await writeTasksFile();
     }
 
 
@@ -3107,7 +3119,7 @@
       }
     });
 
-    // Formulário "nova tarefa" do Ranking: cria a tarefa no TASKS.md e o score no PRIORITIES.md
+    // Formulário "nova tarefa" do Ranking: cria a tarefa (com o score) no tasks.csv
     let rankAddDraft = null;
     function buildRankAddForm(cats, catOptions) {
       const visible = cats.filter(c => !rankCatHidden.has(c) && c !== NO_CATEGORY);
@@ -3142,7 +3154,7 @@
       }));
       form.addEventListener('submit', async e => {
         e.preventDefault();
-        const title = d.title.replace(/\s+/g, ' ').replace(/\|/g, '/').replace(/\*/g, '').trim();
+        const title = d.title.replace(/\s+/g, ' ').trim();
         if (!title) { form.querySelector('.rank-add-title').focus(); return; }
         if (priorities[priorityKey(title)] || sections.some(x => (tasks[x.id] || []).some(t => priorityKey(t.title) === priorityKey(title)))) {
           showStatus('Já existe uma tarefa com esse título');
@@ -3152,7 +3164,7 @@
         setTaskCategory(task, d.cat);
         if (d.urgent) setTaskFlag(task, 'urgente', true);
         tasks[d.section].push(task);
-        priorities[priorityKey(title)] = { title, i: d.i, u: d.u, e: d.e, why: d.why.replace(/\|/g, '/').trim() };
+        priorities[priorityKey(title)] = { title, i: d.i, u: d.u, e: d.e, why: d.why.trim() };
         rankAddDraft = { ...d, title: '', why: '', urgent: false };
         markChanged();
         await savePriorities();
@@ -3244,7 +3256,7 @@
       buildToolbar(rankView);
       const legend = document.createElement('div');
       legend.className = 'rank-legend';
-      legend.textContent = 'Score = 200 × (0,5·Impacto + 0,35·Urgência + 0,15·(6 − Esforço)), de 0 a 1000. Ajuste I/U/E e o "por quê" aqui mesmo — salva em PRIORITIES.md.';
+      legend.textContent = 'Score = 200 × (0,5·Impacto + 0,35·Urgência + 0,15·(6 − Esforço)), de 0 a 1000. Ajuste I/U/E e o "por quê" aqui mesmo — salva no tasks.csv.';
       rankView.appendChild(legend);
 
       const cats = orderedCategories(sections.flatMap(sec => tasks[sec.id] || []));
@@ -3350,7 +3362,7 @@
         bindRankSubs(tr, t);
         tr.querySelector('.rank-del').addEventListener('click', async () => {
           const subs = t.subtasks.length ? ` e ${t.subtasks.length} subtarefa${t.subtasks.length > 1 ? 's' : ''}` : '';
-          if (!confirm(`Excluir "${t.title}"${subs}?\n\nSai do TASKS.md e o score sai do PRIORITIES.md.`)) return;
+          if (!confirm(`Excluir "${t.title}"${subs}?\n\nSai do tasks.csv, junto com o score.`)) return;
           tasks[t.section] = (tasks[t.section] || []).filter(x => x.id !== t.id);
           rankSubsOpen.delete(priorityKey(t.title));
           markChanged();
@@ -3367,8 +3379,7 @@
           if (e.key === 'Escape') { titleEl.textContent = t.title; titleEl.blur(); }
         });
         titleEl.addEventListener('blur', async () => {
-          // "|" breaks the PRIORITIES.md table and "*" the bold title in TASKS.md
-          const next = titleEl.textContent.replace(/\s+/g, ' ').replace(/\|/g, '/').replace(/\*/g, '').trim();
+          const next = titleEl.textContent.replace(/\s+/g, ' ').trim();
           if (!next || next === t.title) { titleEl.textContent = t.title; return; }
           const oldKey = priorityKey(t.title);
           const entry = priorities[oldKey];
@@ -3544,7 +3555,7 @@
       const finish = save => {
         if (done) return;
         done = true;
-        const title = input.value.replace(/\s+/g, ' ').replace(/\|/g, '/').replace(/\*/g, '').trim();
+        const title = input.value.replace(/\s+/g, ' ').trim();
         if (save && title) {
           tasks[sectionId].push({
             id: Date.now() + Math.random(),
@@ -3702,12 +3713,9 @@
       taskFileHandle = handle;
       try {
         const file = await taskFileHandle.getFile();
-        const content = await file.text();
+        const content = await readTasksFile(file);
         lastModified = file.lastModified;
-        const result = parseTaskMarkdown(content);
-        sections = result.sections;
-        tasks = result.tasks;
-        const fixedDone = reconcileDone();
+        const fixedDone = applyTasksCsv(content);
         let savedView = 'board';
         try { savedView = localStorage.getItem('taskView') || 'board'; } catch (e) {}
         switchTaskView(savedView);
@@ -3726,14 +3734,7 @@
 
     saveBtn.addEventListener('click', async () => {
       if (!taskFileHandle) return;
-      try {
-        const writable = await taskFileHandle.createWritable();
-        await writable.write(toMarkdown());
-        await writable.close();
-        hasChanges = false;
-        saveBtn.disabled = true;
-        showStatus('Saved');
-      } catch (e) { showStatus('Error: ' + e.message); }
+      await writeTasksFile();
     });
 
     window.addEventListener('beforeunload', (e) => {

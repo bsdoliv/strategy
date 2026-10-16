@@ -1,90 +1,58 @@
 ---
 name: task-management
-description: Simple task management using a shared TASKS.md file. Reference this when the user asks about their tasks, wants to add/complete tasks, or needs help tracking commitments.
+description: Task management using the shared tasks.csv file (tasks + priority scores in one place). Reference this when the user asks about their tasks, wants to add/complete/prioritize tasks, or needs help tracking commitments.
 user-invocable: false
 ---
 
 # Task Management
 
-Tasks are tracked in a simple `TASKS.md` file that both you and the user can edit.
+Tasks and their priority scores live in **one file: `tasks.csv`** at the project root. Andre edits it through the dashboard (`dashboard.html`, mainly the Ranking tab); you edit it directly. The project conventions (frentes, donos, score) are in `CLAUDE.md` — follow them.
 
-## File Location
+## File format
 
-**Always use `TASKS.md` in the current working directory.**
+**Latin-1 (ISO-8859-1), no BOM**, `\n` line endings, comma-separated, RFC 4180 quoting (fields with `,` `"` or line breaks go in double quotes; `"` is doubled). Accents are fine; **no symbols outside Latin-1** (Andre's decision, 2026-10-15): write `origem: X` instead of an arrow, ` - ` as hierarchy separator in titles, `com`/`para` instead of arrows, `...` instead of an ellipsis, plain quotes and hyphens. `.gitattributes` makes git store it as UTF-8, so diffs show accents correctly. Header:
 
-- If it exists, read/write to it
-- If it doesn't exist, create it with the template below
-
-## Dashboard Setup (First Run)
-
-A visual dashboard is available for managing tasks and memory. **On first interaction with tasks:**
-
-1. The dashboard is `dashboard.html` at the project root (the only copy — it is versioned in git)
-2. If it is missing, restore it from git (`git checkout -- dashboard.html`) and tell the user
-
-The task board:
-- Reads and writes to the same `TASKS.md` file
-- Auto-saves changes
-- Watches for external changes (syncs when you edit via CLI)
-- Supports drag-and-drop reordering of tasks and sections
-
-## Format & Template
-
-When creating a new TASKS.md, use this exact template (without example tasks):
-
-```markdown
-# Tasks
-
-## Active
-
-## Waiting On
-
-## Someday
-
-## Done
+```
+id,parent,status,title,frente,dono,urgente,i,u,e,por_que,nota,done
 ```
 
-Task format:
-- `- [ ] **Task title** - context, for whom, due date`
-- Sub-bullets for additional details
-- Completed: `- [x] ~~Task~~ (date)`
+| Column | Meaning |
+|---|---|
+| `id` | Stable integer id of the task. Subtasks use `<parent id>.<n>` |
+| `parent` | Empty for a task; the task's `id` for a subtask row |
+| `status` | Section: `Someday`, `Active`, `Waiting On`, `Done` (a new value becomes a new section) |
+| `title` | Task title (any text; must be unique among tasks) |
+| `frente` | Category, without `#` (e.g. `platforms/cfx`, `ceo`) |
+| `dono` | `só Andre` · `quant: Andre` · `misto` · `delegável` (or empty) |
+| `urgente` | `x` or empty |
+| `i`,`u`,`e` | Impact, Urgency, Effort, 1–5. Score is **not stored**: 200×(0,5·I + 0,35·U + 0,15·(6−E)) → 0–1000 |
+| `por_que` | Short rationale for the score |
+| `nota` | Free context (e.g. `origem: <task de origem>`) — never a list in running text |
+| `done` | `x` when done. A task with `status=Done` is always `x`, and `x` only exists in Done |
+
+Rows of a section appear in board order; subtask rows come right after their task. Only task rows carry frente/dono/score.
+
+## How to edit safely
+
+- Edit with a script that uses a real CSV parser: read with `encoding='latin-1'` (the dashboard also accepts UTF-8 if a spreadsheet saved it that way), write back with `encoding='latin-1'`, `newline=''` and `lineterminator='\n'`. Never sed/regex on lines.
+- Keep the column order and header exactly as above.
+- New task: next free integer `id`, own I/U/E judged against similar tasks already scored (do not copy the parent's score).
+- The dashboard reloads the file by itself when it changes on disk.
+
+## Dashboard
+
+`dashboard.html` at the project root is the only copy (versioned in git). If it is missing, restore it with `git checkout -- dashboard.html`. It reads/writes `tasks.csv`, auto-saves, and watches for external changes.
 
 ## How to Interact
 
-**When user asks "what's on my plate" / "my tasks":**
-- Read TASKS.md
-- Summarize Active and Waiting On sections
-- Highlight anything overdue or urgent
+**"What's on my plate" / "my tasks":** read `tasks.csv`, summarize Active and Waiting On by score, highlight `urgente` and tasks that depend on Andre (`só Andre`, `quant: Andre`, `misto`).
 
-**When user says "add a task" / "remind me to":**
-- Add to Active section with `- [ ] **Task**` format
-- Include context if provided (who it's for, due date)
+**"Add a task" / "remind me to":** add a row (status Active unless told otherwise) with frente, dono and a judged score.
 
-**When user says "done with X" / "finished X":**
-- Find the task
-- Change `[ ]` to `[x]`
-- Add strikethrough: `~~task~~`
-- Add completion date
-- Move to Done section
+**"Done with X":** set `status=Done` and `done=x`.
 
-**When user asks "what am I waiting on":**
-- Read the Waiting On section
-- Note how long each item has been waiting
-
-## Conventions
-
-- **Bold** the task title for scannability
-- Include "for [person]" when it's a commitment to someone
-- Include "due [date]" for deadlines
-- Include "since [date]" for waiting items
-- Sub-bullets for additional context
-- Keep Done section for ~1 week, then clear old items
+**"What am I waiting on":** list `status=Waiting On`.
 
 ## Extracting Tasks
 
-When summarizing meetings or conversations, offer to add extracted tasks:
-- Commitments the user made ("I'll send that over")
-- Action items assigned to them
-- Follow-ups mentioned
-
-Ask before adding - don't auto-add without confirmation.
+When summarizing meetings or conversations, offer to add extracted tasks (commitments, action items, follow-ups). Ask before adding.
