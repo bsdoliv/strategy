@@ -3438,7 +3438,8 @@
       const active = (tasks['active'] || []).filter(t => !t.checked);
       const mine = active.filter(dependsOnAndre).length;
       const team = active.filter(t => taskOwner(t) === 'team').length;
-      const urgent = active.filter(t => taskFlags(t).length).length;
+      // urgentes: só a flag, em qualquer status
+      const urgent = sections.flatMap(sec => tasks[sec.id] || []).filter(QUICK_FILTERS.urgent).length;
       const statCard = (key, label, n) =>
         `<span class="stat clickable ${viewFilters.quick === key ? 'on' : ''}" data-q="${key}" title="Clique para filtrar">${label}: <strong>${n}</strong></span>`;
       bar.innerHTML = `
