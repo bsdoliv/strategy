@@ -1388,24 +1388,6 @@
     .matrix-chip.open .matrix-chip-detail { display: block; }
     .matrix-chip-detail ul { margin: 4px 0 0 16px; padding: 0; }
 
-    /* ===== Mapa (visão do todo por categoria) ===== */
-    .map-view { flex: 1; min-height: 0; overflow: auto; padding-bottom: 24px; }
-    .map-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
-    .map-tile {
-      background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 12px;
-      border-top: 6px solid var(--cat-color, var(--border)); padding: 14px 16px; box-shadow: 0 1px 3px var(--shadow);
-    }
-    .map-tile h3 { margin: 0 0 4px; font-size: 15px; color: var(--text-primary); display: flex; justify-content: space-between; align-items: baseline; }
-    .map-tile h3 span { font-size: 22px; color: var(--cat-color); }
-    .map-counts { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; }
-    .map-bar { display: flex; height: 8px; border-radius: 4px; overflow: hidden; background: var(--bg-secondary); margin-bottom: 6px; }
-    .map-bar div { height: 100%; }
-    .map-legend { display: flex; flex-wrap: wrap; gap: 10px; font-size: 11px; color: var(--text-secondary); margin-bottom: 10px; }
-    .map-legend i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 4px; }
-    .map-list { list-style: none; margin: 0; padding: 0; font-size: 13px; }
-    .map-list li { padding: 5px 0; border-top: 1px solid var(--border-light); display: flex; gap: 6px; align-items: baseline; }
-    .map-list li .t { flex: 1; color: var(--text-primary); }
-    .map-empty { font-size: 12px; color: var(--text-muted); font-style: italic; }
 </style>
 </head>
 <body>
@@ -1431,7 +1413,6 @@
         <button id="boardViewBtn" class="active">Board</button>
         <button id="listViewBtn">List</button>
         <button id="matrixViewBtn">Tabela</button>
-        <button id="mapViewBtn">Mapa</button>
         <button id="rankViewBtn">Ranking</button>
         <button id="mindmapViewBtn">Mindmap</button>
       </div>
@@ -1447,7 +1428,6 @@
   <div class="tab-panel active" id="tasksPanel">
     <div class="list-view" id="listView" style="display: none;"></div>
     <div class="matrix-view" id="matrixView" style="display: none;"></div>
-    <div class="map-view" id="mapView" style="display: none;"></div>
     <div class="rank-view" id="rankView" style="display: none;"></div>
     <div class="mindmap-view" id="mindmapView" style="display: none;"></div>
     <div class="board" id="board">
@@ -2255,7 +2235,6 @@
     function renderTasks() {
       if (currentView === 'board') { renderBoard(); }
       else if (currentView === 'matrix') { renderMatrix(); }
-      else if (currentView === 'map') { renderMap(); }
       else if (currentView === 'rank') { renderRanking(); }
       else if (currentView === 'mindmap') { renderMindmap(); }
       else { renderList(); }
@@ -3431,7 +3410,7 @@
       }
     }
 
-    // Shared filters for Tabela/Mapa
+    // Shared filters for Tabela/Ranking/Mindmap
     // quick: '' | 'active' | 'mine' | 'team' | 'urgent' (toggled by the stat cards)
     const viewFilters = { quick: '', hideDone: true, minScore: 0 };
     try { viewFilters.minScore = Math.max(0, Math.min(1000, parseInt(localStorage.getItem('minScore'), 10) || 0)); } catch (e) {}
@@ -3495,7 +3474,6 @@
 
     // ===== Tabela: linhas = seções, colunas = categorias =====
     const matrixView = document.getElementById('matrixView');
-    const mapView = document.getElementById('mapView');
     let matrixDragTask = null;
 
     function renderMatrix() {
@@ -3632,60 +3610,20 @@
       return chip;
     }
 
-    // ===== Mapa: uma peça por categoria, ordenada pela carga =====
-    function renderMap() {
-      mapView.innerHTML = '';
-      buildToolbar(mapView);
-      const allTasks = sections.flatMap(sec => tasks[sec.id] || [])
-        .filter(t => !t.checked && !isDoneSection(t.section) && passesFilters(t));
-      const cats = orderedCategories(allTasks);
-      const stats = cats.map(cat => {
-        const inCat = allTasks.filter(t => taskCategory(t) === cat);
-        const active = inCat.filter(t => isActiveSection(t.section));
-        return { cat, inCat, active, mine: active.filter(dependsOnAndre).length };
-      }).sort((a, b) => (b.mine - a.mine) || (b.active.length - a.active.length) || (b.inCat.length - a.inCat.length));
-
-      const grid = document.createElement('div');
-      grid.className = 'map-grid';
-      stats.forEach(({ cat, inCat, active, mine }) => {
-        const tile = document.createElement('div');
-        tile.className = 'map-tile';
-        tile.style.setProperty('--cat-color', categoryColor(cat));
-        const bySection = sections.filter(sec => !isDoneSection(sec.id))
-          .map(sec => `${escapeHtml(sec.name)} ${inCat.filter(t => t.section === sec.id).length}`).join(' · ');
-        const owners = Object.keys(OWNER_META)
-          .map(o => ({ o, n: active.filter(t => taskOwner(t) === o).length })).filter(x => x.n);
-        const bar = active.length
-          ? `<div class="map-bar">${owners.map(x => `<div style="width:${100 * x.n / active.length}%;background:${OWNER_META[x.o].color}" title="${OWNER_META[x.o].label}: ${x.n}"></div>`).join('')}</div>
-             <div class="map-legend">${owners.map(x => `<span><i style="background:${OWNER_META[x.o].color}"></i>${OWNER_META[x.o].label} ${x.n}</span>`).join('')}</div>`
-          : '';
-        const list = active.length
-          ? '<ul class="map-list">' + sortForNow(active).map(t => `<li>${taskFlags(t).map(f => `<span class="flag-pill">${escapeHtml(f)}</span>`).join('')}<span class="t">${escapeHtml(t.title)}</span>${taskOwner(t) ? `<span class="owner-pill ${taskOwner(t)}">${OWNER_META[taskOwner(t)].label}</span>` : ''}</li>`).join('') + '</ul>'
-          : '<div class="map-empty">Nada ativo nesta frente</div>';
-        tile.innerHTML = `
-          <h3>${escapeHtml(categoryLabel(cat))} <span>${active.length}</span></h3>
-          <div class="map-counts">${bySection} · ${mine} ativas dependem de você</div>
-          ${bar}${list}`;
-        grid.appendChild(tile);
-      });
-      mapView.appendChild(grid);
-    }
-
     const matrixViewBtn = document.getElementById('matrixViewBtn');
-    const mapViewBtn = document.getElementById('mapViewBtn');
     const rankViewBtn = document.getElementById('rankViewBtn');
     const mindmapViewBtn = document.getElementById('mindmapViewBtn');
 
     function switchTaskView(view) {
-      currentView = view;
       const views = {
         board: [board, boardViewBtn, 'flex'],
         list: [listView, listViewBtn, 'block'],
         matrix: [matrixView, matrixViewBtn, 'block'],
-        map: [mapView, mapViewBtn, 'block'],
         rank: [rankView, rankViewBtn, 'block'],
         mindmap: [mindmapView, mindmapViewBtn, 'flex'],
       };
+      if (!views[view]) view = 'board';
+      currentView = view;
       Object.entries(views).forEach(([name, [el, btn, display]]) => {
         el.style.display = name === view ? display : 'none';
         btn.classList.toggle('active', name === view);
@@ -3697,7 +3635,6 @@
     listViewBtn.addEventListener('click', () => switchTaskView('list'));
     boardViewBtn.addEventListener('click', () => switchTaskView('board'));
     matrixViewBtn.addEventListener('click', () => switchTaskView('matrix'));
-    mapViewBtn.addEventListener('click', () => switchTaskView('map'));
     rankViewBtn.addEventListener('click', () => switchTaskView('rank'));
     mindmapViewBtn.addEventListener('click', () => switchTaskView('mindmap'));
 

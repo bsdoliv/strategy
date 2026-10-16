@@ -56,7 +56,7 @@ Tasks e scores ficam num arquivo só, `tasks.csv` (formato e regras de edição:
 - Prioridade: colunas i/u/e (1–5) + por_que; o score não é gravado: Score = 200×(0,5·I + 0,35·U + 0,15·(6−E)) → 0 a 1000. Toda task nova recebe score próprio, calibrado pelas tasks semelhantes já pontuadas por Andre — não copiar o da origem
 
 ## Dashboard (dashboard.html)
-- Abas: Board, List, Tabela (seções × frentes), Mapa, Ranking, Mindmap. O **Ranking é a visão de trabalho principal** de Andre: ali ele cria task, edita título/frente/status/urgente/I/U/E/por quê, edita subtarefas (sempre visíveis) e exclui (🗑 ao lado da ⚑)
+- Abas: Board, List, Tabela (seções × frentes), Ranking, Mindmap (a aba Mapa foi removida em 2026-10-16). O **Ranking é a visão de trabalho principal** de Andre: ali ele cria task, edita título/frente/status/urgente/I/U/E/por quê, edita subtarefas (sempre visíveis) e exclui (🗑 ao lado da ⚑)
 - Lê e grava só o `tasks.csv` (gravações em fila) e recarrega sozinho quando ele muda por fora — dá para editar o arquivo direto enquanto o dashboard está aberto
 - Arquivo único: `dashboard.html` na raiz (versionado no git; não há cópia em `.claude/skills/`)
 - Teste: cópia no scratchpad com script injetado (`applyTasksCsv(...)` + `switchTaskView`; para gravar, simular `taskFileHandle` com getFile/createWritable em memória), Chrome headless `--dump-dom`/`--screenshot`; macOS não tem `timeout`, usar `perl -e 'alarm 30; exec @ARGV' …`. Nunca testar sobre os arquivos reais
