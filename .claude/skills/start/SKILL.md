@@ -23,7 +23,7 @@ Check the working directory for:
 
 **If `TASKS.md` doesn't exist:** Create it with the standard template (see task-management skill). Place it in the current working directory.
 
-**If `dashboard.html` doesn't exist:** Copy it from `.claude/skills/dashboard.html` to the current working directory.
+**If `dashboard.html` doesn't exist:** Restore it from git (`git checkout -- dashboard.html`); it is the only copy and is versioned there.
 
 **If `CLAUDE.md` and `.claude/memory/` don't exist:** This is a fresh setup — after opening the dashboard, begin the memory bootstrap workflow (see below). Place these in the current working directory.
 

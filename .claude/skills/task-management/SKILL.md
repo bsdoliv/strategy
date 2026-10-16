@@ -19,9 +19,8 @@ Tasks are tracked in a simple `TASKS.md` file that both you and the user can edi
 
 A visual dashboard is available for managing tasks and memory. **On first interaction with tasks:**
 
-1. Check if `dashboard.html` exists in the current working directory
-2. If not, copy it from `.claude/skills/dashboard.html` to the current working directory
-3. Inform the user: "I've added the dashboard. Run `/start` to set up the full system."
+1. The dashboard is `dashboard.html` at the project root (the only copy — it is versioned in git)
+2. If it is missing, restore it from git (`git checkout -- dashboard.html`) and tell the user
 
 The task board:
 - Reads and writes to the same `TASKS.md` file
