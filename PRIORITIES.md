@@ -37,14 +37,14 @@ A coluna Tarefa precisa ser igual ao título no TASKS.md. Ajuste I/U/E aqui ou n
 | Minimum spread | 3 | 3 | 3 |  |
 | manual-quote | 3 | 3 | 3 |  |
 | Solução de governança TLS built-in no octaxpro | 4 | 2 | 4 | Evita a próxima crise de certificado; estrutural, mais esforço |
+| Auto Tests / QA | 4 | 2 | 4 | Cobre Quote API (caminho da receita de cotação), libs, Docstore API e UI; amplo, mas delegável |
+| rfqd | 4 | 2 | 4 | Agora inclui a integração Braza (receita nova) além da base do rfqd; esforço maior |
 | SRE / metaox: painel de monitoração, cron tasks, CI/CD | 3 | 3 | 4 | Reduz trabalho manual e risco; delegável |
 | Ambiente de integração octaxpro + quartix-markets | 3 | 3 | 4 | Apoia Pine e deploy do quartix-markets |
-| Tela de apuração / earnings do partner (UX) | 3 | 2 | 2 | Transparência para parceiros |
+| Tela de apuração / earnings do partner (UX) | 3 | 2 | 2 | Transparência para parceiros; escopo pequeno de UX |
 | Bugfix: deletar conta-company demora demais | 2 | 3 | 1 | Bug visível, correção barata |
-| Control Plane | 3 | 2 | 2 | Operação do cfx |
+| Control Plane | 3 | 2 | 2 | Operação do cfx (OS c/ detalhes dos clientes); barato |
 | Atualizar OS com solicitação dos detalhes dos clientes | 3 | 2 | 2 | Operação do cfx; barato |
-| Auto Tests / QA | 3 | 2 | 2 | Maior retorno por esforço entre os testes |
-| rfqd | 3 | 2 | 3 | Serviço de RFQ do cfx; escopo a confirmar |
 | Sangria diária de dados de produção (octaxpro → plataforma de dados) | 3 | 2 | 3 | Base de dados p/ analytics/intelligence; sem prazo; reclassificado de "data leak" |
 | Release cherry / PortAR | 3 | 2 | 3 | Integração de parceiro; sem prazo conhecido |
 | flow.sight: análise period-over-period, flow.sight spot, ideias | 3 | 2 | 3 | Melhora produto existente; depende do seu quant |
@@ -83,12 +83,13 @@ A coluna Tarefa precisa ser igual ao título no TASKS.md. Ajuste I/U/E aqui ou n
 | quartix-intelligence: datalake | 3 | 1 | 5 | Exploratório e caro |
 | Plataforma FP&A para empresas comex | 1 | 3 | 3 | Como o pai: necessário p/ captação e venda |
 | Enfoque ferramentas para execução | 1 | 3 | 3 | Como o pai: necessário p/ captação e venda |
-| Platform overhaul | 3 | 1 | 5 | Refatoração grande; adiar até depois dos releases |
+| Platform overhaul | 3 | 1 | 5 | Agrupa API mock, api-auth, rabbitmq, messaging e docstored; grande, adiar até depois dos releases |
 | settings-apps-spotlight | 2 | 1 | 2 | Melhoria pequena de UX |
 | News + calendar | 2 | 1 | 2 | Já existe no LAUNCHPAD; incremental |
 | Ideias para o flow.sight | 2 | 1 | 2 | Backlog de ideias; baixo esforço de registrar |
 | Giba / Santander | 2 | 1 | 2 | Banco grande; maior potencial do pipeline hedgeOS |
 | Blog › AutoFlow Post | 2 | 1 | 2 | Conteúdo pontual; barato |
+| Chat prototype | 2 | 1 | 2 | Só a avaliação no quartix-markets, que decide se o protótipo segue; barato |
 | Ask for strategic capital | 1 | 3 | 4 | Fôlego financeiro e escala do time; processo longo, começar cedo (e-mail estilo Dropbox) |
 | Integração hedgeOS ↔ port.ar | 1 | 3 | 4 | Parceiro com contexto pouco claro |
 | UI + api-mock | 2 | 1 | 3 | Depende de API mock e testes de UI |
@@ -99,8 +100,7 @@ A coluna Tarefa precisa ser igual ao título no TASKS.md. Ajuste I/U/E aqui ou n
 | Estruturar marketing / blogposts | 2 | 1 | 3 | Marketing de longo prazo |
 | Social Media Agent | 2 | 1 | 3 | Automação de marketing; exploratório |
 | Marketing Agent | 2 | 1 | 3 | Automação de marketing; exploratório |
-| Chat prototype | 2 | 1 | 3 | Exploratório |
-| Email orch | 2 | 1 | 4 | Parte do Platform overhaul; adiar |
+| Email orch | 2 | 1 | 4 | mailsend-d + emailorchd; parte do overhaul, adiar |
 | Content publishing platform | 2 | 1 | 4 | Exploratório e caro |
 | Design do oxpro sandbox sobre Cloud Run | 2 | 1 | 4 | Design exploratório; sem prazo |
 | cloud-storage | 2 | 1 | 4 | Parte do overhaul do data-store |
@@ -111,7 +111,8 @@ A coluna Tarefa precisa ser igual ao título no TASKS.md. Ajuste I/U/E aqui ou n
 | Convite Damke: apresentar hedgeOS | 1 | 1 | 1 | Abre a 1ª venda do hedgeOS; custo de uma mensagem; estava parado |
 | Follow up Fernando Silveira | 1 | 1 | 1 | Conversa parada; esfria se demorar; custo mínimo |
 | Damke | 1 | 1 | 1 | Igual a "Convite Damke": mesmo alvo |
-| dbentities | 2 | 1 | 5 | Refatoração grande; adiar |
+| dbentities | 2 | 1 | 5 | dbentity2, skel e libs; refatoração grande sem dor urgente |
+| Document Workflows | 2 | 1 | 5 | Engine + overhaul do data-store + layers + estratégia rsync; grande, sem prazo |
 | Alvos hedgeOS | 1 | 1 | 2 | Pipeline comercial do hedgeOS (Campanelli, Santander, Giva, FK…) |
 | Transformar livro em skill | 1 | 1 | 2 | Pessoal/experimental |
 | Campanelli | 1 | 1 | 2 | Como o pai: pipeline hedgeOS |

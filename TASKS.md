@@ -18,10 +18,11 @@
   - [ ] base
   - [ ] Integrar Braza API
 - [ ] **Bugfix: deletar conta-company demora demais** - Customer/Doc mgmt [delegável] #platforms/cfx
-- [ ] **docstored (engine)** - [delegável] #platforms/cfx
+- [ ] **Document Workflows** - [delegável] #platforms/cfx
   - [ ] Overhaul do data-store de docs
   - [ ] Data-store layers: (1) blobs, (2) metadados
   - [ ] estrategia rsync
+  - [ ] docstored (engine)
 - [ ] **cloud-storage** - ↳ Overhaul do data-store de docs [delegável] #platforms/quartix-intel
 - [ ] **Auto Tests / QA** - ↳ Testes: UI (Playwright), API, API mock, autotests das libs [delegável] #platforms/cfx
   - [ ] Quote API
@@ -35,7 +36,6 @@
   - [ ] api-auth
   - [ ] rabbitmq
   - [ ] messaging-integration
-  - [ ] docstored (engine)
 - [ ] **Email orch** - ↳ Platform overhaul [delegável] #platforms/cfx
   - [ ] › mailsend-d
   - [ ] emailorchd
