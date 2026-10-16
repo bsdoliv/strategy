@@ -53,10 +53,10 @@ Este folder (`strategy/`) é a base de coordenação, gestão e execução da em
 - Granularidade: cada item é uma task própria — nada de listas em texto corrido na nota. (Em 2026-10-15 todas as subtarefas existentes viraram tasks; subtarefas novas são permitidas, Andre as cria/edita no Ranking.) Task desmembrada de outra leva `↳ <task de origem>` na nota e herda dono/frente/flags; a task de origem fica como agrupadora. Hierarquia mais funda vai no título com `›` (ex.: `Metaoxengine › Backup diário`)
 - Subtarefas: sempre `  - [ ] ...` (o dashboard descarta bullets simples e subtítulos ###)
 - Títulos únicos (o score casa pelo título) e sem `*` ou `|` (quebram o negrito e a tabela)
-- Prioridade: PRIORITIES.md (I/U/E 1–5 + Aj + por quê, casado pelo título exato da tarefa); Score = 200×(0,5·I + 0,35·U + 0,15·(6−E)) + Aj → 0 a 1000. I/U/E sozinhos dão múltiplos de 10; Aj (ajuste fino) deixa as tasks de um grupo com scores vizinhos (faixa x1–x9), para aparecerem juntas no Ranking. Toda task nova recebe score próprio, calibrado pelas tasks semelhantes já pontuadas por Andre — não copiar o da origem
+- Prioridade: PRIORITIES.md (I/U/E 1–5 + por quê, casado pelo título exato da tarefa); Score = 200×(0,5·I + 0,35·U + 0,15·(6−E)) → 0 a 1000. Toda task nova recebe score próprio, calibrado pelas tasks semelhantes já pontuadas por Andre — não copiar o da origem
 
 ## Dashboard (dashboard.html)
-- Abas: Board, List, Tabela (seções × frentes), Mapa, Ranking, Mindmap. O **Ranking é a visão de trabalho principal** de Andre: ali ele cria task, edita título/frente/status/urgente/I/U/E/Aj/por quê, edita subtarefas (sempre visíveis) e exclui (🗑 ao lado da ⚑; remove do TASKS.md e do PRIORITIES.md)
+- Abas: Board, List, Tabela (seções × frentes), Mapa, Ranking, Mindmap. O **Ranking é a visão de trabalho principal** de Andre: ali ele cria task, edita título/frente/status/urgente/I/U/E/por quê, edita subtarefas (sempre visíveis) e exclui (🗑 ao lado da ⚑; remove do TASKS.md e do PRIORITIES.md)
 - Recarrega sozinho TASKS.md e PRIORITIES.md quando mudam por fora — dá para editar os arquivos direto enquanto ele está aberto
 - Arquivo único: `dashboard.html` na raiz (versionado no git; não há cópia em `.claude/skills/`)
 - Teste: cópia no scratchpad com script injetado (parseTaskMarkdown/parsePriorities + switchTaskView), Chrome headless `--dump-dom`/`--screenshot`; macOS não tem `timeout`, usar `perl -e 'alarm 30; exec @ARGV' …`. Nunca testar sobre os arquivos reais

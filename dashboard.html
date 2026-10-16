@@ -1252,7 +1252,6 @@
     .rank-score .bar { flex: 1; height: 6px; background: var(--bg-secondary); border-radius: 3px; overflow: hidden; }
     .rank-score .bar div { height: 100%; border-radius: 3px; }
     .rank-title { border-left: 3px solid var(--cat-color, var(--border)); padding-left: 8px; color: var(--text-primary); font-weight: 500; }
-    .rank-aj { width: 52px; font: inherit; border: 1px solid var(--border); border-radius: 4px; background: var(--bg-card); color: var(--text-primary); padding: 1px 3px; }
     .rank-table select { font: inherit; border: 1px solid var(--border); border-radius: 4px; background: var(--bg-card); color: var(--text-primary); padding: 1px 2px; }
     .rank-why { color: var(--text-secondary); min-width: 220px; outline: none; border-radius: 4px; padding: 2px 4px; }
     .rank-why:focus { background: var(--bg-card); box-shadow: 0 0 0 2px var(--accent); }
@@ -2852,17 +2851,16 @@
 
     // ===== Priorities (PRIORITIES.md: | Tarefa | I | U | E | Por quê |) =====
     const PRIORITY_FILE = 'PRIORITIES.md';
-    const PRIORITY_TABLE_HEAD = '| Tarefa | I | U | E | Aj | Por quê |\n|---|---|---|---|---|---|\n';
+    const PRIORITY_TABLE_HEAD = '| Tarefa | I | U | E | Por quê |\n|---|---|---|---|---|\n';
     let projectRoot = null;
     let priorityFileHandle = null;
-    let priorityHeader = '# Priorities\n\nScore = 200 × (0,5·I + 0,35·U + 0,15·(6 − E)) + Aj → 0 a 1000\n\n';
+    let priorityHeader = '# Priorities\n\nScore = 200 × (0,5·I + 0,35·U + 0,15·(6 − E)) → 0 a 1000\n\n';
     let priorities = {};
     let priorityLastModified = 0;
 
     function priorityKey(title) { return title.trim().toLowerCase(); }
     function priorityOf(task) { return priorities[priorityKey(task.title)] || null; }
-    // Aj = ajuste fino somado ao score (ex.: dar scores vizinhos a tasks de um mesmo grupo)
-    function priorityScore(p) { return Math.max(0, Math.min(1000, Math.round(200 * (0.5 * p.i + 0.35 * p.u + 0.15 * (6 - p.e))) + (p.aj || 0))); }
+    function priorityScore(p) { return Math.round(200 * (0.5 * p.i + 0.35 * p.u + 0.15 * (6 - p.e))); }
     function taskScore(task) { const p = priorityOf(task); return p ? priorityScore(p) : null; }
     function scoreColor(score) { return score >= 750 ? '#e03131' : score >= 550 ? '#f08c00' : '#868e96'; }
 
@@ -2870,19 +2868,16 @@
       const out = {};
       const headIdx = md.indexOf('| Tarefa');
       if (headIdx > 0) priorityHeader = md.slice(0, headIdx);
-      let hasAj = false;
       md.split('\n').forEach(line => {
         const c = line.split('|').map(x => x.trim());
-        if (c[1] === 'Tarefa') { hasAj = c[5] === 'Aj'; return; }
-        if (c.length < (hasAj ? 8 : 7) || !/^[1-5]$/.test(c[2]) || !/^[1-5]$/.test(c[3]) || !/^[1-5]$/.test(c[4])) return;
-        const aj = hasAj && /^[+-]?\d+$/.test(c[5]) ? +c[5] : 0;
-        out[priorityKey(c[1])] = { title: c[1], i: +c[2], u: +c[3], e: +c[4], aj, why: c.slice(hasAj ? 6 : 5, -1).join('|').trim() };
+        if (c.length < 7 || !/^[1-5]$/.test(c[2]) || !/^[1-5]$/.test(c[3]) || !/^[1-5]$/.test(c[4])) return;
+        out[priorityKey(c[1])] = { title: c[1], i: +c[2], u: +c[3], e: +c[4], why: c.slice(5, -1).join('|').trim() };
       });
       return out;
     }
     function prioritiesToMarkdown() {
       const rows = Object.values(priorities).sort((a, b) => priorityScore(b) - priorityScore(a))
-        .map(p => `| ${p.title} | ${p.i} | ${p.u} | ${p.e} | ${p.aj ? p.aj : ''} | ${(p.why || '').replace(/\|/g, '/')} |`);
+        .map(p => `| ${p.title} | ${p.i} | ${p.u} | ${p.e} | ${(p.why || '').replace(/\|/g, '/')} |`);
       return priorityHeader + PRIORITY_TABLE_HEAD + rows.join('\n') + '\n';
     }
     async function loadPriorities(root) {
@@ -3157,7 +3152,7 @@
         setTaskCategory(task, d.cat);
         if (d.urgent) setTaskFlag(task, 'urgente', true);
         tasks[d.section].push(task);
-        priorities[priorityKey(title)] = { title, i: d.i, u: d.u, e: d.e, aj: 0, why: d.why.replace(/\|/g, '/').trim() };
+        priorities[priorityKey(title)] = { title, i: d.i, u: d.u, e: d.e, why: d.why.replace(/\|/g, '/').trim() };
         rankAddDraft = { ...d, title: '', why: '', urgent: false };
         markChanged();
         await savePriorities();
@@ -3249,7 +3244,7 @@
       buildToolbar(rankView);
       const legend = document.createElement('div');
       legend.className = 'rank-legend';
-      legend.textContent = 'Score = 200 × (0,5·Impacto + 0,35·Urgência + 0,15·(6 − Esforço)) + Aj, de 0 a 1000. Aj é um ajuste fino (ex.: deixar tasks de um grupo vizinhas). Ajuste I/U/E/Aj e o "por quê" aqui mesmo — salva em PRIORITIES.md.';
+      legend.textContent = 'Score = 200 × (0,5·Impacto + 0,35·Urgência + 0,15·(6 − Esforço)), de 0 a 1000. Ajuste I/U/E e o "por quê" aqui mesmo — salva em PRIORITIES.md.';
       rankView.appendChild(legend);
 
       const cats = orderedCategories(sections.flatMap(sec => tasks[sec.id] || []));
@@ -3285,7 +3280,7 @@
 
       const table = document.createElement('table');
       table.className = 'rank-table';
-      table.innerHTML = `<thead><tr><th>#</th><th>Score</th><th>Tarefa</th><th>Frente ${catMenu}</th><th>Dono</th><th>Status</th><th title="Impacto">I</th><th title="Urgência">U</th><th title="Esforço">E</th><th title="Ajuste fino somado ao score">Aj</th><th>Por quê</th></tr></thead>`;
+      table.innerHTML = `<thead><tr><th>#</th><th>Score</th><th>Tarefa</th><th>Frente ${catMenu}</th><th>Dono</th><th>Status</th><th title="Impacto">I</th><th title="Urgência">U</th><th title="Esforço">E</th><th>Por quê</th></tr></thead>`;
       const menu = table.querySelector('.rank-cat-menu');
       menu.querySelector('.rank-cat-toggle').addEventListener('click', () => {
         rankCatMenuOpen = !rankCatMenuOpen;
@@ -3328,11 +3323,10 @@
           <td>${owner ? `<span class="owner-pill ${owner}">${OWNER_META[owner].label}</span>` : ''}</td>
           <td><select class="rank-status-edit" title="Mudar o status">${sections.map(x => `<option value="${escapeHtml(x.id)}" ${x.id === sec.id ? 'selected' : ''}>${escapeHtml(x.name)}</option>`).join('')}</select></td>
           <td>${sel('i')}</td><td>${sel('u')}</td><td>${sel('e')}</td>
-          <td><input class="rank-aj" type="number" step="1" value="${p?.aj || ''}" placeholder="0" title="Ajuste fino somado ao score"></td>
           <td><div class="rank-why" contenteditable="true">${escapeHtml(p?.why || '')}</div></td>`;
         const ensure = () => {
           const key = priorityKey(t.title);
-          if (!priorities[key]) priorities[key] = { title: t.title, i: 3, u: 3, e: 3, aj: 0, why: '' };
+          if (!priorities[key]) priorities[key] = { title: t.title, i: 3, u: 3, e: 3, why: '' };
           return priorities[key];
         };
         tr.querySelectorAll('select').forEach(selEl => selEl.addEventListener('change', async () => {
@@ -3398,15 +3392,6 @@
           }
           setTaskCategory(t, next);
           markChanged();
-          renderTasks();
-        });
-        const ajEl = tr.querySelector('.rank-aj');
-        ajEl.addEventListener('keydown', e => { if (e.key === 'Enter') ajEl.blur(); });
-        ajEl.addEventListener('change', async () => {
-          const v = Math.round(+ajEl.value || 0);
-          if ((p?.aj || 0) === v) return;
-          ensure().aj = v;
-          await savePriorities();
           renderTasks();
         });
         const why = tr.querySelector('.rank-why');
