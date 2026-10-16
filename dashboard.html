@@ -93,6 +93,15 @@
 
     .buttons { display: flex; gap: 12px; }
 
+    /* Botão Subtarefas: oculta as subtarefas nas abas que as mostram */
+    body.hide-subs .card-subtasks,
+    body.hide-subs .list-item-subtasks,
+    body.hide-subs .list-item-add-subtask,
+    body.hide-subs .rank-subs,
+    body.hide-subs .rank-subs-toggle,
+    body.hide-subs .matrix-chip-subs,
+    body.hide-subs .matrix-chip-subcount { display: none !important; }
+
     button {
       background: var(--bg-card);
       color: var(--text-primary);
@@ -1386,7 +1395,7 @@
     .matrix-chip-meta { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; }
     .matrix-chip-detail { display: none; margin-top: 6px; color: var(--text-secondary); font-size: 12px; }
     .matrix-chip.open .matrix-chip-detail { display: block; }
-    .matrix-chip-detail ul { margin: 4px 0 0 16px; padding: 0; }
+    .matrix-chip-subs { margin: 6px 0 0 16px; padding: 0; color: var(--text-secondary); font-size: 12px; }
 
 </style>
 </head>
@@ -1415,6 +1424,9 @@
         <button id="matrixViewBtn">Tabela</button>
         <button id="rankViewBtn">Ranking</button>
         <button id="mindmapViewBtn">Mindmap</button>
+      </div>
+      <div class="view-toggle" id="subsToggle">
+        <button id="subsToggleBtn" title="Mostrar/ocultar subtarefas">Subtarefas</button>
       </div>
     </div>
     <div class="buttons">
@@ -1563,6 +1575,7 @@
 
       // Show/hide view toggle for tasks
       taskViewToggle.style.display = tab === 'tasks' ? 'flex' : 'none';
+      updateSubsToggle();
 
       // Show/hide appropriate buttons
       openTaskBtn.style.display = tab === 'tasks' ? 'inline-flex' : 'none';
@@ -2911,7 +2924,7 @@
         id: 'cat:' + cat, kind: 'cat', cat, label,
         children: sortForNow(visible.filter(t => taskCategory(t) === cat)).map(t => ({
           id: 'task:' + t.title, kind: 'task', cat, task: t,
-          children: t.subtasks.map((st, i) => ({ id: 'sub:' + t.title + ':' + i, kind: 'sub', cat, sub: st, children: [] })),
+          children: (showSubs ? t.subtasks : []).map((st, i) => ({ id: 'sub:' + t.title + ':' + i, kind: 'sub', cat, sub: st, children: [] })),
         })),
       });
       const top = [];
@@ -3589,18 +3602,18 @@
       chip.style.setProperty('--cat-color', categoryColor(taskCategory(task)));
       const note = cleanNote(task.note);
       const subs = task.subtasks.length
-        ? '<ul>' + task.subtasks.map(st => `<li>${st.checked ? '✓ ' : ''}${escapeHtml(st.text)}</li>`).join('') + '</ul>' : '';
+        ? '<ul class="matrix-chip-subs">' + task.subtasks.map(st => `<li>${st.checked ? '✓ ' : ''}${escapeHtml(st.text)}</li>`).join('') + '</ul>' : '';
       const ownerPill = taskOwner(task) ? `<span class="owner-pill ${taskOwner(task)}">${OWNER_META[taskOwner(task)].label}</span>` : '';
       const flags = taskFlags(task).map(f => `<span class="flag-pill">${escapeHtml(f)}</span>`).join('');
       const score = taskScore(task);
-      const subCount = task.subtasks.length ? `<span class="owner-pill">${task.subtasks.filter(s => s.checked).length}/${task.subtasks.length}</span>` : '';
+      const subCount = task.subtasks.length ? `<span class="owner-pill matrix-chip-subcount">${task.subtasks.filter(s => s.checked).length}/${task.subtasks.length}</span>` : '';
       chip.innerHTML = `
         <div class="matrix-chip-head">
           <input type="checkbox" ${task.checked ? 'checked' : ''}>
           <span class="matrix-chip-title">${escapeHtml(task.title)}</span>
         </div>
         ${(flags || ownerPill || subCount || score !== null) ? `<div class="matrix-chip-meta">${score !== null ? `<span class="owner-pill score-pill" title="Score de prioridade">${score}</span>` : ''}${flags}${ownerPill}${subCount}</div>` : ''}
-        <div class="matrix-chip-detail">${escapeHtml(note)}${subs}</div>`;
+        ${note ? `<div class="matrix-chip-detail">${escapeHtml(note)}</div>` : ''}${subs}`;
       chip.querySelector('input').addEventListener('change', e => {
         setTaskChecked(task, e.target.checked);
         markChanged();
@@ -3631,8 +3644,30 @@
         btn.classList.toggle('active', name === view);
       });
       try { localStorage.setItem('taskView', view); } catch (e) {}
+      updateSubsToggle();
       renderTasks();
     }
+
+    // Mostrar/ocultar subtarefas (Board, List, Tabela, Ranking, Mindmap)
+    const SUBS_VIEWS = ['board', 'list', 'matrix', 'rank', 'mindmap'];
+    const subsToggle = document.getElementById('subsToggle');
+    const subsToggleBtn = document.getElementById('subsToggleBtn');
+    let showSubs = true;
+    try { showSubs = localStorage.getItem('showSubs') !== '0'; } catch (e) {}
+    function updateSubsToggle() {
+      if (!subsToggle) return;
+      subsToggle.style.display = activeMainTab === 'tasks' && SUBS_VIEWS.includes(currentView) ? 'flex' : 'none';
+      subsToggleBtn.classList.toggle('active', showSubs);
+      subsToggleBtn.textContent = showSubs ? 'Ocultar subtarefas' : 'Mostrar subtarefas';
+      document.body.classList.toggle('hide-subs', !showSubs);
+    }
+    subsToggleBtn.addEventListener('click', () => {
+      showSubs = !showSubs;
+      try { localStorage.setItem('showSubs', showSubs ? '1' : '0'); } catch (e) {}
+      updateSubsToggle();
+      renderTasks();
+    });
+    updateSubsToggle();
 
     listViewBtn.addEventListener('click', () => switchTaskView('list'));
     boardViewBtn.addEventListener('click', () => switchTaskView('board'));
