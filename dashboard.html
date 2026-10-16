@@ -1331,6 +1331,12 @@
     .rank-cat-pop label i { width: 10px; height: 10px; border-radius: 2px; flex: none; }
     .rank-cat-actions { display: flex; gap: 6px; padding: 2px 4px 6px; border-bottom: 1px solid var(--border-light); margin-bottom: 4px; }
     .rank-cat-actions button { font-size: 11px; padding: 2px 8px; }
+    .score-filter { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-secondary); padding: 3px 8px; border-radius: 6px; border: 1px solid transparent; }
+    .score-filter.on { border-color: #f08c00; color: var(--text-primary); background: var(--bg-card); }
+    .score-filter input[type=range] { width: 120px; accent-color: #f08c00; }
+    .score-filter input[type=number] { width: 58px; font: inherit; border: 1px solid var(--border); border-radius: 4px; background: var(--bg-card); color: var(--text-primary); padding: 1px 4px; }
+    .score-filter button { border: none; background: transparent; color: var(--text-muted); cursor: pointer; font-size: 14px; line-height: 1; padding: 0 2px; }
+    .score-filter button:hover { color: #c92a2a; }
     .rank-legend { font-size: 12px; color: var(--text-muted); margin: -6px 0 12px; }
 
     /* ===== Tabela (status x categoria) ===== */
@@ -3427,7 +3433,13 @@
 
     // Shared filters for Tabela/Mapa
     // quick: '' | 'active' | 'mine' | 'team' | 'urgent' (toggled by the stat cards)
-    const viewFilters = { quick: '', hideDone: true };
+    const viewFilters = { quick: '', hideDone: true, minScore: 0 };
+    try { viewFilters.minScore = Math.max(0, Math.min(1000, parseInt(localStorage.getItem('minScore'), 10) || 0)); } catch (e) {}
+    function setMinScore(v) {
+      viewFilters.minScore = Math.max(0, Math.min(1000, Math.round((+v || 0) / 10) * 10));
+      try { localStorage.setItem('minScore', String(viewFilters.minScore)); } catch (e) {}
+      renderTasks();
+    }
     const QUICK_FILTERS = {
       active: t => isActiveSection(t.section),
       mine: t => dependsOnAndre(t),
@@ -3435,6 +3447,8 @@
       urgent: t => taskFlags(t).length > 0,
     };
     function passesFilters(task) {
+      // Score mínimo: tasks sem score somem quando o filtro está ligado
+      if (viewFilters.minScore > 0 && (taskScore(task) ?? -1) < viewFilters.minScore) return false;
       if (viewFilters.quick && !QUICK_FILTERS[viewFilters.quick](task)) return false;
       if (viewFilters.hideDone && isDoneSection(task.section)) return false;
       return true;
@@ -3455,6 +3469,11 @@
         ${statCard('urgent', 'urgentes', urgent)}
         ${extraStats || ''}
         <span style="flex:1"></span>
+        <span class="score-filter ${viewFilters.minScore ? 'on' : ''}" title="Mostrar só tasks com score a partir deste valor (0 = todas)">
+          Score ≥ <input type="range" min="0" max="1000" step="10" value="${viewFilters.minScore}">
+          <input type="number" min="0" max="1000" step="10" value="${viewFilters.minScore}">
+          ${viewFilters.minScore ? '<button type="button" title="Limpar filtro de score">×</button>' : ''}
+        </span>
         <label><input type="checkbox" data-f="hideDone" ${viewFilters.hideDone ? 'checked' : ''}> Ocultar Done</label>`;
       bar.querySelectorAll('[data-q]').forEach(el => el.addEventListener('click', () => {
         viewFilters.quick = viewFilters.quick === el.dataset.q ? '' : el.dataset.q;
@@ -3464,6 +3483,13 @@
         viewFilters[inp.dataset.f] = inp.checked;
         renderTasks();
       }));
+      const sf = bar.querySelector('.score-filter');
+      const range = sf.querySelector('input[type=range]'), num = sf.querySelector('input[type=number]');
+      range.addEventListener('input', () => { num.value = range.value; });
+      range.addEventListener('change', () => setMinScore(range.value));
+      num.addEventListener('keydown', e => { if (e.key === 'Enter') num.blur(); });
+      num.addEventListener('change', () => setMinScore(num.value));
+      sf.querySelector('button')?.addEventListener('click', () => setMinScore(0));
       container.appendChild(bar);
     }
 
