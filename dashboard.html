@@ -2243,7 +2243,8 @@
     function renderBoard() {
       board.innerHTML = '';
       sections.forEach(section => {
-        const sectionTasks = tasks[section.id] || [];
+        let sectionTasks = tasks[section.id] || [];
+        if (section.id === 'someday') sectionTasks = [...sectionTasks].sort((a, b) => (taskScore(b) ?? -1) - (taskScore(a) ?? -1));
         board.appendChild(createColumn(section.id, section.name, sectionTasks));
       });
 
