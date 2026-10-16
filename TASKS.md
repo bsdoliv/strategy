@@ -18,28 +18,32 @@
   - [ ] base
   - [ ] Integrar Braza API
 - [ ] **Bugfix: deletar conta-company demora demais** - Customer/Doc mgmt [delegável] #platforms/cfx
-- [ ] **Overhaul do data-store de docs** - [delegável] #platforms/cfx
-- [ ] **Data-store layers: (1) blobs, (2) metadados** - ↳ Overhaul do data-store de docs [delegável] #platforms/cfx
+- [ ] **docstored (engine)** - [delegável] #platforms/cfx
+  - [ ] Overhaul do data-store de docs
+  - [ ] Data-store layers: (1) blobs, (2) metadados
+  - [ ] estrategia rsync
 - [ ] **cloud-storage** - ↳ Overhaul do data-store de docs [delegável] #platforms/quartix-intel
-- [ ] **docstored (engine)** - ↳ Overhaul do data-store de docs [delegável] #platforms/cfx
-- [ ] **docstored › libs** - ↳ Overhaul do data-store de docs [delegável] #platforms/cfx
-- [ ] **docstored › mini-exec** - ↳ Overhaul do data-store de docs [delegável] #platforms/cfx
-- [ ] **dbentity2** - ↳ Overhaul do data-store de docs [delegável] #platforms/cfx
-- [ ] **Auto Tests** - ↳ Testes: UI (Playwright), API, API mock, autotests das libs [delegável] #platforms/cfx
+- [ ] **Auto Tests / QA** - ↳ Testes: UI (Playwright), API, API mock, autotests das libs [delegável] #platforms/cfx
   - [ ] Quote API
   - [ ] libs
   - [ ] Docstore API
   - [ ] Escrever testes de UI (Playwright)
   - [ ] Testes: UI (Playwright), API, API mock, autotests das libs
+  - [ ] QA do chat
 - [ ] **Platform overhaul** - [delegável] #platforms/cfx
   - [ ] API mock
   - [ ] api-auth
   - [ ] rabbitmq
+  - [ ] messaging-integration
+  - [ ] docstored (engine)
 - [ ] **Email orch** - ↳ Platform overhaul [delegável] #platforms/cfx
   - [ ] › mailsend-d
   - [ ] emailorchd
+  - [ ] Tutorial para marcar mensagens gmail como importantes
 - [ ] **dbentities** - ↳ Platform overhaul [delegável] #platforms/cfx
-- [ ] **messaging-integration** - [delegável] #platforms/cfx
+  - [ ] dbentity2
+  - [ ] skel
+  - [ ] libs
 - [ ] **CI/CD** - [delegável] #platforms/sre
 - [ ] **metaox-next como orquestrador dos pipelines de CI/CD** - ↳ CI/CD [delegável] #platforms/sre
 - [ ] **Ambiente de integração octaxpro + quartix-markets** - ↳ CI/CD [delegável] #platforms/sre
@@ -84,10 +88,8 @@
 - [ ] **Acolher dados de eventos (logs, preços)** - ↳ quartix-intelligence: datalake #platforms/quartix-intel
 - [ ] **Acolher outros dados** - ↳ quartix-intelligence: datalake #platforms/quartix-intel
 - [ ] **Content publishing platform** - acesso de clientes ao conteúdo #platforms/quartix-intel
-- [ ] **Chat prototype / isabel** - #platforms/cfx
-- [ ] **Avaliar chat no quartix-markets** - ↳ Chat prototype / isabel #platforms/cfx
-- [ ] **QA do chat** - ↳ Chat prototype / isabel #platforms/cfx
-- [ ] **Tutorial para marcar mensagens gmail como importantes** - ↳ Chat prototype / isabel #platforms/cfx
+- [ ] **Chat prototype** - #platforms/cfx
+  - [ ] Avaliar chat no quartix-markets
 - [ ] **octaxpro addon / excel-plugin** - #platforms/oxpro
 - [ ] **Organizar repos** - #platforms/quartix-intel
 - [ ] **marketdata** - ↳ Organizar repos #platforms/quartix-intel

@@ -60,7 +60,7 @@ A coluna Tarefa precisa ser igual ao título no TASKS.md. Ajuste I/U/E aqui ou n
 | metaox-next como orquestrador dos pipelines de CI/CD | 3 | 2 | 4 |  | Como o pai: produtividade; esforço alto |
 | Integração com bancos | 3 | 2 | 4 |  | Serviço de advisory; integração pesada |
 | bpipe cortesia | 2 | 2 | 1 |  | Pequeno; contexto pouco claro |
-| Auto Tests | 3 | 2 | 2 | -72 | Maior retorno por esforço entre os testes |
+| Auto Tests / QA | 3 | 2 | 2 | -72 | Maior retorno por esforço entre os testes |
 | UI + api-mock | 2 | 1 | 3 | 123 | Depende de API mock e testes de UI |
 | Revisar taxonomia | 2 | 2 | 2 |  | Base do quartix-intelligence, que está em modo exploratório |
 | Opensource Fernando | 2 | 2 | 2 |  | Visibilidade/comunidade |
@@ -101,14 +101,7 @@ A coluna Tarefa precisa ser igual ao título no TASKS.md. Ajuste I/U/E aqui ou n
 | Marketing Agent | 2 | 1 | 3 |  | Automação de marketing; exploratório |
 | Platform overhaul | 3 | 1 | 5 | -51 | Refatoração grande; adiar até depois dos releases |
 | Email orch | 2 | 1 | 4 | 17 | Parte do Platform overhaul; adiar |
-| messaging-integration | 2 | 1 | 3 | -16 | Sem demanda clara |
 | dbentities | 2 | 1 | 5 | 43 | Refatoração grande; adiar |
-| dbentity2 | 2 | 1 | 4 | 9 | Refatoração de entidades |
-| Overhaul do data-store de docs | 2 | 1 | 5 | 38 | Refatoração grande sem dor urgente |
-| Data-store layers: (1) blobs, (2) metadados | 2 | 1 | 5 | 37 | Núcleo do overhaul; grande |
-| docstored (engine) | 2 | 1 | 5 | 36 | Engine nova; grande |
-| docstored › libs | 2 | 1 | 3 | -25 | Parte do docstored |
-| docstored › mini-exec | 1 | 1 | 3 | 74 | Detalhe do docstored |
 | Content publishing platform | 2 | 1 | 4 |  | Exploratório e caro |
 | Design do oxpro sandbox sobre Cloud Run | 2 | 1 | 4 |  | Design exploratório; sem prazo |
 | cloud-storage | 2 | 1 | 4 |  | Parte do overhaul do data-store |
@@ -116,10 +109,7 @@ A coluna Tarefa precisa ser igual ao título no TASKS.md. Ajuste I/U/E aqui ou n
 | Tesouraria institucional e corretoras › Renda fixa | 1 | 2 | 3 |  | Segmento do pitch |
 | Tesouraria institucional e corretoras › Moedas | 1 | 2 | 3 |  | Segmento do pitch (core FX) |
 | Acolher dados do LinkedIn | 2 | 1 | 4 |  | Exploratório |
-| Chat prototype / isabel | 2 | 1 | 3 | -31 | Exploratório |
-| Avaliar chat no quartix-markets | 2 | 1 | 2 | -62 | Decide se o protótipo segue |
-| Tutorial para marcar mensagens gmail como importantes | 1 | 1 | 2 | 37 | Detalhe do protótipo |
-| QA do chat | 1 | 1 | 3 | 66 | Só faz sentido após a avaliação |
+| Chat prototype | 2 | 1 | 3 | -31 | Exploratório |
 | Convite Damke: apresentar hedgeOS | 1 | 1 | 1 |  | Abre a 1ª venda do hedgeOS; custo de uma mensagem; estava parado |
 | Follow up Fernando Silveira | 1 | 1 | 1 |  | Conversa parada; esfria se demorar; custo mínimo |
 | Damke | 1 | 1 | 1 |  | Igual a "Convite Damke": mesmo alvo |
