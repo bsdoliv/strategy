@@ -6,7 +6,7 @@ user-invocable: false
 
 # Task Management
 
-Tasks and their priority scores live in **one file: `tasks.csv`** at the project root. Andre edits it through the dashboard (`dashboard.html`, mainly the Ranking tab); you edit it directly. The project conventions (frentes, donos, score) are in `CLAUDE.md` — follow them.
+Tasks and their priority scores live in **one file: `tasks.csv`** at the project root. Andre edits it through the dashboard (`dashboard.html`, mainly the Scored-Backlog tab, formerly Ranking); you edit it directly. The project conventions (frentes, donos, score) are in `CLAUDE.md` — follow them.
 
 ## File format
 
