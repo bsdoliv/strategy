@@ -662,7 +662,6 @@
     }
     .cat-pill { color: #fff; }
     .owner-pill { background: var(--bg-secondary); color: var(--text-secondary); border: 1px solid var(--border); }
-    .owner-pill.quant { background: #fff4ef; color: #b4532a; border-color: #f2c6b2; }
     .flag-pill { background: #fff5f5; color: #c92a2a; border: 1px solid #ffc9c9; }
 
     .view-toolbar {
@@ -849,6 +848,10 @@
     .matrix-chip-meta { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; }
     .matrix-chip-detail { display: none; margin-top: 6px; color: var(--text-secondary); font-size: 12px; }
     .matrix-chip.open .matrix-chip-detail { display: block; }
+    .matrix-chip .score-pill { cursor: pointer; border: none; font: inherit; font-size: 11px; font-weight: 600; }
+    .matrix-chip .score-pill.empty { background: transparent; color: var(--text-muted); border: 1px dashed var(--border); }
+    .matrix-chip-score { display: flex; align-items: center; gap: 8px; margin-top: 6px; font-size: 11px; color: var(--text-secondary); }
+    .matrix-chip-score select { font: inherit; border: 1px solid var(--border); border-radius: 4px; background: var(--bg-card); color: var(--text-primary); padding: 0 2px; }
     .matrix-chip-subs { margin: 6px 0 0 16px; padding: 0; color: var(--text-secondary); font-size: 12px; }
 
 </style>
@@ -895,8 +898,8 @@
     <div class="mindmap-view" id="mindmapView" style="display: none;"></div>
     <div class="tasks-empty" id="tasksEmpty">
       <div class="empty-state" id="boardEmptyState" style="width: 100%;">
-        <p style="margin-bottom: 24px; font-size: 18px; font-weight: 600; color: var(--text-primary);">Conecte a pasta strategy/ (lê o tasks.csv)</p>
-        <button id="openBtnLarge">Conectar pasta strategy/</button>
+        <p style="margin-bottom: 24px; font-size: 18px; font-weight: 600; color: var(--text-primary);">Conecte a pasta backlog/ (lê o tasks.csv)</p>
+        <button id="openBtnLarge">Conectar pasta backlog/</button>
       </div>
     </div>
   </div>
@@ -960,7 +963,19 @@
         });
       }
 
+      // A pasta guardada pode ser strategy/ (antes da mudança para strategy/backlog/): desce para backlog/ se o tasks.csv estiver lá
+      async function resolveProjectRoot(root) {
+        try { await root.getFileHandle(TASKS_FILE); return root; } catch (e) {}
+        try {
+          const sub = await root.getDirectoryHandle('backlog');
+          await sub.getFileHandle(TASKS_FILE);
+          return sub;
+        } catch (e) { return root; }
+      }
+
       async function loadProject(root) {
+        const resolved = await resolveProjectRoot(root);
+        if (resolved !== root) { root = resolved; await idbSet('projectRoot', root).catch(() => {}); }
         projectRoot = root;
         try {
           await loadTaskHandle(await root.getFileHandle(TASKS_FILE));
@@ -1287,19 +1302,6 @@
       marketing:  { label: 'Marketing',        color: '#e67700' },
       explorar:   { label: 'Exploratório',     color: '#868e96' },
     };
-    const OWNER_META = {
-      andre: { label: 'só Andre', color: '#D97757' },
-      quant: { label: 'quant: Andre', color: '#7048e8' },
-      mixed: { label: 'misto', color: '#fab005' },
-      team:  { label: 'delegável', color: '#40c057' },
-      '':    { label: 'sem dono', color: '#ced4da' },
-    };
-    // Donos sem pill nas abas (irrelevante por agora); o valor continua no tasks.csv
-    const HIDDEN_OWNER_PILLS = ['andre', 'team'];
-    function ownerPillHtml(task) {
-      const owner = taskOwner(task);
-      return owner && !HIDDEN_OWNER_PILLS.includes(owner) ? `<span class="owner-pill ${owner}">${OWNER_META[owner].label}</span>` : '';
-    }
     const GROUP_META = {
       platforms: { label: 'Platforms', color: '#343a40' },
       produto:   { label: 'Produto',   color: '#5f3dc4' },
@@ -1314,17 +1316,6 @@
     }
     function taskFlags(task) {
       return taskTags(task).filter(t => FLAG_TAGS.includes(t));
-    }
-    function taskOwner(task) {
-      const n = (task.note || '').toLowerCase();
-      if (/\[quant[^\]]*\]/.test(n)) return 'quant';
-      if (/\[só andre[^\]]*\]/.test(n)) return 'andre';
-      if (/\[misto\]/.test(n)) return 'mixed';
-      if (/\[delegável\]/.test(n)) return 'team';
-      return '';
-    }
-    function dependsOnAndre(task) {
-      return ['andre', 'quant', 'mixed'].includes(taskOwner(task));
     }
     function categoryGroup(cat) {
       return cat.includes('/') ? cat.split('/')[0] : null;
@@ -1420,7 +1411,7 @@
     function sortForNow(list) {
       return [...list].sort((a, b) =>
         ((taskScore(b) ?? -1) - (taskScore(a) ?? -1)) ||
-        (taskFlags(b).length - taskFlags(a).length) || (dependsOnAndre(b) - dependsOnAndre(a)));
+        (taskFlags(b).length - taskFlags(a).length));
     }
 
     // ===== Prioridade: colunas i/u/e/por_que do tasks.csv (mapa por título, em memória) =====
@@ -1996,7 +1987,7 @@
     }
 
     // Shared filters for Tabela/Ranking/Mindmap
-    // quick: '' | 'active' | 'mine' | 'urgent' (toggled by the stat cards)
+    // quick: '' | 'active' | 'urgent' (toggled by the stat cards)
     const viewFilters = { quick: '', hideDone: true, minScore: 0 };
     try { viewFilters.minScore = Math.max(0, Math.min(1000, parseInt(localStorage.getItem('minScore'), 10) || 0)); } catch (e) {}
     function setMinScore(v) {
@@ -2006,7 +1997,6 @@
     }
     const QUICK_FILTERS = {
       active: t => isActiveSection(t.section),
-      mine: t => dependsOnAndre(t),
       urgent: t => taskFlags(t).length > 0,
     };
     function passesFilters(task) {
@@ -2020,14 +2010,12 @@
       const bar = document.createElement('div');
       bar.className = 'view-toolbar';
       const active = (tasks['active'] || []).filter(t => !t.checked);
-      const mine = active.filter(dependsOnAndre).length;
       // urgentes: só a flag, em qualquer status
       const urgent = sections.flatMap(sec => tasks[sec.id] || []).filter(QUICK_FILTERS.urgent).length;
       const statCard = (key, label, n) =>
         `<span class="stat clickable ${viewFilters.quick === key ? 'on' : ''}" data-q="${key}" title="Clique para filtrar">${label}: <strong>${n}</strong></span>`;
       bar.innerHTML = `
         ${statCard('active', 'Active', active.length)}
-        ${statCard('mine', 'dependem de você', mine)}
         ${statCard('urgent', 'urgentes', urgent)}
         ${extraStats || ''}
         <span style="flex:1"></span>
@@ -2090,10 +2078,9 @@
       cats.forEach(cat => {
         const inCat = allTasks.filter(t => taskCategory(t) === cat && !t.checked);
         const act = inCat.filter(t => isActiveSection(t.section));
-        const mine = act.filter(dependsOnAndre).length;
         head += `<th style="--cat-color:${categoryColor(cat)}">
           <div class="matrix-col-title">${escapeHtml(hasGroups ? categoryShortLabel(cat) : categoryLabel(cat))}</div>
-          <div class="matrix-col-sub">${act.length} ativas · ${mine} suas · ${inCat.length} abertas</div></th>`;
+          <div class="matrix-col-sub">${act.length} ativas · ${inCat.length} abertas</div></th>`;
       });
       table.innerHTML = head + '</tr></thead>';
 
@@ -2163,6 +2150,8 @@
       input.addEventListener('blur', () => finish(true));
     }
 
+    // Score editável no Grid: clicar na pill abre IMP/URG/EFF no próprio card
+    const matrixScoreOpen = new Set();
     function createMatrixChip(task) {
       const chip = document.createElement('div');
       chip.className = 'matrix-chip' + (task.checked ? ' done' : '');
@@ -2171,16 +2160,22 @@
       const note = cleanNote(task.note);
       const subs = task.subtasks.length
         ? '<ul class="matrix-chip-subs">' + task.subtasks.map(st => `<li>${st.checked ? '✓ ' : ''}${escapeHtml(st.text)}</li>`).join('') + '</ul>' : '';
-      const ownerPill = ownerPillHtml(task);
       const flags = taskFlags(task).map(f => `<span class="flag-pill">${escapeHtml(f)}</span>`).join('');
       const score = taskScore(task);
+      const p = priorityOf(task);
+      const scoreOpen = matrixScoreOpen.has(priorityKey(task.title));
+      const scorePill = score !== null
+        ? `<button class="owner-pill score-pill" title="Editar score (IMP/URG/EFF)">${score}</button>`
+        : '<button class="owner-pill score-pill empty" title="Dar score (IMP/URG/EFF)">+ score</button>';
+      const scoreSel = (field, label) => `<label>${label} <select data-field="${field}">${p ? '' : '<option value="">–</option>'}${[1, 2, 3, 4, 5].map(n => `<option ${p && p[field] === n ? 'selected' : ''}>${n}</option>`).join('')}</select></label>`;
+      const scoreEditor = scoreOpen ? `<div class="matrix-chip-score">${scoreSel('i', 'IMP')}${scoreSel('u', 'URG')}${scoreSel('e', 'EFF')}</div>` : '';
       const subCount = task.subtasks.length ? `<span class="owner-pill matrix-chip-subcount">${task.subtasks.filter(s => s.checked).length}/${task.subtasks.length}</span>` : '';
       chip.innerHTML = `
         <div class="matrix-chip-head">
           <input type="checkbox" ${task.checked ? 'checked' : ''}>
           <span class="matrix-chip-title">${escapeHtml(task.title)}</span>
         </div>
-        ${(flags || ownerPill || subCount || score !== null) ? `<div class="matrix-chip-meta">${score !== null ? `<span class="owner-pill score-pill" title="Score de prioridade">${score}</span>` : ''}${flags}${ownerPill}${subCount}</div>` : ''}
+        <div class="matrix-chip-meta">${scorePill}${flags}${subCount}</div>${scoreEditor}
         ${note ? `<div class="matrix-chip-detail">${escapeHtml(note)}</div>` : ''}${subs}`;
       chip.querySelector('input').addEventListener('change', e => {
         setTaskChecked(task, e.target.checked);
@@ -2188,6 +2183,23 @@
         renderTasks();
       });
       chip.querySelector('.matrix-chip-title').addEventListener('click', () => chip.classList.toggle('open'));
+      if (scoreOpen) chip.draggable = false;
+      chip.querySelector('.score-pill').addEventListener('click', () => {
+        const key = priorityKey(task.title);
+        matrixScoreOpen.has(key) ? matrixScoreOpen.delete(key) : matrixScoreOpen.add(key);
+        renderTasks();
+      });
+      chip.querySelectorAll('.matrix-chip-score select').forEach(selEl => {
+        selEl.addEventListener('mousedown', e => e.stopPropagation());
+        selEl.addEventListener('change', async () => {
+          if (!selEl.value) return;
+          const key = priorityKey(task.title);
+          if (!priorities[key]) priorities[key] = { title: task.title, i: 3, u: 3, e: 3, why: '' };
+          priorities[key][selEl.dataset.field] = +selEl.value;
+          await savePriorities();
+          renderTasks();
+        });
+      });
       chip.addEventListener('dragstart', () => { matrixDragTask = task; });
       chip.addEventListener('dragend', () => { matrixDragTask = null; });
       return chip;
@@ -2909,7 +2921,7 @@
     // On load: auto-load if permission is still granted, otherwise arm the button
     (async () => {
       const root = await idbGet('projectRoot').catch(() => null);
-      const label = root ? 'Abrir ' + root.name + '/' : 'Conectar pasta strategy/ (só na 1ª vez)';
+      const label = root ? 'Abrir ' + root.name + '/' : 'Conectar pasta backlog/ (só na 1ª vez)';
       ['openBtnLarge', 'openMemoryBtnLarge', 'openTaskBtn', 'openMemoryBtn'].forEach(id => {
         const btn = document.getElementById(id);
         if (btn) btn.textContent = label;
