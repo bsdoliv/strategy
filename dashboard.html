@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Productivity</title>
+  <title>Backlog</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='4' y='2' width='24' height='28' rx='4' fill='%23faf9f5' stroke='%23D97757' stroke-width='2'/%3E%3Crect x='8' y='0' width='16' height='5' rx='2.5' fill='%23D97757'/%3E%3Cpath d='M9 13l3 3 5-5' fill='none' stroke='%23D97757' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Crect x='20' y='12' width='5' height='2' rx='1' fill='%23c4c4c2'/%3E%3Crect x='9' y='20' width='10' height='2' rx='1' fill='%23c4c4c2'/%3E%3Crect x='9' y='25' width='7' height='2' rx='1' fill='%23c4c4c2'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -662,8 +662,7 @@
     }
     .cat-pill { color: #fff; }
     .owner-pill { background: var(--bg-secondary); color: var(--text-secondary); border: 1px solid var(--border); }
-    .owner-pill.andre, .owner-pill.quant { background: #fff4ef; color: #b4532a; border-color: #f2c6b2; }
-    .owner-pill.team { background: #ebfbee; color: #2b8a3e; border-color: #b2f2bb; }
+    .owner-pill.quant { background: #fff4ef; color: #b4532a; border-color: #f2c6b2; }
     .flag-pill { background: #fff5f5; color: #c92a2a; border: 1px solid #ffc9c9; }
 
     .view-toolbar {
@@ -866,7 +865,7 @@
         <rect x="9" y="25" width="7" height="2" rx="1" fill="#c4c4c2"/>
       </svg>
       <div>
-        <h1>Productivity</h1>
+        <h1>Backlog</h1>
         <div id="filePath" class="file-path"></div>
       </div>
       <div class="view-toggle" id="mainTabToggle">
@@ -875,7 +874,7 @@
       </div>
       <div class="view-toggle" id="taskViewToggle">
         <button id="matrixViewBtn" class="active">Grid</button>
-        <button id="rankViewBtn">Scored-Backlog</button>
+        <button id="rankViewBtn">Scored</button>
         <button id="mindmapViewBtn">Mindmap</button>
       </div>
       <div class="view-toggle" id="subsToggle">
@@ -1295,6 +1294,12 @@
       team:  { label: 'delegável', color: '#40c057' },
       '':    { label: 'sem dono', color: '#ced4da' },
     };
+    // Donos sem pill nas abas (irrelevante por agora); o valor continua no tasks.csv
+    const HIDDEN_OWNER_PILLS = ['andre', 'team'];
+    function ownerPillHtml(task) {
+      const owner = taskOwner(task);
+      return owner && !HIDDEN_OWNER_PILLS.includes(owner) ? `<span class="owner-pill ${owner}">${OWNER_META[owner].label}</span>` : '';
+    }
     const GROUP_META = {
       platforms: { label: 'Platforms', color: '#343a40' },
       produto:   { label: 'Produto',   color: '#5f3dc4' },
@@ -1664,7 +1669,8 @@
       rankAddDraft = d;
       const form = document.createElement('form');
       form.className = 'rank-add';
-      const nums = field => `<label>${field.toUpperCase()} <select data-f="${field}">${[1, 2, 3, 4, 5].map(n => `<option ${d[field] === n ? 'selected' : ''}>${n}</option>`).join('')}</select></label>`;
+      const IUE_LABELS = { i: 'IMP', u: 'URG', e: 'EFF' };
+      const nums = field => `<label>${IUE_LABELS[field]} <select data-f="${field}">${[1, 2, 3, 4, 5].map(n => `<option ${d[field] === n ? 'selected' : ''}>${n}</option>`).join('')}</select></label>`;
       form.innerHTML = `
         <span class="rank-add-label">+ Nova tarefa</span>
         <input data-f="title" class="rank-add-title" placeholder="Título da tarefa" value="${escapeHtml(d.title)}">
@@ -1798,7 +1804,7 @@
       buildToolbar(rankView);
       const legend = document.createElement('div');
       legend.className = 'rank-legend';
-      legend.textContent = 'Score = 200 × (0,5·Impacto + 0,35·Urgência + 0,15·(6 − Esforço)), de 0 a 1000. Ajuste I/U/E e o "por quê" aqui mesmo — salva no tasks.csv.';
+      legend.textContent = 'Score = 200 × (0,5·Impacto + 0,35·Urgência + 0,15·(6 − Esforço)), de 0 a 1000. Ajuste IMP/URG/EFF e o "por quê" aqui mesmo — salva no tasks.csv.';
       rankView.appendChild(legend);
 
       const cats = orderedCategories(sections.flatMap(sec => tasks[sec.id] || []));
@@ -1845,7 +1851,7 @@
 
       const table = document.createElement('table');
       table.className = 'rank-table';
-      table.innerHTML = `<thead><tr><th>#</th><th>Score</th><th>Tarefa</th><th>Frente ${catMenu}</th><th>Dono</th><th>Status ${statusMenu}</th><th title="Impacto">I</th><th title="Urgência">U</th><th title="Esforço">E</th><th>Por quê</th></tr></thead>`;
+      table.innerHTML = `<thead><tr><th>#</th><th>Score</th><th>Tarefa</th><th>Frente ${catMenu}</th><th>Status ${statusMenu}</th><th title="Impacto">IMP</th><th title="Urgência">URG</th><th title="Esforço">EFF</th><th>Por quê</th></tr></thead>`;
       const statusMenuEl = table.querySelector('.rank-cat-menu[data-menu="status"]');
       statusMenuEl.querySelector('.rank-cat-toggle').addEventListener('click', () => {
         rankStatusMenuOpen = !rankStatusMenuOpen;
@@ -1888,7 +1894,6 @@
         const p = priorityOf(t);
         const score = p ? priorityScore(p) : null;
         const cat = taskCategory(t);
-        const owner = taskOwner(t);
         const urgent = taskFlags(t).includes('urgente');
         const tr = document.createElement('tr');
         if (t.checked) tr.className = 'done';
@@ -1898,7 +1903,6 @@
           <td><div class="rank-score">${score ?? '–'}<div class="bar"><div style="width:${(score ?? 0) / 10}%;background:${scoreColor(score ?? 0)}"></div></div></div></td>
           <td><div class="rank-title" style="--cat-color:${categoryColor(cat)}"><button class="rank-flag ${urgent ? 'on' : ''}" title="${urgent ? 'Desmarcar urgente' : 'Marcar como urgente'}">${urgent ? 'urgente' : '⚑'}</button><button class="rank-del" title="Excluir tarefa (e o score dela)">🗑</button><span class="rank-title-text" contenteditable="true" spellcheck="false" title="Clique para editar">${escapeHtml(t.title)}</span></div>${rankSubsHtml(t)}</td>
           <td><select class="rank-cat-edit" title="Mudar a frente" style="background:${categoryColor(cat)}">${catOptions(cat)}</select></td>
-          <td>${owner ? `<span class="owner-pill ${owner}">${OWNER_META[owner].label}</span>` : ''}</td>
           <td><select class="rank-status-edit" title="Mudar o status">${sections.map(x => `<option value="${escapeHtml(x.id)}" ${x.id === sec.id ? 'selected' : ''}>${escapeHtml(x.name)}</option>`).join('')}</select></td>
           <td>${sel('i')}</td><td>${sel('u')}</td><td>${sel('e')}</td>
           <td><div class="rank-why" contenteditable="true">${escapeHtml(p?.why || '')}</div></td>`;
@@ -1992,7 +1996,7 @@
     }
 
     // Shared filters for Tabela/Ranking/Mindmap
-    // quick: '' | 'active' | 'mine' | 'team' | 'urgent' (toggled by the stat cards)
+    // quick: '' | 'active' | 'mine' | 'urgent' (toggled by the stat cards)
     const viewFilters = { quick: '', hideDone: true, minScore: 0 };
     try { viewFilters.minScore = Math.max(0, Math.min(1000, parseInt(localStorage.getItem('minScore'), 10) || 0)); } catch (e) {}
     function setMinScore(v) {
@@ -2003,7 +2007,6 @@
     const QUICK_FILTERS = {
       active: t => isActiveSection(t.section),
       mine: t => dependsOnAndre(t),
-      team: t => taskOwner(t) === 'team',
       urgent: t => taskFlags(t).length > 0,
     };
     function passesFilters(task) {
@@ -2018,7 +2021,6 @@
       bar.className = 'view-toolbar';
       const active = (tasks['active'] || []).filter(t => !t.checked);
       const mine = active.filter(dependsOnAndre).length;
-      const team = active.filter(t => taskOwner(t) === 'team').length;
       // urgentes: só a flag, em qualquer status
       const urgent = sections.flatMap(sec => tasks[sec.id] || []).filter(QUICK_FILTERS.urgent).length;
       const statCard = (key, label, n) =>
@@ -2026,7 +2028,6 @@
       bar.innerHTML = `
         ${statCard('active', 'Active', active.length)}
         ${statCard('mine', 'dependem de você', mine)}
-        ${statCard('team', 'delegáveis', team)}
         ${statCard('urgent', 'urgentes', urgent)}
         ${extraStats || ''}
         <span style="flex:1"></span>
@@ -2170,7 +2171,7 @@
       const note = cleanNote(task.note);
       const subs = task.subtasks.length
         ? '<ul class="matrix-chip-subs">' + task.subtasks.map(st => `<li>${st.checked ? '✓ ' : ''}${escapeHtml(st.text)}</li>`).join('') + '</ul>' : '';
-      const ownerPill = taskOwner(task) ? `<span class="owner-pill ${taskOwner(task)}">${OWNER_META[taskOwner(task)].label}</span>` : '';
+      const ownerPill = ownerPillHtml(task);
       const flags = taskFlags(task).map(f => `<span class="flag-pill">${escapeHtml(f)}</span>`).join('');
       const score = taskScore(task);
       const subCount = task.subtasks.length ? `<span class="owner-pill matrix-chip-subcount">${task.subtasks.filter(s => s.checked).length}/${task.subtasks.length}</span>` : '';
@@ -2214,7 +2215,7 @@
       renderTasks();
     }
 
-    // Mostrar/ocultar subtarefas (Grid, Scored-Backlog, Mindmap)
+    // Mostrar/ocultar subtarefas (Grid, Scored, Mindmap)
     const SUBS_VIEWS = ['matrix', 'rank', 'mindmap'];
     const subsToggle = document.getElementById('subsToggle');
     const subsToggleBtn = document.getElementById('subsToggleBtn');
