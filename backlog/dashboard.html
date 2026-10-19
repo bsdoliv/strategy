@@ -865,6 +865,10 @@
     .matrix-chip.open .matrix-chip-title:focus { background: var(--bg-secondary); }
     .matrix-chip-close { border: none; background: transparent; color: var(--text-muted); cursor: pointer; font-size: 14px; line-height: 1; padding: 0 2px; }
     .matrix-chip-close:hover { color: var(--accent); }
+    /* Lixeira do Grid: menor que a do Scored, aparece no hover do card */
+    .matrix-chip-del { flex: none; border: none; background: transparent; cursor: pointer; font-size: 9px; line-height: 1; padding: 1px 2px; border-radius: 3px; opacity: 0; }
+    .matrix-chip:hover .matrix-chip-del, .matrix-chip-del:focus { opacity: .6; }
+    .matrix-chip-del:hover { opacity: 1; background: #fff5f5; }
     .matrix-chip .rank-subs { margin-left: 0; }
     .matrix-chip .rank-sub-del { opacity: 1; }
     /* Nota da task (coluna nota do tasks.csv), editável no card aberto do Grid */
@@ -1832,6 +1836,23 @@
       }
     }
 
+    // Exclusão (🗑 no Scored e no Grid): tira a task e o score do tasks.csv
+    async function deleteTask(t) {
+      const subs = t.subtasks.length ? ` e ${t.subtasks.length} subtarefa${t.subtasks.length > 1 ? 's' : ''}` : '';
+      if (!confirm(`Excluir "${t.title}"${subs}?\n\nSai do tasks.csv, junto com o score.`)) return;
+      tasks[t.section] = (tasks[t.section] || []).filter(x => x.id !== t.id);
+      rankSubsOpen.delete(priorityKey(t.title));
+      matrixOpen.delete(priorityKey(t.title));
+      matrixScoreOpen.delete(priorityKey(t.title));
+      markChanged();
+      if (priorities[priorityKey(t.title)]) {
+        delete priorities[priorityKey(t.title)];
+        await savePriorities();
+      }
+      renderTasks();
+      showStatus(`Excluída: ${t.title}`);
+    }
+
     // Status vem antes do score: Active → Waiting On → Someday → outras
     const RANK_STATUS_ORDER = ['active', 'waiting-on', 'someday'];
     function rankStatusOrder(id) {
@@ -1970,19 +1991,7 @@
           renderTasks();
         });
         bindRankSubs(tr, t);
-        tr.querySelector('.rank-del').addEventListener('click', async () => {
-          const subs = t.subtasks.length ? ` e ${t.subtasks.length} subtarefa${t.subtasks.length > 1 ? 's' : ''}` : '';
-          if (!confirm(`Excluir "${t.title}"${subs}?\n\nSai do tasks.csv, junto com o score.`)) return;
-          tasks[t.section] = (tasks[t.section] || []).filter(x => x.id !== t.id);
-          rankSubsOpen.delete(priorityKey(t.title));
-          markChanged();
-          if (priorities[priorityKey(t.title)]) {
-            delete priorities[priorityKey(t.title)];
-            await savePriorities();
-          }
-          renderTasks();
-          showStatus(`Excluída: ${t.title}`);
-        });
+        tr.querySelector('.rank-del').addEventListener('click', () => deleteTask(t));
         const titleEl = tr.querySelector('.rank-title-text');
         titleEl.addEventListener('keydown', e => {
           if (e.key === 'Enter') { e.preventDefault(); titleEl.blur(); }
@@ -2233,10 +2242,12 @@
         <div class="matrix-chip-head">
           <input type="checkbox" ${task.checked ? 'checked' : ''}>
           <span class="matrix-chip-title" ${isOpen ? 'contenteditable="true" spellcheck="false"' : 'title="Clique para editar"'}>${escapeHtml(task.title)}</span>
+          <button class="matrix-chip-del" title="Excluir tarefa (e o score dela)">🗑</button>
           ${isOpen ? '<button class="matrix-chip-close" title="Fechar edição">×</button>' : ''}
         </div>
         <div class="matrix-chip-meta">${scorePill}${flags}${subCount}</div>${scoreEditor}
         ${isOpen ? `<div class="task-note" contenteditable="true" spellcheck="false">${escapeHtml(note)}</div>` : note ? `<div class="matrix-chip-note">${escapeHtml(note)}</div>` : ''}${subs}`;
+      chip.querySelector('.matrix-chip-del').addEventListener('click', e => { e.stopPropagation(); deleteTask(task); });
       chip.querySelector('input').addEventListener('change', e => {
         setTaskChecked(task, e.target.checked);
         markChanged();
