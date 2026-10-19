@@ -834,6 +834,18 @@
     .matrix-table thead th.row-head { z-index: 3; border-top-color: transparent; }
     .matrix-col-title { font-size: 13px; font-weight: 700; color: var(--text-primary); }
     .matrix-col-sub { font-size: 11px; color: var(--text-muted); font-weight: 500; margin-top: 2px; }
+    /* Show/hide de coluna: "–" no cabeçalho recolhe a frente numa faixa estreita; clicar na faixa reexibe */
+    .matrix-col-head { display: flex; align-items: flex-start; gap: 6px; }
+    .matrix-col-head > div { flex: 1; }
+    .matrix-col-hide { border: none; background: transparent; color: var(--text-muted); cursor: pointer; font-size: 14px; line-height: 1; padding: 0 3px; border-radius: 3px; opacity: 0; }
+    .matrix-table thead th:hover .matrix-col-hide, .matrix-col-hide:focus { opacity: 1; }
+    .matrix-col-hide:hover { color: var(--accent); background: var(--bg-card); }
+    .matrix-table thead th.collapsed { min-width: 0; width: 26px; padding: 6px 3px; cursor: pointer; }
+    .matrix-table thead th.collapsed:hover { background: var(--bg-card); }
+    .matrix-col-vert { writing-mode: vertical-rl; transform: rotate(180deg); font-size: 11px; font-weight: 600; color: var(--text-secondary); white-space: nowrap; margin: 0 auto; }
+    .matrix-table td.collapsed { width: 26px; padding: 4px 3px; text-align: center; font-size: 11px; color: var(--text-muted); background: var(--bg-secondary); }
+    .view-toolbar .stat.cols-hidden { cursor: pointer; }
+    .view-toolbar .stat.cols-hidden:hover { border-color: var(--accent); color: var(--accent); }
     .matrix-table td.drop-target { background: var(--bg-secondary); outline: 2px dashed var(--accent); outline-offset: -3px; }
     .matrix-chip {
       border: 1px solid var(--border-light); border-left: 3px solid var(--cat-color, var(--border));
@@ -2030,7 +2042,7 @@
 
     // Shared filters for Tabela/Ranking/Mindmap
     // quick: '' | 'active' (card Active); onlyToday: card today (só tasks com a flag)
-    const viewFilters = { quick: '', hideDone: true, minScore: 0, onlyToday: false };
+    const viewFilters = { quick: '', hideDone: true, minScore: 0, onlyToday: false, focusCols: false };
     const QUICK_FILTER_KEYS = ['active'];
     try { viewFilters.minScore = Math.max(0, Math.min(1000, parseInt(localStorage.getItem('minScore'), 10) || 0)); } catch (e) {}
     // Cards Active/today e "Ocultar Done" sobrevivem ao recarregar (localStorage viewFilters)
@@ -2039,10 +2051,11 @@
       if (saved.quick === '' || QUICK_FILTER_KEYS.includes(saved.quick)) viewFilters.quick = saved.quick;
       if (typeof saved.onlyToday === 'boolean') viewFilters.onlyToday = saved.onlyToday;
       if (typeof saved.hideDone === 'boolean') viewFilters.hideDone = saved.hideDone;
+      if (typeof saved.focusCols === 'boolean') viewFilters.focusCols = saved.focusCols;
     } catch (e) {}
     function saveViewFilters() {
-      const { quick, onlyToday, hideDone } = viewFilters;
-      try { localStorage.setItem('viewFilters', JSON.stringify({ quick, onlyToday, hideDone })); } catch (e) {}
+      const { quick, onlyToday, hideDone, focusCols } = viewFilters;
+      try { localStorage.setItem('viewFilters', JSON.stringify({ quick, onlyToday, hideDone, focusCols })); } catch (e) {}
     }
     function setMinScore(v) {
       viewFilters.minScore = Math.max(0, Math.min(1000, Math.round((+v || 0) / 10) * 10));
@@ -2078,7 +2091,8 @@
           <input type="number" min="0" max="1000" step="10" value="${viewFilters.minScore}">
           ${viewFilters.minScore ? '<button type="button" title="Limpar filtro de score">×</button>' : ''}
         </span>
-        <label><input type="checkbox" data-f="hideDone" ${viewFilters.hideDone ? 'checked' : ''}> Ocultar Done</label>`;
+        <label><input type="checkbox" data-f="hideDone" ${viewFilters.hideDone ? 'checked' : ''}> Ocultar Done</label>
+        ${container === matrixView ? `<label title="Só no Grid: esconde as frentes sem nenhuma task em Active nem com today (tasks com Done não contam)"><input type="checkbox" data-f="focusCols" ${viewFilters.focusCols ? 'checked' : ''}> Ocultar frentes sem Active/today</label>` : ''}`;
       bar.querySelectorAll('[data-q]').forEach(el => el.addEventListener('click', () => {
         viewFilters.quick = viewFilters.quick === el.dataset.q ? '' : el.dataset.q;
         saveViewFilters();
@@ -2091,6 +2105,7 @@
       });
       bar.querySelectorAll('input[data-f]').forEach(inp => inp.addEventListener('change', () => {
         viewFilters[inp.dataset.f] = inp.checked;
+        if (inp.dataset.f === 'focusCols') gridColPinned.clear();
         saveViewFilters();
         renderTasks();
       }));
@@ -2107,12 +2122,34 @@
     // ===== Tabela: linhas = seções, colunas = categorias =====
     const matrixView = document.getElementById('matrixView');
     let matrixDragTask = null;
+    // Colunas (frentes) recolhidas no Grid; persiste no localStorage
+    let gridColHidden = new Set();
+    try { gridColHidden = new Set(JSON.parse(localStorage.getItem('gridColHidden') || '[]')); } catch (e) {}
+    function setGridColHidden(next) {
+      gridColHidden = next;
+      try { localStorage.setItem('gridColHidden', JSON.stringify([...next])); } catch (e) {}
+      renderMatrix();
+    }
+    // Frentes reabertas (clique na faixa) enquanto o filtro de frentes está ligado; zera ao ligar/desligar o filtro
+    const gridColPinned = new Set();
 
     function renderMatrix() {
       matrixView.innerHTML = '';
-      buildToolbar(matrixView);
       const allTasks = sections.flatMap(sec => tasks[sec.id] || []);
       const cats = orderedCategories(allTasks);
+      // Filtro "Ocultar frentes sem Active/today": recolhe (igual ao "–") a frente sem task aberta em Active nem com today
+      const inFocus = c => allTasks.some(t => taskCategory(t) === c && !t.checked && passesFilters(t) &&
+        (isToday(t) || isActiveSection(t.section)));
+      const isCollapsed = c => gridColHidden.has(c) || (viewFilters.focusCols && !gridColPinned.has(c) && !inFocus(c));
+      const nHidden = cats.filter(isCollapsed).length;
+      buildToolbar(matrixView, nHidden ? `<span class="stat cols-hidden" title="Mostrar todas as colunas">${nHidden} ${nHidden > 1 ? 'colunas ocultas' : 'coluna oculta'} · mostrar todas</span>` : '');
+      matrixView.querySelector('.cols-hidden')?.addEventListener('click', () => {
+        // Mostrar todas: limpa as ocultas à mão e desliga o filtro de frentes
+        viewFilters.focusCols = false;
+        saveViewFilters();
+        gridColPinned.clear();
+        setGridColHidden(new Set());
+      });
       // Mesma ordem do Scored: Active → Waiting On → Someday → outras
       const rows = [...sections].sort((a, b) => rankStatusOrder(a.id) - rankStatusOrder(b.id));
 
@@ -2126,8 +2163,10 @@
           const g = cats[k] !== NO_CATEGORY ? categoryGroup(cats[k]) : null;
           let span = 1;
           while (g && k + span < cats.length && categoryGroup(cats[k + span]) === g) span++;
+          // Grupo com todas as colunas recolhidas: sem rótulo (não cabe na faixa estreita)
+          const allHidden = cats.slice(k, k + span).every(isCollapsed);
           head += g
-            ? `<th colspan="${span}" class="group-head" style="--cat-color:${groupColor(g)}">${escapeHtml(groupLabel(g))}</th>`
+            ? `<th colspan="${span}" class="group-head" style="--cat-color:${groupColor(g)}" title="${escapeHtml(groupLabel(g))}">${allHidden ? '' : escapeHtml(groupLabel(g))}</th>`
             : `<th class="group-head empty" style="--cat-color:transparent"></th>`;
           k += span;
         }
@@ -2138,11 +2177,25 @@
       cats.forEach(cat => {
         const inCat = allTasks.filter(t => taskCategory(t) === cat && !t.checked);
         const act = inCat.filter(t => isActiveSection(t.section));
-        head += `<th style="--cat-color:${categoryColor(cat)}">
-          <div class="matrix-col-title">${escapeHtml(hasGroups ? categoryShortLabel(cat) : categoryLabel(cat))}</div>
-          <div class="matrix-col-sub">${act.length} ativas · ${inCat.length} abertas</div></th>`;
+        const label = hasGroups ? categoryShortLabel(cat) : categoryLabel(cat);
+        head += isCollapsed(cat)
+          ? `<th class="collapsed" data-show="${escapeHtml(cat)}" style="--cat-color:${categoryColor(cat)}" title="Mostrar ${escapeHtml(categoryLabel(cat))}">
+          <div class="matrix-col-vert">${escapeHtml(label)}</div></th>`
+          : `<th style="--cat-color:${categoryColor(cat)}"><div class="matrix-col-head"><div>
+          <div class="matrix-col-title">${escapeHtml(label)}</div>
+          <div class="matrix-col-sub">${act.length} ativas · ${inCat.length} abertas</div></div>
+          <button class="matrix-col-hide" data-hide="${escapeHtml(cat)}" title="Ocultar coluna">–</button></div></th>`;
       });
       table.innerHTML = head + '</tr></thead>';
+      table.querySelectorAll('[data-hide]').forEach(btn => btn.addEventListener('click', () => {
+        setGridColHidden(new Set([...gridColHidden, btn.dataset.hide]));
+      }));
+      table.querySelectorAll('[data-show]').forEach(th => th.addEventListener('click', () => {
+        const next = new Set(gridColHidden);
+        next.delete(th.dataset.show);
+        gridColPinned.add(th.dataset.show);
+        setGridColHidden(next);
+      }));
 
       const tbody = document.createElement('tbody');
       rows.forEach(sec => {
@@ -2153,12 +2206,19 @@
         tr.innerHTML = `<th class="row-head">${escapeHtml(sec.name)}${secTasks.length ? `<div class="matrix-col-sub">${secTasks.length} tarefas</div>` : ''}</th>`;
         cats.forEach(cat => {
           const td = document.createElement('td');
-          sortForNow(secTasks.filter(t => taskCategory(t) === cat)).forEach(t => td.appendChild(createMatrixChip(t)));
-          const add = document.createElement('div');
-          add.className = 'matrix-add';
-          add.textContent = '+ nova tarefa';
-          add.addEventListener('click', () => startMatrixAdd(add, sec.id, cat));
-          td.appendChild(add);
+          const cellTasks = sortForNow(secTasks.filter(t => taskCategory(t) === cat));
+          if (isCollapsed(cat)) {
+            // Coluna recolhida: só a contagem; continua aceitando drop
+            td.className = 'collapsed';
+            td.textContent = cellTasks.length || '';
+          } else {
+            cellTasks.forEach(t => td.appendChild(createMatrixChip(t)));
+            const add = document.createElement('div');
+            add.className = 'matrix-add';
+            add.textContent = '+ nova tarefa';
+            add.addEventListener('click', () => startMatrixAdd(add, sec.id, cat));
+            td.appendChild(add);
+          }
           td.addEventListener('dragover', e => { e.preventDefault(); td.classList.add('drop-target'); });
           td.addEventListener('dragleave', () => td.classList.remove('drop-target'));
           td.addEventListener('drop', e => {
