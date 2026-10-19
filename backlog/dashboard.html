@@ -2235,7 +2235,9 @@
         tr.innerHTML = `<th class="row-head">${escapeHtml(sec.name)}${secTasks.length ? `<div class="matrix-col-sub">${secTasks.length} tarefas</div>` : ''}</th>`;
         cats.forEach(cat => {
           const td = document.createElement('td');
-          const cellTasks = sortForNow(secTasks.filter(t => taskCategory(t) === cat));
+          // attention sem score sobe para o topo da célula; o resto segue score desc
+          const cellTasks = sortForNow(secTasks.filter(t => taskCategory(t) === cat))
+            .sort((a, b) => (isAttention(b) && taskScore(b) === null) - (isAttention(a) && taskScore(a) === null));
           if (isCollapsed(cat)) {
             // Coluna recolhida: só a contagem; continua aceitando drop
             td.className = 'collapsed';
