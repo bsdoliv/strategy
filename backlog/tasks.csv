@@ -138,4 +138,7 @@ id,parent,status,title,frente,today,i,u,e,nota,done
 116,,Active,cfxui over cloudrun,platforms/sre,x,5,5,1,,
 117,,Active,demandar 10 melhores alvos por categoria,ceo,x,5,5,1,https://claude.ai/chat/c1d36e4a-996b-4cea-ac17-3a53ecfc1705,
 118,,Active,projeto linkedin-intel,ceo,x,5,3,3,,
-120,,Active,retorno para 5TM,ceo,x,5,3,3,,x
+121,,Waiting On,retorno do lucas sobre algo,platforms/sre,,,,,,
+122,,Waiting On,retorno da,ceo,,,,,,
+120,,Waiting On,retorno para 5TM,ceo,x,5,3,3,,
+120.1,120,Waiting On,aguardando victoria retornar,,,,,,,

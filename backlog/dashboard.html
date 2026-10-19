@@ -845,6 +845,9 @@
       transition: opacity .15s ease;
     }
     .matrix-table td:hover .matrix-add { opacity: 1; }
+    .matrix-table tr.empty th.row-head, .matrix-table tr.empty td { padding-top: 2px; padding-bottom: 2px; }
+    .matrix-table tr.empty th.row-head { font-size: 11px; font-weight: 500; color: var(--text-muted); }
+    .matrix-table tr.empty .matrix-add { font-size: 11px; padding: 1px 6px; }
     .matrix-add:hover { background: var(--bg-secondary); color: var(--accent); }
     .matrix-add-input {
       width: 100%; font: inherit; font-size: 12.5px; padding: 6px 8px; border: 2px solid var(--accent);
@@ -2101,9 +2104,8 @@
       buildToolbar(matrixView);
       const allTasks = sections.flatMap(sec => tasks[sec.id] || []);
       const cats = orderedCategories(allTasks);
-      const rows = [...sections];
-      // Active first, so "agora" is always the top row
-      rows.sort((a, b) => isActiveSection(b.id) - isActiveSection(a.id));
+      // Mesma ordem do Scored: Active → Waiting On → Someday → outras
+      const rows = [...sections].sort((a, b) => rankStatusOrder(a.id) - rankStatusOrder(b.id));
 
       const table = document.createElement('table');
       table.className = 'matrix-table';
@@ -2137,7 +2139,9 @@
       rows.forEach(sec => {
         const tr = document.createElement('tr');
         const secTasks = (tasks[sec.id] || []).filter(passesFilters);
-        tr.innerHTML = `<th class="row-head">${escapeHtml(sec.name)}<div class="matrix-col-sub">${secTasks.length} tarefas</div></th>`;
+        // Linha vazia fica discreta (baixa e apagada), mas continua aceitando drop e "+ nova tarefa"
+        if (!secTasks.length) tr.className = 'empty';
+        tr.innerHTML = `<th class="row-head">${escapeHtml(sec.name)}${secTasks.length ? `<div class="matrix-col-sub">${secTasks.length} tarefas</div>` : ''}</th>`;
         cats.forEach(cat => {
           const td = document.createElement('td');
           sortForNow(secTasks.filter(t => taskCategory(t) === cat)).forEach(t => td.appendChild(createMatrixChip(t)));
