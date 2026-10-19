@@ -7,7 +7,7 @@ Andre de Oliveira, founder-CEO da **Quartix** (desde 2017; SP + Miami). Acumula 
 - **Engenheiro-chefe de software** — lidera time de 3 pessoas
 - **Quant líder** — a pessoa com finanças quantitativas mais avançadas da empresa; features quantitativas dependem da atenção profunda dele (prototipação, desenvolvimento e validação)
 
-Este folder (`strategy/`) é a base de coordenação, gestão e execução da empresa.
+O folder `strategy/` é a base de coordenação, gestão e execução da empresa; o backlog (tasks, dashboard, memória do Claude) fica em `strategy/backlog/` desde 2026-10-17 — abrir o Claude Code nesse diretório.
 
 ## People
 | Who | Role |
@@ -59,9 +59,10 @@ Tasks e scores ficam num arquivo só, `tasks.csv` (formato e regras de edição:
 - Abas, nesta ordem: Grid (ex-Tabela; seções × frentes; aba padrão), Scored (ex-Ranking), Mindmap. Removidas: Mapa (2026-10-16), List e Board/Kanban (2026-10-17). O **Scored é a visão de trabalho principal** de Andre: ali ele cria task, edita título/frente/status/urgente/I/U/E/por quê, edita subtarefas e exclui (🗑 ao lado da ⚑)
 - Scored: ordena por status (Active → Waiting On → Someday → outros → Done) e depois por score (desc); filtros de Frente e de Status no cabeçalho (localStorage `rankCatHidden`/`rankStatusHidden`)
 - Título da aplicação: Backlog. Scored não tem coluna Dono
-- Dono: as abas mostram só as pills `quant: Andre` e `misto`; `só Andre` e `delegável` ficam ocultas (irrelevantes por agora, 2026-10-17), mas seguem no tasks.csv. Card "delegáveis" removido
+- Dono: o dashboard não usa mais o dono (pills, card "dependem de você" e "N suas" do Grid removidos em 2026-10-17); o valor segue no tasks.csv
+- Grid: clicar no score de um card (ou "+ score") abre IMP/URG/EFF no próprio card e grava no tasks.csv
 - Botão "Mostrar/Ocultar subtarefas" (todas as abas; estado em localStorage `showSubs`, padrão visível)
 - Lê e grava só o `tasks.csv` (gravações em fila) e recarrega sozinho quando ele muda por fora — dá para editar o arquivo direto enquanto o dashboard está aberto
 - Relatórios (PDF) vão em `reports/` (`AAAA-MM-DD-<tema>.pdf`); uma página só
-- Arquivo único: `dashboard.html` na raiz (versionado no git; não há cópia em `.claude/skills/`)
+- Arquivo único: `dashboard.html` em `backlog/` (desde 2026-10-17, junto com `tasks.csv` e `.claude/`; versionado no git; não há cópia em `.claude/skills/`). A pasta conectada deve ser `backlog/`; se a pasta guardada for `strategy/`, o dashboard desce sozinho para `backlog/`
 - Teste: cópia no scratchpad com script injetado (`applyTasksCsv(...)` + `switchTaskView`; para gravar, simular `taskFileHandle` com getFile/createWritable em memória), Chrome headless `--dump-dom`/`--screenshot`; macOS não tem `timeout`, usar `perl -e 'alarm 30; exec @ARGV' …`. Nunca testar sobre os arquivos reais

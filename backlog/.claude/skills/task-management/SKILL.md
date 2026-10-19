@@ -41,11 +41,11 @@ Rows of a section appear in board order; subtask rows come right after their tas
 
 ## Dashboard
 
-`dashboard.html` at the project root is the only copy (versioned in git). If it is missing, restore it with `git checkout -- dashboard.html`. It reads/writes `tasks.csv`, auto-saves, and watches for external changes.
+`dashboard.html` at the project root (`strategy/backlog/`) is the only copy (versioned in git). If it is missing, restore it with `git checkout -- dashboard.html`. It reads/writes `tasks.csv`, auto-saves, and watches for external changes.
 
 ## How to Interact
 
-**"What's on my plate" / "my tasks":** read `tasks.csv`, summarize Active and Waiting On by score, highlight `urgente` and tasks that depend on Andre (`só Andre`, `quant: Andre`, `misto`).
+**"What's on my plate" / "my tasks":** read `tasks.csv`, summarize Active and Waiting On by score, highlight `urgente`. Owner (`dono`) is irrelevant for now (Andre, 2026-10-17): keep filling it, but don't group or highlight by it.
 
 **"Add a task" / "remind me to":** add a row (status Active unless told otherwise) with frente, dono and a judged score.
 
