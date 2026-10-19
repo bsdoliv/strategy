@@ -897,6 +897,8 @@
     .matrix-chip-score { display: flex; align-items: center; gap: 8px; margin-top: 6px; font-size: 11px; color: var(--text-secondary); }
     .matrix-chip-score select { font: inherit; border: 1px solid var(--border); border-radius: 4px; background: var(--bg-card); color: var(--text-primary); padding: 0 2px; }
     .matrix-chip-note { margin-top: 5px; color: var(--text-secondary); font-size: 12px; }
+    .matrix-link { color: inherit; text-decoration: underline; text-underline-offset: 2px; word-break: break-all; }
+    .matrix-link:hover { color: var(--text-primary); }
     .matrix-chip-subs { margin: 6px 0 0 16px; padding: 0; color: var(--text-secondary); font-size: 12px; }
 
 </style>
@@ -2273,6 +2275,14 @@
       input.addEventListener('blur', () => finish(true));
     }
 
+    // URLs viram links clicáveis nos cards fechados do Grid
+    function linkify(text) {
+      return escapeHtml(text).replace(/\b(?:https?:\/\/|www\.)[^\s<]+[^\s<.,;:!?)\]'"]/gi, url => {
+        const href = /^www\./i.test(url) ? 'https://' + url : url;
+        return `<a class="matrix-link" href="${href}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+      });
+    }
+
     // Score editável no Grid: clicar na pill abre IMP/URG/EFF no próprio card
     const matrixScoreOpen = new Set();
     // Cards abertos para edição (clicar no título): título, nota e subtarefas editáveis
@@ -2284,7 +2294,7 @@
       chip.draggable = !isOpen;
       chip.style.setProperty('--cat-color', categoryColor(taskCategory(task)));
       const note = cleanNote(task.note);
-      const subs = isOpen ? rankSubsHtml(task, true) : !task.subtasks.length ? '' : '<ul class="matrix-chip-subs">' + task.subtasks.map(st => `<li>${st.checked ? '✓ ' : ''}${escapeHtml(st.text)}</li>`).join('') + '</ul>';
+      const subs = isOpen ? rankSubsHtml(task, true) : !task.subtasks.length ? '' : '<ul class="matrix-chip-subs">' + task.subtasks.map(st => `<li>${st.checked ? '✓ ' : ''}${linkify(st.text)}</li>`).join('') + '</ul>';
       // Flag today clicável: pill verde quando marcada; "⚑ today" aparece no hover para marcar
       const flags = isToday(task)
         ? '<button class="flag-pill matrix-today" title="Desmarcar today">today</button>'
@@ -2301,13 +2311,15 @@
       chip.innerHTML = `
         <div class="matrix-chip-head">
           <input type="checkbox" ${task.checked ? 'checked' : ''}>
-          <span class="matrix-chip-title" ${isOpen ? 'contenteditable="true" spellcheck="false"' : 'title="Clique para editar"'}>${escapeHtml(task.title)}</span>
+          <span class="matrix-chip-title" ${isOpen ? 'contenteditable="true" spellcheck="false"' : 'title="Clique para editar"'}>${isOpen ? escapeHtml(task.title) : linkify(task.title)}</span>
           <button class="matrix-chip-del" title="Excluir tarefa (e o score dela)">🗑</button>
           ${isOpen ? '<button class="matrix-chip-close" title="Fechar edição">×</button>' : ''}
         </div>
         <div class="matrix-chip-meta">${scorePill}${flags}${subCount}</div>${scoreEditor}
-        ${isOpen ? `<div class="task-note" contenteditable="true" spellcheck="false">${escapeHtml(note)}</div>` : note ? `<div class="matrix-chip-note">${escapeHtml(note)}</div>` : ''}${subs}`;
+        ${isOpen ? `<div class="task-note" contenteditable="true" spellcheck="false">${escapeHtml(note)}</div>` : note ? `<div class="matrix-chip-note">${linkify(note)}</div>` : ''}${subs}`;
       chip.querySelector('.matrix-chip-del').addEventListener('click', e => { e.stopPropagation(); deleteTask(task); });
+      // Link abre a URL sem abrir a edição do card
+      chip.querySelectorAll('.matrix-link').forEach(a => a.addEventListener('click', e => e.stopPropagation()));
       chip.querySelector('input').addEventListener('change', e => {
         setTaskChecked(task, e.target.checked);
         markChanged();
@@ -2328,6 +2340,19 @@
           matrixOpen.delete(priorityKey(task.title));
           renderTasks();
         });
+        // Enter em título, nota ou subtarefa salva e fecha a edição (= clicar no ×).
+        // No campo "nova subtarefa", Enter com texto adiciona; vazio fecha.
+        chip.addEventListener('keydown', e => {
+          if (e.key !== 'Enter' || e.isComposing) return;
+          const el = e.target;
+          const isAdd = el.classList.contains('rank-sub-add');
+          if (!el.isContentEditable && !(isAdd && !el.value.trim())) return;
+          e.preventDefault();
+          e.stopPropagation();
+          matrixOpen.delete(priorityKey(task.title));
+          el.blur();
+          renderTasks();
+        }, true);
         bindNoteEdit(chip.querySelector('.task-note'), task);
         bindRankSubs(chip, task);
       } else {
