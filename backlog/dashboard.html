@@ -1770,8 +1770,10 @@
       // Subtarefas existentes ficam sempre visíveis; "+ subtarefa" abre o campo nas tasks que ainda não têm
       const adding = always || rankSubsOpen.has(key);
       const open = n > 0 || adding;
+      // No card aberto do Grid (always) o campo fica sempre visível: sem botão de abrir/fechar
       let html = n
         ? `<span class="rank-subs-count">${done}/${n} subtarefa${n > 1 ? 's' : ''}</span>`
+        : always ? ''
         : `<span class="rank-subs-toggle ${adding ? '' : 'empty'}" tabindex="0">${adding ? '× fechar' : '+ subtarefa'}</span>`;
       if (open) {
         html += '<div class="rank-subs">' + t.subtasks.map((st, idx) => `
