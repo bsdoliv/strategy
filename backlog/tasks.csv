@@ -135,3 +135,4 @@ id,parent,status,title,frente,dono,urgente,i,u,e,por_que,nota,done
 103.5,103,Active,metaox-next como orquestrador dos pipelines de CI/CD,,,,,,,,,
 103.6,103,Active,Metaoxengine - Trigger de VMs p/ build e deploy,,,,,,,,,
 116,,Active,cfxui over cloudrun,platforms/sre,,,5,5,1,,,
+117,,Active,demandar 10 melhores alvos por categoria,ceo,,,5,5,1,,,
