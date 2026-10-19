@@ -20,13 +20,13 @@ id,parent,status,title,frente,today,i,u,e,nota,done
 |---|---|
 | `id` | Stable integer id of the task. Subtasks use `<parent id>.<n>` |
 | `parent` | Empty for a task; the task's `id` for a subtask row |
-| `status` | Section: `Someday`, `Active`, `Waiting On`, `Done` (a new value becomes a new section) |
+| `status` | Section: `Someday`, `Active`, `Waiting On` (a new value becomes a new section). Done is NOT a status — it is the `done` flag |
 | `title` | Task title (any text; must be unique among tasks) |
 | `frente` | Category, without `#` (e.g. `platforms/cfx`, `ceo`) |
 | `today` | `x` or empty — flag for what Andre wants to work on now (renamed from `urgente` on 2026-10-19) |
 | `i`,`u`,`e` | Impact, Urgency, Effort, 1–5. Score is **not stored**: 200×(0,5·I + 0,35·U + 0,15·(6−E)) → 0–1000 |
 | `nota` | Single note: score rationale first, then other context, joined with ` · ` (e.g. `Risco de perda de dados; barato · origem: <task de origem>`) — never a list in running text. (A separate `por_que` column existed until 2026-10-19 and was merged here.) |
-| `done` | `x` when done. A task with `status=Done` is always `x`, and `x` only exists in Done |
+| `done` | `x` when done. Independent of `status`: the task keeps its status and position |
 
 Rows of a section appear in board order; subtask rows come right after their task. Only task rows carry frente/today/score. (There is no owner column: `dono` was removed on 2026-10-19; the dashboard ignores it in old files.)
 
@@ -47,7 +47,7 @@ Rows of a section appear in board order; subtask rows come right after their tas
 
 **"Add a task" / "remind me to":** add a row (status Active unless told otherwise) with frente and a judged score.
 
-**"Done with X":** set `status=Done` and `done=x`.
+**"Done with X":** set `done=x` (keep `status` as is).
 
 **"What am I waiting on":** list `status=Waiting On`.
 

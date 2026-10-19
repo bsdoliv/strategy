@@ -1109,7 +1109,7 @@
     // que é o que as abas já usam.
     const TASKS_FILE = 'tasks.csv';
     const CSV_COLUMNS = ['id', 'parent', 'status', 'title', 'frente', 'today', 'i', 'u', 'e', 'nota', 'done'];
-    const DEFAULT_SECTIONS = ['Someday', 'Active', 'Waiting On', 'Done'];
+    const DEFAULT_SECTIONS = ['Someday', 'Active', 'Waiting On'];
 
     function parseCsv(text) {
       const rows = [];
@@ -1165,6 +1165,7 @@
       const head = (rows.shift() || []).map(h => h.trim().toLowerCase());
       const get = (r, name) => { const i = head.indexOf(name); return i >= 0 ? (r[i] || '').trim() : ''; };
       const resultSections = [], resultTasks = {}, resultPriorities = {}, byId = {};
+      let legacyDone = false;
       const ensureSection = name => {
         const id = taskSectionId(name);
         if (!resultTasks[id]) { resultSections.push({ id, name }); resultTasks[id] = []; }
@@ -1176,14 +1177,17 @@
         if (get(r, 'parent')) { subRows.push(r); return; }
         const title = get(r, 'title');
         if (!title) return;
-        const sectionId = ensureSection(get(r, 'status') || 'Someday');
+        // Done é flag, não status: CSV antigo com status=Done vira Active + done=x
+        const isLegacyDone = taskSectionId(get(r, 'status')) === 'done';
+        if (isLegacyDone) legacyDone = true;
+        const sectionId = ensureSection(isLegacyDone ? 'Active' : get(r, 'status') || 'Someday');
         const frente = get(r, 'frente').replace(/^#/, '');
         const nota = [get(r, 'por_que'), get(r, 'nota')].filter(Boolean).join(' · ');
         const note = [nota, frente ? '#' + frente : '', get(r, 'today') || get(r, 'urgente') ? '#today' : '']
           .filter(Boolean).join(' ');
         const task = {
           id: Date.now() + Math.random(), uid: get(r, 'id'), title, note,
-          checked: isDoneSection(sectionId) || !!get(r, 'done'), subtasks: [], section: sectionId,
+          checked: isLegacyDone || !!get(r, 'done'), subtasks: [], section: sectionId,
         };
         resultTasks[sectionId].push(task);
         if (task.uid) byId[task.uid] = task;
@@ -1194,7 +1198,7 @@
         const parent = byId[get(r, 'parent')];
         if (parent && get(r, 'title')) parent.subtasks.push({ text: get(r, 'title'), checked: !!get(r, 'done') });
       });
-      return { sections: resultSections, tasks: resultTasks, priorities: resultPriorities };
+      return { sections: resultSections, tasks: resultTasks, priorities: resultPriorities, legacyDone };
     }
 
     // Separa da nota interna o que vira coluna: frente (#tag) e #today
@@ -1276,7 +1280,7 @@
       sections = result.sections;
       tasks = result.tasks;
       priorities = result.priorities;
-      return reconcileDone();
+      return result.legacyDone;
     }
 
     async function checkForExternalChanges() {
@@ -1437,41 +1441,16 @@
       const grouped = groupOrder.flatMap(g => list.filter(c => (categoryGroup(c) || c) === g));
       return [...grouped, ...(present.has(NO_CATEGORY) ? [NO_CATEGORY] : [])];
     }
-    function isDoneSection(id) { return id === 'done'; }
-    // Done e concluída são a mesma coisa: estar na seção Done <=> checkbox [x]
-    function ensureDoneSection() {
-      if (!sections.some(s => isDoneSection(s.id))) sections.push({ id: 'done', name: 'Done' });
-      if (!tasks['done']) tasks['done'] = [];
-      return 'done';
-    }
     function setTaskSection(task, to, dropIndex = -1) {
-      if (task.section !== to) {
-        if (isDoneSection(to)) task.prevSection = task.section;
-        tasks[task.section] = (tasks[task.section] || []).filter(x => x.id !== task.id);
-        task.section = to;
-        if (!tasks[to]) tasks[to] = [];
-        if (dropIndex >= 0 && dropIndex <= tasks[to].length) tasks[to].splice(dropIndex, 0, task);
-        else tasks[to].push(task);
-      }
-      task.checked = isDoneSection(to);
+      if (task.section === to) return;
+      tasks[task.section] = (tasks[task.section] || []).filter(x => x.id !== task.id);
+      task.section = to;
+      if (!tasks[to]) tasks[to] = [];
+      if (dropIndex >= 0 && dropIndex <= tasks[to].length) tasks[to].splice(dropIndex, 0, task);
+      else tasks[to].push(task);
     }
-    function setTaskChecked(task, done) {
-      if (done) return setTaskSection(task, ensureDoneSection());
-      const back = task.prevSection && !isDoneSection(task.prevSection) && sections.some(s => s.id === task.prevSection)
-        ? task.prevSection
-        : (sections.find(s => isActiveSection(s.id)) || sections.find(s => !isDoneSection(s.id)) || {}).id;
-      if (back) setTaskSection(task, back);
-      else task.checked = false;
-    }
-    // Acerta arquivos editados fora do dashboard: [x] fora de Done vai para Done; tudo em Done fica [x]
-    function reconcileDone() {
-      let changed = false;
-      sections.forEach(sec => (tasks[sec.id] || []).slice().forEach(t => {
-        if (isDoneSection(sec.id)) { if (!t.checked) { t.checked = true; changed = true; } }
-        else if (t.checked) { setTaskChecked(t, true); changed = true; }
-      }));
-      return changed;
-    }
+    // Done é flag (coluna done), independente do status: a task fica onde está, riscada
+    function setTaskChecked(task, done) { task.checked = !!done; }
     function isActiveSection(id) { return id === 'active'; }
     function sortForNow(list) {
       return [...list].sort((a, b) =>
@@ -1501,7 +1480,7 @@
     let mmZoom = 1;
 
     function buildMindmapTree() {
-      const visible = sections.filter(sec => !(viewFilters.hideDone && isDoneSection(sec.id)))
+      const visible = sections
         .flatMap(sec => tasks[sec.id] || []).filter(passesFilters);
       const catNode = (cat, label) => ({
         id: 'cat:' + cat, kind: 'cat', cat, label,
@@ -1756,7 +1735,7 @@
           showStatus('Já existe uma tarefa com esse título');
           return;
         }
-        const task = { id: Date.now() + Math.random(), title, note: '', checked: isDoneSection(d.section), subtasks: [], section: d.section };
+        const task = { id: Date.now() + Math.random(), title, note: '', checked: false, subtasks: [], section: d.section };
         setTaskCategory(task, d.cat);
         if (d.today) setTaskFlag(task, 'today', true);
         if (d.note.trim()) setTaskNoteText(task, d.note);
@@ -1850,10 +1829,9 @@
       }
     }
 
-    // Status vem antes do score: Active → Waiting On → Someday → outras → Done
+    // Status vem antes do score: Active → Waiting On → Someday → outras
     const RANK_STATUS_ORDER = ['active', 'waiting-on', 'someday'];
     function rankStatusOrder(id) {
-      if (isDoneSection(id)) return RANK_STATUS_ORDER.length + 1;
       const i = RANK_STATUS_ORDER.indexOf(id);
       return i === -1 ? RANK_STATUS_ORDER.length : i;
     }
@@ -1902,7 +1880,7 @@
         `<option value="${NO_CATEGORY}" ${current === NO_CATEGORY ? 'selected' : ''}>Sem categoria</option>` +
         '<option value="__new__">+ nova frente…</option>';
 
-      const list = sections.filter(sec => !(viewFilters.hideDone && isDoneSection(sec.id)))
+      const list = sections
         .flatMap(sec => (tasks[sec.id] || []).map(t => ({ t, sec })))
         .filter(({ t, sec }) => passesFilters(t) && matchesRankCat(t) && !rankStatusHidden.has(sec.id))
         .sort((a, b) => (rankStatusOrder(a.sec.id) - rankStatusOrder(b.sec.id)) ||
@@ -2067,7 +2045,7 @@
       if (viewFilters.minScore > 0 && (taskScore(task) ?? -1) < viewFilters.minScore) return false;
       if (viewFilters.quick && !QUICK_FILTERS[viewFilters.quick](task)) return false;
       if (viewFilters.onlyToday && !isToday(task)) return false;
-      if (viewFilters.hideDone && isDoneSection(task.section)) return false;
+      if (viewFilters.hideDone && task.checked) return false;
       return true;
     }
     function buildToolbar(container, extraStats) {
@@ -2123,7 +2101,7 @@
       buildToolbar(matrixView);
       const allTasks = sections.flatMap(sec => tasks[sec.id] || []);
       const cats = orderedCategories(allTasks);
-      const rows = sections.filter(sec => !(viewFilters.hideDone && isDoneSection(sec.id)));
+      const rows = [...sections];
       // Active first, so "agora" is always the top row
       rows.sort((a, b) => isActiveSection(b.id) - isActiveSection(a.id));
 
@@ -2207,7 +2185,7 @@
             id: Date.now() + Math.random(),
             title,
             note: cat === NO_CATEGORY ? '' : '#' + cat,
-            checked: isDoneSection(sectionId),
+            checked: false,
             subtasks: [],
             section: sectionId,
           });
