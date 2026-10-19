@@ -663,7 +663,7 @@
     }
     .cat-pill { color: #fff; }
     .owner-pill { background: var(--bg-secondary); color: var(--text-secondary); border: 1px solid var(--border); }
-    .flag-pill { background: #fff5f5; color: #c92a2a; border: 1px solid #ffc9c9; }
+    .flag-pill { background: #2f9e44; color: #fff; border: 1px solid #2f9e44; }
 
     .view-toolbar {
       display: flex; flex-wrap: wrap; align-items: center; gap: 16px;
@@ -766,7 +766,10 @@
     }
     .rank-table tr:hover .rank-del, .rank-del:focus { opacity: 1; }
     .rank-del:hover { color: #c92a2a; background: #fff5f5; }
-    .rank-flag.on { opacity: 1; background: #fff5f5; color: #c92a2a; border: 1px solid #ffc9c9; }
+    .rank-flag.on { opacity: 1; background: #2f9e44; color: #fff; border: 1px solid #2f9e44; }
+    /* Flag today: linha verde no Scored (sempre no topo) */
+    .rank-table tr.today td, .rank-table tr.today:hover td { background: #ebfbee; }
+    .rank-table tr.today td:first-child { box-shadow: inset 4px 0 0 #2f9e44; }
     .rank-add {
       display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; padding: 10px 12px;
       background: var(--bg-card); border: 1px dashed var(--border); border-radius: 10px; font-size: 13px;
@@ -848,6 +851,8 @@
       border-radius: 6px; outline: none; background: var(--bg-card); color: var(--text-primary);
     }
     .matrix-chip.done { opacity: .5; text-decoration: line-through; }
+    /* Flag today: card verde no Grid, em qualquer status */
+    .matrix-chip.today { background: #ebfbee; border-color: #8ce99a; box-shadow: 0 0 0 1px #8ce99a; }
     .matrix-chip-head { display: flex; align-items: flex-start; gap: 6px; }
     .matrix-chip-head input { margin-top: 2px; cursor: pointer; }
     .matrix-chip-title { flex: 1; color: var(--text-primary); cursor: pointer; }
@@ -864,6 +869,10 @@
     .task-note:hover { background: var(--bg-card); box-shadow: 0 0 0 1px var(--border); }
     .task-note:focus { background: var(--bg-card); box-shadow: 0 0 0 2px var(--accent); color: var(--text-primary); }
     .task-note:empty::before { content: '+ nota'; color: var(--text-muted); font-style: italic; }
+    .matrix-chip .matrix-today { cursor: pointer; font: inherit; font-size: 11px; font-weight: 600; }
+    .matrix-chip .matrix-today.off { background: transparent; color: var(--text-muted); border: 1px dashed var(--border); opacity: 0; }
+    .matrix-chip:hover .matrix-today.off, .matrix-chip.open .matrix-today.off, .matrix-chip .matrix-today.off:focus { opacity: 1; }
+    .matrix-chip .matrix-today.off:hover { color: #2f9e44; border-color: #2f9e44; }
     .matrix-chip .score-pill { cursor: pointer; border: none; font: inherit; font-size: 11px; font-weight: 600; }
     .matrix-chip .score-pill.empty { background: transparent; color: var(--text-muted); border: 1px dashed var(--border); }
     .matrix-chip-score { display: flex; align-items: center; gap: 8px; margin-top: 6px; font-size: 11px; color: var(--text-secondary); }
@@ -1094,11 +1103,12 @@
     }
 
     // ===== tasks.csv: uma linha por task (e uma por subtarefa, com parent = id da task) =====
-    // Colunas: id, parent, status, title, frente, dono, urgente, i, u, e, nota, done. (Até 2026-10-19 havia por_que: ao ler, entra no início da nota.)
-    // Arquivo em Latin-1, sem BOM. O score não é gravado: sai de I/U/E. Internamente frente/dono/urgente viram tags na nota,
+    // Colunas: id, parent, status, title, frente, dono, today, i, u, e, nota, done. (Até 2026-10-19 havia por_que: ao ler, entra no início da nota;
+    // até 2026-10-19 a flag today se chamava urgente: a coluna antiga é lida como today.)
+    // Arquivo em Latin-1, sem BOM. O score não é gravado: sai de I/U/E. Internamente frente/dono/today viram tags na nota,
     // que é o que as abas já usam.
     const TASKS_FILE = 'tasks.csv';
-    const CSV_COLUMNS = ['id', 'parent', 'status', 'title', 'frente', 'dono', 'urgente', 'i', 'u', 'e', 'nota', 'done'];
+    const CSV_COLUMNS = ['id', 'parent', 'status', 'title', 'frente', 'dono', 'today', 'i', 'u', 'e', 'nota', 'done'];
     const DEFAULT_SECTIONS = ['Someday', 'Active', 'Waiting On', 'Done'];
 
     function parseCsv(text) {
@@ -1169,7 +1179,7 @@
         const sectionId = ensureSection(get(r, 'status') || 'Someday');
         const dono = get(r, 'dono'), frente = get(r, 'frente').replace(/^#/, '');
         const nota = [get(r, 'por_que'), get(r, 'nota')].filter(Boolean).join(' · ');
-        const note = [nota, dono ? `[${dono}]` : '', frente ? '#' + frente : '', get(r, 'urgente') ? '#urgente' : '']
+        const note = [nota, dono ? `[${dono}]` : '', frente ? '#' + frente : '', get(r, 'today') || get(r, 'urgente') ? '#today' : '']
           .filter(Boolean).join(' ');
         const task = {
           id: Date.now() + Math.random(), uid: get(r, 'id'), title, note,
@@ -1187,7 +1197,7 @@
       return { sections: resultSections, tasks: resultTasks, priorities: resultPriorities };
     }
 
-    // Separa da nota interna o que vira coluna: frente (#tag), dono ([...]) e #urgente
+    // Separa da nota interna o que vira coluna: frente (#tag), dono ([...]) e #today
     function noteColumns(task) {
       const cat = taskCategory(task);
       const frente = cat === NO_CATEGORY ? '' : cat;
@@ -1195,8 +1205,8 @@
       const dono = nota.match(/\[([^\]]+)\]/);
       if (dono) nota = nota.replace(dono[0], '');
       if (frente) nota = nota.replace(new RegExp('#' + frente.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?![\\p{L}\\p{N}_/-])', 'iu'), '');
-      nota = nota.replace(/#urgente(?![\p{L}\p{N}_\/-])/giu, '');
-      return { frente, dono: dono ? dono[1].trim() : '', urgente: taskFlags(task).includes('urgente'), nota: nota.replace(/\s{2,}/g, ' ').trim() };
+      nota = nota.replace(/#today(?![\p{L}\p{N}_\/-])/giu, '');
+      return { frente, dono: dono ? dono[1].trim() : '', today: isToday(task), nota: nota.replace(/\s{2,}/g, ' ').trim() };
     }
 
     function tasksToCsv() {
@@ -1209,7 +1219,7 @@
         seen.add(String(t.uid));
         const c = noteColumns(t);
         const p = priorityOf(t);
-        lines.push([t.uid, '', sec.name, t.title, c.frente, c.dono, c.urgente ? 'x' : '',
+        lines.push([t.uid, '', sec.name, t.title, c.frente, c.dono, c.today ? 'x' : '',
           p ? p.i : '', p ? p.u : '', p ? p.e : '', c.nota, t.checked ? 'x' : ''].map(csvField).join(','));
         t.subtasks.forEach((st, k) => {
           lines.push([`${t.uid}.${k + 1}`, t.uid, sec.name, st.text, '', '', '', '', '', '', '', st.checked ? 'x' : ''].map(csvField).join(','));
@@ -1304,9 +1314,11 @@
     // ===== CATEGORIES: #tag in the note = category (column) =====
     // ============================================================
     const NO_CATEGORY = '_none';
-    const FLAG_TAGS = ['urgente'];
+    const FLAG_TAGS = ['today'];
     // Subcategories use "group/sub" tags, e.g. #platforms/cfx
+    // A ordem aqui é a ordem das colunas do Grid (e das frentes no Scored/Mindmap): CEO na borda esquerda, Release antes de Exploratório
     const CATEGORY_META = {
+      ceo:        { label: 'CEO / Comercial',  color: '#1971c2' },
       'platforms/quartix-markets': { label: 'quartix-markets', color: '#0c8599' },
       'platforms/oxpro':           { label: 'oxpro',           color: '#4263eb' },
       'platforms/cfx':             { label: 'cfx',             color: '#e64980' },
@@ -1314,10 +1326,9 @@
       'platforms/sre':             { label: 'sre',             color: '#d9480f' },
       'produto/quartix-markets':   { label: 'quartix-markets', color: '#7048e8' },
       'produto/cfx':               { label: 'cfx',             color: '#ae3ec9' },
-      ceo:        { label: 'CEO / Comercial',  color: '#1971c2' },
-      release:    { label: 'Release',          color: '#2f9e44' },
       advisory:   { label: 'Advisory',         color: '#a61e4d' },
       marketing:  { label: 'Marketing',        color: '#e67700' },
+      release:    { label: 'Release',          color: '#2f9e44' },
       explorar:   { label: 'Exploratório',     color: '#868e96' },
     };
     const GROUP_META = {
@@ -1335,6 +1346,8 @@
     function taskFlags(task) {
       return taskTags(task).filter(t => FLAG_TAGS.includes(t));
     }
+    // Flag "today": destaque verde no Grid e topo do Scored, em qualquer status
+    function isToday(task) { return taskFlags(task).includes('today'); }
     function categoryGroup(cat) {
       return cat.includes('/') ? cat.split('/')[0] : null;
     }
@@ -1368,7 +1381,7 @@
       if (on) note += ' #' + flag;
       task.note = note.replace(/\s{2,}/g, ' ').trim();
     }
-    // Texto livre da nota: as tags (#frente, #urgente, [dono]) ficam preservadas na frente
+    // Texto livre da nota: as tags (#frente, #today, [dono]) ficam preservadas na frente
     function setTaskNoteText(task, text) {
       const tags = (task.note || '').match(new RegExp(TAG_RE.source + '|\\[[^\\]]*\\]', 'gu')) || [];
       task.note = [...tags, text.replace(/\s+/g, ' ').trim()].join(' ').trim();
@@ -1709,7 +1722,7 @@
       const visible = cats.filter(c => !rankCatHidden.has(c) && c !== NO_CATEGORY);
       const d = rankAddDraft || {
         title: '', cat: visible[0] || cats.find(c => c !== NO_CATEGORY) || NO_CATEGORY,
-        section: sections.find(x => isActiveSection(x.id))?.id || sections[0]?.id, i: 3, u: 3, e: 3, note: '', urgent: false,
+        section: sections.find(x => isActiveSection(x.id))?.id || sections[0]?.id, i: 3, u: 3, e: 3, note: '', today: false,
       };
       rankAddDraft = d;
       const form = document.createElement('form');
@@ -1722,7 +1735,7 @@
         <select data-f="cat" class="rank-cat-edit" style="background:${categoryColor(d.cat)}">${catOptions(d.cat)}</select>
         <select data-f="section">${sections.map(x => `<option value="${escapeHtml(x.id)}" ${x.id === d.section ? 'selected' : ''}>${escapeHtml(x.name)}</option>`).join('')}</select>
         ${nums('i')}${nums('u')}${nums('e')}
-        <label><input type="checkbox" data-f="urgent" ${d.urgent ? 'checked' : ''}> urgente</label>
+        <label><input type="checkbox" data-f="today" ${d.today ? 'checked' : ''}> today</label>
         <input data-f="note" class="rank-add-note" placeholder="Nota (opcional)" value="${escapeHtml(d.note)}">
         <button type="submit" class="primary">Adicionar</button>`;
       form.querySelectorAll('[data-f]').forEach(el => el.addEventListener(el.tagName === 'INPUT' && el.type !== 'checkbox' ? 'input' : 'change', async () => {
@@ -1747,11 +1760,11 @@
         }
         const task = { id: Date.now() + Math.random(), title, note: '', checked: isDoneSection(d.section), subtasks: [], section: d.section };
         setTaskCategory(task, d.cat);
-        if (d.urgent) setTaskFlag(task, 'urgente', true);
+        if (d.today) setTaskFlag(task, 'today', true);
         if (d.note.trim()) setTaskNoteText(task, d.note);
         tasks[d.section].push(task);
         priorities[priorityKey(title)] = { title, i: d.i, u: d.u, e: d.e };
-        rankAddDraft = { ...d, title: '', note: '', urgent: false };
+        rankAddDraft = { ...d, title: '', note: '', today: false };
         markChanged();
         await savePriorities();
         renderTasks();
@@ -1942,14 +1955,14 @@
         const p = priorityOf(t);
         const score = p ? priorityScore(p) : null;
         const cat = taskCategory(t);
-        const urgent = taskFlags(t).includes('urgente');
+        const today = isToday(t);
         const tr = document.createElement('tr');
-        if (t.checked) tr.className = 'done';
+        tr.className = [t.checked ? 'done' : '', today ? 'today' : ''].filter(Boolean).join(' ');
         const sel = (field) => `<select data-field="${field}">${p ? '' : '<option value="">–</option>'}${[1, 2, 3, 4, 5].map(n => `<option ${p && p[field] === n ? 'selected' : ''}>${n}</option>`).join('')}</select>`;
         tr.innerHTML = `
           <td class="rank-num">${idx + 1}</td>
           <td><div class="rank-score">${score ?? '–'}<div class="bar"><div style="width:${(score ?? 0) / 10}%;background:${scoreColor(score ?? 0)}"></div></div></div></td>
-          <td><div class="rank-title" style="--cat-color:${categoryColor(cat)}"><button class="rank-flag ${urgent ? 'on' : ''}" title="${urgent ? 'Desmarcar urgente' : 'Marcar como urgente'}">${urgent ? 'urgente' : '⚑'}</button><button class="rank-del" title="Excluir tarefa (e o score dela)">🗑</button><span class="rank-title-text" contenteditable="true" spellcheck="false" title="Clique para editar">${escapeHtml(t.title)}</span></div>${rankSubsHtml(t)}</td>
+          <td><div class="rank-title" style="--cat-color:${categoryColor(cat)}"><button class="rank-flag ${today ? 'on' : ''}" title="${today ? 'Desmarcar today' : 'Marcar como today'}">${today ? 'today' : '⚑'}</button><button class="rank-del" title="Excluir tarefa (e o score dela)">🗑</button><span class="rank-title-text" contenteditable="true" spellcheck="false" title="Clique para editar">${escapeHtml(t.title)}</span></div>${rankSubsHtml(t)}</td>
           <td><select class="rank-cat-edit" title="Mudar a frente" style="background:${categoryColor(cat)}">${catOptions(cat)}</select></td>
           <td><select class="rank-status-edit status-${escapeHtml(sec.id)}" title="Mudar o status">${sections.map(x => `<option value="${escapeHtml(x.id)}" ${x.id === sec.id ? 'selected' : ''}>${escapeHtml(x.name)}</option>`).join('')}</select></td>
           <td>${sel('i')}</td><td>${sel('u')}</td><td>${sel('e')}</td>
@@ -1973,7 +1986,7 @@
           renderTasks();
         });
         tr.querySelector('.rank-flag').addEventListener('click', () => {
-          setTaskFlag(t, 'urgente', !urgent);
+          setTaskFlag(t, 'today', !today);
           markChanged();
           renderTasks();
         });
@@ -2028,9 +2041,21 @@
     }
 
     // Shared filters for Tabela/Ranking/Mindmap
-    // quick: '' | 'active' | 'urgent' (toggled by the stat cards)
-    const viewFilters = { quick: '', hideDone: true, minScore: 0 };
+    // quick: '' | 'active' (card Active); onlyToday: card today (só tasks com a flag)
+    const viewFilters = { quick: '', hideDone: true, minScore: 0, onlyToday: false };
+    const QUICK_FILTER_KEYS = ['active'];
     try { viewFilters.minScore = Math.max(0, Math.min(1000, parseInt(localStorage.getItem('minScore'), 10) || 0)); } catch (e) {}
+    // Cards Active/today e "Ocultar Done" sobrevivem ao recarregar (localStorage viewFilters)
+    try {
+      const saved = JSON.parse(localStorage.getItem('viewFilters') || '{}');
+      if (saved.quick === '' || QUICK_FILTER_KEYS.includes(saved.quick)) viewFilters.quick = saved.quick;
+      if (typeof saved.onlyToday === 'boolean') viewFilters.onlyToday = saved.onlyToday;
+      if (typeof saved.hideDone === 'boolean') viewFilters.hideDone = saved.hideDone;
+    } catch (e) {}
+    function saveViewFilters() {
+      const { quick, onlyToday, hideDone } = viewFilters;
+      try { localStorage.setItem('viewFilters', JSON.stringify({ quick, onlyToday, hideDone })); } catch (e) {}
+    }
     function setMinScore(v) {
       viewFilters.minScore = Math.max(0, Math.min(1000, Math.round((+v || 0) / 10) * 10));
       try { localStorage.setItem('minScore', String(viewFilters.minScore)); } catch (e) {}
@@ -2038,12 +2063,12 @@
     }
     const QUICK_FILTERS = {
       active: t => isActiveSection(t.section),
-      urgent: t => taskFlags(t).length > 0,
     };
     function passesFilters(task) {
       // Score mínimo: tasks sem score somem quando o filtro está ligado
       if (viewFilters.minScore > 0 && (taskScore(task) ?? -1) < viewFilters.minScore) return false;
       if (viewFilters.quick && !QUICK_FILTERS[viewFilters.quick](task)) return false;
+      if (viewFilters.onlyToday && !isToday(task)) return false;
       if (viewFilters.hideDone && isDoneSection(task.section)) return false;
       return true;
     }
@@ -2051,13 +2076,13 @@
       const bar = document.createElement('div');
       bar.className = 'view-toolbar';
       const active = (tasks['active'] || []).filter(t => !t.checked);
-      // urgentes: só a flag, em qualquer status
-      const urgent = sections.flatMap(sec => tasks[sec.id] || []).filter(QUICK_FILTERS.urgent).length;
+      // today: só a flag, em qualquer status
+      const today = sections.flatMap(sec => tasks[sec.id] || []).filter(isToday).length;
       const statCard = (key, label, n) =>
         `<span class="stat clickable ${viewFilters.quick === key ? 'on' : ''}" data-q="${key}" title="Clique para filtrar">${label}: <strong>${n}</strong></span>`;
       bar.innerHTML = `
         ${statCard('active', 'Active', active.length)}
-        ${statCard('urgent', 'urgentes', urgent)}
+        <span class="stat clickable ${viewFilters.onlyToday ? 'on' : ''}" data-today title="Clique para mostrar só today">today: <strong>${today}</strong></span>
         ${extraStats || ''}
         <span style="flex:1"></span>
         <span class="score-filter ${viewFilters.minScore ? 'on' : ''}" title="Mostrar só tasks com score a partir deste valor (0 = todas)">
@@ -2068,10 +2093,17 @@
         <label><input type="checkbox" data-f="hideDone" ${viewFilters.hideDone ? 'checked' : ''}> Ocultar Done</label>`;
       bar.querySelectorAll('[data-q]').forEach(el => el.addEventListener('click', () => {
         viewFilters.quick = viewFilters.quick === el.dataset.q ? '' : el.dataset.q;
+        saveViewFilters();
         renderTasks();
       }));
+      bar.querySelector('[data-today]').addEventListener('click', () => {
+        viewFilters.onlyToday = !viewFilters.onlyToday;
+        saveViewFilters();
+        renderTasks();
+      });
       bar.querySelectorAll('input[data-f]').forEach(inp => inp.addEventListener('change', () => {
         viewFilters[inp.dataset.f] = inp.checked;
+        saveViewFilters();
         renderTasks();
       }));
       const sf = bar.querySelector('.score-filter');
@@ -2199,12 +2231,15 @@
     function createMatrixChip(task) {
       const chip = document.createElement('div');
       const isOpen = matrixOpen.has(priorityKey(task.title));
-      chip.className = 'matrix-chip' + (task.checked ? ' done' : '') + (isOpen ? ' open' : '');
+      chip.className = 'matrix-chip' + (task.checked ? ' done' : '') + (isToday(task) ? ' today' : '') + (isOpen ? ' open' : '');
       chip.draggable = !isOpen;
       chip.style.setProperty('--cat-color', categoryColor(taskCategory(task)));
       const note = cleanNote(task.note);
       const subs = isOpen ? rankSubsHtml(task, true) : !task.subtasks.length ? '' : '<ul class="matrix-chip-subs">' + task.subtasks.map(st => `<li>${st.checked ? '✓ ' : ''}${escapeHtml(st.text)}</li>`).join('') + '</ul>';
-      const flags = taskFlags(task).map(f => `<span class="flag-pill">${escapeHtml(f)}</span>`).join('');
+      // Flag today clicável: pill verde quando marcada; "⚑ today" aparece no hover para marcar
+      const flags = isToday(task)
+        ? '<button class="flag-pill matrix-today" title="Desmarcar today">today</button>'
+        : '<button class="flag-pill matrix-today off" title="Marcar como today">⚑ today</button>';
       const score = taskScore(task);
       const p = priorityOf(task);
       const scoreOpen = matrixScoreOpen.has(priorityKey(task.title));
@@ -2251,6 +2286,11 @@
         });
       }
       if (scoreOpen) chip.draggable = false;
+      chip.querySelector('.matrix-today').addEventListener('click', () => {
+        setTaskFlag(task, 'today', !isToday(task));
+        markChanged();
+        renderTasks();
+      });
       chip.querySelector('.score-pill').addEventListener('click', () => {
         const key = priorityKey(task.title);
         matrixScoreOpen.has(key) ? matrixScoreOpen.delete(key) : matrixScoreOpen.add(key);
