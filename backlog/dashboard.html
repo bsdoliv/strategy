@@ -93,11 +93,12 @@
 
     .buttons { display: flex; gap: 12px; }
 
-    /* Botão Subtarefas: oculta as subtarefas nas abas que as mostram */
-    body.hide-subs .rank-subs,
-    body.hide-subs .rank-subs-toggle,
+    /* Botão Subtarefas: oculta as subtarefas (e, no Grid, as notas dos cards fechados) */
+    body.hide-subs .rank-table .rank-subs,
+    body.hide-subs .rank-table .rank-subs-toggle,
     body.hide-subs .matrix-chip-subs,
-    body.hide-subs .matrix-chip-subcount { display: none !important; }
+    body.hide-subs .matrix-chip-subcount,
+    body.hide-subs .matrix-chip-note { display: none !important; }
 
     button {
       background: var(--bg-card);
@@ -715,9 +716,14 @@
     .rank-score .bar div { height: 100%; border-radius: 3px; }
     .rank-title { border-left: 3px solid var(--cat-color, var(--border)); padding-left: 8px; color: var(--text-primary); font-weight: 500; }
     .rank-table select { font: inherit; border: 1px solid var(--border); border-radius: 4px; background: var(--bg-card); color: var(--text-primary); padding: 1px 2px; }
-    .rank-why { color: var(--text-secondary); min-width: 220px; outline: none; border-radius: 4px; padding: 2px 4px; }
-    .rank-why:focus { background: var(--bg-card); box-shadow: 0 0 0 2px var(--accent); }
-    .rank-why:empty::before { content: '+ por quê'; color: var(--text-muted); font-style: italic; }
+    /* Status colorido no Scored: Active verde, Waiting On amarelo, Someday padrão */
+    .rank-table select.rank-status-edit { min-width: 112px; }
+    .rank-table select.rank-status-edit.status-active { background: #d3f9d8; border-color: #8ce99a; color: #2b8a3e; font-weight: 600; }
+    .rank-table select.rank-status-edit.status-waiting-on { background: #fff3bf; border-color: #ffd43b; color: #946c00; font-weight: 600; }
+    .rank-table select.rank-status-edit option { background: var(--bg-card); color: var(--text-primary); font-weight: normal; }
+    .rank-note { color: var(--text-secondary); min-width: 220px; outline: none; border-radius: 4px; padding: 2px 4px; }
+    .rank-note:focus { background: var(--bg-card); box-shadow: 0 0 0 2px var(--accent); }
+    .rank-note:empty::before { content: '+ nota'; color: var(--text-muted); font-style: italic; }
     .rank-table select.rank-cat-edit {
       color: #fff; border: none; border-radius: 999px; font-size: 11px; font-weight: 600;
       padding: 3px 6px; cursor: pointer; max-width: 210px;
@@ -770,7 +776,7 @@
       font: inherit; padding: 4px 8px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg-card); color: var(--text-primary);
     }
     .rank-add-title { flex: 2 1 260px; }
-    .rank-add-why { flex: 1 1 200px; }
+    .rank-add-note { flex: 1 1 200px; }
     .rank-add select { font: inherit; border: 1px solid var(--border); border-radius: 4px; background: var(--bg-card); color: var(--text-primary); padding: 2px; }
     .rank-add select.rank-cat-edit { color: #fff; border: none; border-radius: 999px; font-size: 11px; font-weight: 600; padding: 3px 6px; }
     .rank-add label { display: inline-flex; align-items: center; gap: 4px; color: var(--text-secondary); }
@@ -846,12 +852,23 @@
     .matrix-chip-head input { margin-top: 2px; cursor: pointer; }
     .matrix-chip-title { flex: 1; color: var(--text-primary); cursor: pointer; }
     .matrix-chip-meta { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; }
-    .matrix-chip-detail { display: none; margin-top: 6px; color: var(--text-secondary); font-size: 12px; }
-    .matrix-chip.open .matrix-chip-detail { display: block; }
+    .matrix-chip.open { cursor: default; box-shadow: 0 0 0 2px var(--accent); }
+    .matrix-chip.open .matrix-chip-title { cursor: text; outline: none; border-radius: 4px; padding: 0 2px; }
+    .matrix-chip.open .matrix-chip-title:focus { background: var(--bg-secondary); }
+    .matrix-chip-close { border: none; background: transparent; color: var(--text-muted); cursor: pointer; font-size: 14px; line-height: 1; padding: 0 2px; }
+    .matrix-chip-close:hover { color: var(--accent); }
+    .matrix-chip .rank-subs { margin-left: 0; }
+    .matrix-chip .rank-sub-del { opacity: 1; }
+    /* Nota da task (coluna nota do tasks.csv), editável no card aberto do Grid */
+    .task-note { margin-top: 3px; font-size: 12px; color: var(--text-secondary); outline: none; border-radius: 4px; padding: 1px 3px; cursor: text; white-space: pre-wrap; }
+    .task-note:hover { background: var(--bg-card); box-shadow: 0 0 0 1px var(--border); }
+    .task-note:focus { background: var(--bg-card); box-shadow: 0 0 0 2px var(--accent); color: var(--text-primary); }
+    .task-note:empty::before { content: '+ nota'; color: var(--text-muted); font-style: italic; }
     .matrix-chip .score-pill { cursor: pointer; border: none; font: inherit; font-size: 11px; font-weight: 600; }
     .matrix-chip .score-pill.empty { background: transparent; color: var(--text-muted); border: 1px dashed var(--border); }
     .matrix-chip-score { display: flex; align-items: center; gap: 8px; margin-top: 6px; font-size: 11px; color: var(--text-secondary); }
     .matrix-chip-score select { font: inherit; border: 1px solid var(--border); border-radius: 4px; background: var(--bg-card); color: var(--text-primary); padding: 0 2px; }
+    .matrix-chip-note { margin-top: 5px; color: var(--text-secondary); font-size: 12px; }
     .matrix-chip-subs { margin: 6px 0 0 16px; padding: 0; color: var(--text-secondary); font-size: 12px; }
 
 </style>
@@ -881,7 +898,7 @@
         <button id="mindmapViewBtn">Mindmap</button>
       </div>
       <div class="view-toggle" id="subsToggle">
-        <button id="subsToggleBtn" title="Mostrar/ocultar subtarefas">Subtarefas</button>
+        <button id="subsToggleBtn" title="Mostrar/ocultar notas e subtarefas">Notas e subtarefas</button>
       </div>
     </div>
     <div class="buttons">
@@ -1077,11 +1094,11 @@
     }
 
     // ===== tasks.csv: uma linha por task (e uma por subtarefa, com parent = id da task) =====
-    // Colunas: id, parent, status, title, frente, dono, urgente, i, u, e, por_que, nota, done.
+    // Colunas: id, parent, status, title, frente, dono, urgente, i, u, e, nota, done. (Até 2026-10-19 havia por_que: ao ler, entra no início da nota.)
     // Arquivo em Latin-1, sem BOM. O score não é gravado: sai de I/U/E. Internamente frente/dono/urgente viram tags na nota,
     // que é o que as abas já usam.
     const TASKS_FILE = 'tasks.csv';
-    const CSV_COLUMNS = ['id', 'parent', 'status', 'title', 'frente', 'dono', 'urgente', 'i', 'u', 'e', 'por_que', 'nota', 'done'];
+    const CSV_COLUMNS = ['id', 'parent', 'status', 'title', 'frente', 'dono', 'urgente', 'i', 'u', 'e', 'nota', 'done'];
     const DEFAULT_SECTIONS = ['Someday', 'Active', 'Waiting On', 'Done'];
 
     function parseCsv(text) {
@@ -1151,7 +1168,8 @@
         if (!title) return;
         const sectionId = ensureSection(get(r, 'status') || 'Someday');
         const dono = get(r, 'dono'), frente = get(r, 'frente').replace(/^#/, '');
-        const note = [get(r, 'nota'), dono ? `[${dono}]` : '', frente ? '#' + frente : '', get(r, 'urgente') ? '#urgente' : '']
+        const nota = [get(r, 'por_que'), get(r, 'nota')].filter(Boolean).join(' · ');
+        const note = [nota, dono ? `[${dono}]` : '', frente ? '#' + frente : '', get(r, 'urgente') ? '#urgente' : '']
           .filter(Boolean).join(' ');
         const task = {
           id: Date.now() + Math.random(), uid: get(r, 'id'), title, note,
@@ -1160,7 +1178,7 @@
         resultTasks[sectionId].push(task);
         if (task.uid) byId[task.uid] = task;
         const [i, u, e] = ['i', 'u', 'e'].map(k => get(r, k));
-        if ([i, u, e].every(x => /^[1-5]$/.test(x))) resultPriorities[priorityKey(title)] = { title, i: +i, u: +u, e: +e, why: get(r, 'por_que') };
+        if ([i, u, e].every(x => /^[1-5]$/.test(x))) resultPriorities[priorityKey(title)] = { title, i: +i, u: +u, e: +e };
       });
       subRows.forEach(r => {
         const parent = byId[get(r, 'parent')];
@@ -1192,9 +1210,9 @@
         const c = noteColumns(t);
         const p = priorityOf(t);
         lines.push([t.uid, '', sec.name, t.title, c.frente, c.dono, c.urgente ? 'x' : '',
-          p ? p.i : '', p ? p.u : '', p ? p.e : '', p ? p.why || '' : '', c.nota, t.checked ? 'x' : ''].map(csvField).join(','));
+          p ? p.i : '', p ? p.u : '', p ? p.e : '', c.nota, t.checked ? 'x' : ''].map(csvField).join(','));
         t.subtasks.forEach((st, k) => {
-          lines.push([`${t.uid}.${k + 1}`, t.uid, sec.name, st.text, '', '', '', '', '', '', '', '', st.checked ? 'x' : ''].map(csvField).join(','));
+          lines.push([`${t.uid}.${k + 1}`, t.uid, sec.name, st.text, '', '', '', '', '', '', '', st.checked ? 'x' : ''].map(csvField).join(','));
         });
       }));
       return lines.join('\n') + '\n';
@@ -1350,6 +1368,42 @@
       if (on) note += ' #' + flag;
       task.note = note.replace(/\s{2,}/g, ' ').trim();
     }
+    // Texto livre da nota: as tags (#frente, #urgente, [dono]) ficam preservadas na frente
+    function setTaskNoteText(task, text) {
+      const tags = (task.note || '').match(new RegExp(TAG_RE.source + '|\\[[^\\]]*\\]', 'gu')) || [];
+      task.note = [...tags, text.replace(/\s+/g, ' ').trim()].join(' ').trim();
+    }
+    function bindNoteEdit(el, task) {
+      el.addEventListener('keydown', e => {
+        if (e.key === 'Enter') { e.preventDefault(); el.blur(); }
+        if (e.key === 'Escape') { el.textContent = cleanNote(task.note); el.blur(); }
+      });
+      el.addEventListener('blur', () => {
+        const next = el.textContent.replace(/\s+/g, ' ').trim();
+        if (next === cleanNote(task.note)) { el.textContent = next; return; }
+        setTaskNoteText(task, next);
+        markChanged();
+        renderTasks();
+      });
+    }
+    // Renomeia a task levando junto o score (priorities é indexado pelo título)
+    async function renameTask(t, next) {
+      const oldKey = priorityKey(t.title);
+      const newKey = priorityKey(next);
+      const entry = priorities[oldKey];
+      if (rankSubsOpen.delete(oldKey)) rankSubsOpen.add(newKey);
+      if (matrixOpen.delete(oldKey)) matrixOpen.add(newKey);
+      if (matrixScoreOpen.delete(oldKey)) matrixScoreOpen.add(newKey);
+      t.title = next;
+      if (entry) {
+        delete priorities[oldKey];
+        entry.title = next;
+        priorities[newKey] = entry;
+        await savePriorities();
+      }
+      markChanged();
+      renderTasks();
+    }
     function setTaskCategory(task, cat) {
       const current = taskCategory(task);
       if (current === cat) return;
@@ -1414,7 +1468,7 @@
         (taskFlags(b).length - taskFlags(a).length));
     }
 
-    // ===== Prioridade: colunas i/u/e/por_que do tasks.csv (mapa por título, em memória) =====
+    // ===== Prioridade: colunas i/u/e do tasks.csv (mapa por título, em memória) =====
     let projectRoot = null;
     let priorities = {};
 
@@ -1655,7 +1709,7 @@
       const visible = cats.filter(c => !rankCatHidden.has(c) && c !== NO_CATEGORY);
       const d = rankAddDraft || {
         title: '', cat: visible[0] || cats.find(c => c !== NO_CATEGORY) || NO_CATEGORY,
-        section: sections.find(x => isActiveSection(x.id))?.id || sections[0]?.id, i: 3, u: 3, e: 3, why: '', urgent: false,
+        section: sections.find(x => isActiveSection(x.id))?.id || sections[0]?.id, i: 3, u: 3, e: 3, note: '', urgent: false,
       };
       rankAddDraft = d;
       const form = document.createElement('form');
@@ -1669,7 +1723,7 @@
         <select data-f="section">${sections.map(x => `<option value="${escapeHtml(x.id)}" ${x.id === d.section ? 'selected' : ''}>${escapeHtml(x.name)}</option>`).join('')}</select>
         ${nums('i')}${nums('u')}${nums('e')}
         <label><input type="checkbox" data-f="urgent" ${d.urgent ? 'checked' : ''}> urgente</label>
-        <input data-f="why" class="rank-add-why" placeholder="Por quê (opcional)" value="${escapeHtml(d.why)}">
+        <input data-f="note" class="rank-add-note" placeholder="Nota (opcional)" value="${escapeHtml(d.note)}">
         <button type="submit" class="primary">Adicionar</button>`;
       form.querySelectorAll('[data-f]').forEach(el => el.addEventListener(el.tagName === 'INPUT' && el.type !== 'checkbox' ? 'input' : 'change', async () => {
         const f = el.dataset.f;
@@ -1694,9 +1748,10 @@
         const task = { id: Date.now() + Math.random(), title, note: '', checked: isDoneSection(d.section), subtasks: [], section: d.section };
         setTaskCategory(task, d.cat);
         if (d.urgent) setTaskFlag(task, 'urgente', true);
+        if (d.note.trim()) setTaskNoteText(task, d.note);
         tasks[d.section].push(task);
-        priorities[priorityKey(title)] = { title, i: d.i, u: d.u, e: d.e, why: d.why.trim() };
-        rankAddDraft = { ...d, title: '', why: '', urgent: false };
+        priorities[priorityKey(title)] = { title, i: d.i, u: d.u, e: d.e };
+        rankAddDraft = { ...d, title: '', note: '', urgent: false };
         markChanged();
         await savePriorities();
         renderTasks();
@@ -1708,12 +1763,12 @@
     // Subtarefas abertas no Ranking (por título, pois o id muda a cada leitura do arquivo)
     const rankSubsOpen = new Set();
     let rankSubFocus = null;
-    function rankSubsHtml(t) {
+    function rankSubsHtml(t, always = false) {
       const key = priorityKey(t.title);
       const n = t.subtasks.length;
       const done = t.subtasks.filter(st => st.checked).length;
       // Subtarefas existentes ficam sempre visíveis; "+ subtarefa" abre o campo nas tasks que ainda não têm
-      const adding = rankSubsOpen.has(key);
+      const adding = always || rankSubsOpen.has(key);
       const open = n > 0 || adding;
       let html = n
         ? `<span class="rank-subs-count">${done}/${n} subtarefa${n > 1 ? 's' : ''}</span>`
@@ -1735,7 +1790,7 @@
       const flip = () => {
         rankSubsOpen.has(key) ? rankSubsOpen.delete(key) : rankSubsOpen.add(key);
         if (rankSubsOpen.has(key)) rankSubFocus = key;
-        renderRanking();
+        renderTasks();
       };
       if (toggle) {
         toggle.addEventListener('click', flip);
@@ -1795,7 +1850,7 @@
       buildToolbar(rankView);
       const legend = document.createElement('div');
       legend.className = 'rank-legend';
-      legend.textContent = 'Score = 200 × (0,5·Impacto + 0,35·Urgência + 0,15·(6 − Esforço)), de 0 a 1000. Ajuste IMP/URG/EFF e o "por quê" aqui mesmo — salva no tasks.csv.';
+      legend.textContent = 'Score = 200 × (0,5·Impacto + 0,35·Urgência + 0,15·(6 − Esforço)), de 0 a 1000. Ajuste IMP/URG/EFF e a nota aqui mesmo — salva no tasks.csv.';
       rankView.appendChild(legend);
 
       const cats = orderedCategories(sections.flatMap(sec => tasks[sec.id] || []));
@@ -1842,7 +1897,7 @@
 
       const table = document.createElement('table');
       table.className = 'rank-table';
-      table.innerHTML = `<thead><tr><th>#</th><th>Score</th><th>Tarefa</th><th>Frente ${catMenu}</th><th>Status ${statusMenu}</th><th title="Impacto">IMP</th><th title="Urgência">URG</th><th title="Esforço">EFF</th><th>Por quê</th></tr></thead>`;
+      table.innerHTML = `<thead><tr><th>#</th><th>Score</th><th>Tarefa</th><th>Frente ${catMenu}</th><th>Status ${statusMenu}</th><th title="Impacto">IMP</th><th title="Urgência">URG</th><th title="Esforço">EFF</th><th>Nota</th></tr></thead>`;
       const statusMenuEl = table.querySelector('.rank-cat-menu[data-menu="status"]');
       statusMenuEl.querySelector('.rank-cat-toggle').addEventListener('click', () => {
         rankStatusMenuOpen = !rankStatusMenuOpen;
@@ -1894,12 +1949,12 @@
           <td><div class="rank-score">${score ?? '–'}<div class="bar"><div style="width:${(score ?? 0) / 10}%;background:${scoreColor(score ?? 0)}"></div></div></div></td>
           <td><div class="rank-title" style="--cat-color:${categoryColor(cat)}"><button class="rank-flag ${urgent ? 'on' : ''}" title="${urgent ? 'Desmarcar urgente' : 'Marcar como urgente'}">${urgent ? 'urgente' : '⚑'}</button><button class="rank-del" title="Excluir tarefa (e o score dela)">🗑</button><span class="rank-title-text" contenteditable="true" spellcheck="false" title="Clique para editar">${escapeHtml(t.title)}</span></div>${rankSubsHtml(t)}</td>
           <td><select class="rank-cat-edit" title="Mudar a frente" style="background:${categoryColor(cat)}">${catOptions(cat)}</select></td>
-          <td><select class="rank-status-edit" title="Mudar o status">${sections.map(x => `<option value="${escapeHtml(x.id)}" ${x.id === sec.id ? 'selected' : ''}>${escapeHtml(x.name)}</option>`).join('')}</select></td>
+          <td><select class="rank-status-edit status-${escapeHtml(sec.id)}" title="Mudar o status">${sections.map(x => `<option value="${escapeHtml(x.id)}" ${x.id === sec.id ? 'selected' : ''}>${escapeHtml(x.name)}</option>`).join('')}</select></td>
           <td>${sel('i')}</td><td>${sel('u')}</td><td>${sel('e')}</td>
-          <td><div class="rank-why" contenteditable="true">${escapeHtml(p?.why || '')}</div></td>`;
+          <td><div class="rank-note" contenteditable="true" spellcheck="false">${escapeHtml(cleanNote(t.note))}</div></td>`;
         const ensure = () => {
           const key = priorityKey(t.title);
-          if (!priorities[key]) priorities[key] = { title: t.title, i: 3, u: 3, e: 3, why: '' };
+          if (!priorities[key]) priorities[key] = { title: t.title, i: 3, u: 3, e: 3 };
           return priorities[key];
         };
         tr.querySelectorAll('select').forEach(selEl => selEl.addEventListener('change', async () => {
@@ -1942,18 +1997,7 @@
         titleEl.addEventListener('blur', async () => {
           const next = titleEl.textContent.replace(/\s+/g, ' ').trim();
           if (!next || next === t.title) { titleEl.textContent = t.title; return; }
-          const oldKey = priorityKey(t.title);
-          const entry = priorities[oldKey];
-          if (rankSubsOpen.delete(oldKey)) rankSubsOpen.add(priorityKey(next));
-          t.title = next;
-          if (entry) {
-            delete priorities[oldKey];
-            entry.title = next;
-            priorities[priorityKey(next)] = entry;
-            await savePriorities();
-          }
-          markChanged();
-          renderTasks();
+          await renameTask(t, next);
         });
         tr.querySelector('.rank-cat-edit').addEventListener('change', e => {
           let next = e.target.value;
@@ -1966,24 +2010,19 @@
           markChanged();
           renderTasks();
         });
-        const why = tr.querySelector('.rank-why');
-        why.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); why.blur(); } });
-        why.addEventListener('blur', async () => {
-          const text = why.textContent.trim();
-          if ((p?.why || '') === text) return;
-          ensure().why = text;
-          await savePriorities();
-        });
+        bindNoteEdit(tr.querySelector('.rank-note'), t);
         tbody.appendChild(tr);
       });
       table.appendChild(tbody);
       rankView.appendChild(buildRankAddForm(cats, catOptions));
       rankView.appendChild(table);
-      if (rankSubFocus) {
-        const input = [...table.querySelectorAll('.rank-sub-add')].find(x => x.dataset.key === rankSubFocus);
-        rankSubFocus = null;
-        if (input) input.focus();
-      }
+      restoreSubFocus(table);
+    }
+    function restoreSubFocus(container) {
+      if (!rankSubFocus) return;
+      const input = [...container.querySelectorAll('.rank-sub-add')].find(x => x.dataset.key === rankSubFocus);
+      rankSubFocus = null;
+      if (input) input.focus();
     }
 
     // Shared filters for Tabela/Ranking/Mindmap
@@ -2116,6 +2155,7 @@
       });
       table.appendChild(tbody);
       matrixView.appendChild(table);
+      restoreSubFocus(table);
     }
 
     function startMatrixAdd(addEl, sectionId, cat) {
@@ -2152,14 +2192,16 @@
 
     // Score editável no Grid: clicar na pill abre IMP/URG/EFF no próprio card
     const matrixScoreOpen = new Set();
+    // Cards abertos para edição (clicar no título): título, nota e subtarefas editáveis
+    const matrixOpen = new Set();
     function createMatrixChip(task) {
       const chip = document.createElement('div');
-      chip.className = 'matrix-chip' + (task.checked ? ' done' : '');
-      chip.draggable = true;
+      const isOpen = matrixOpen.has(priorityKey(task.title));
+      chip.className = 'matrix-chip' + (task.checked ? ' done' : '') + (isOpen ? ' open' : '');
+      chip.draggable = !isOpen;
       chip.style.setProperty('--cat-color', categoryColor(taskCategory(task)));
       const note = cleanNote(task.note);
-      const subs = task.subtasks.length
-        ? '<ul class="matrix-chip-subs">' + task.subtasks.map(st => `<li>${st.checked ? '✓ ' : ''}${escapeHtml(st.text)}</li>`).join('') + '</ul>' : '';
+      const subs = isOpen ? rankSubsHtml(task, true) : !task.subtasks.length ? '' : '<ul class="matrix-chip-subs">' + task.subtasks.map(st => `<li>${st.checked ? '✓ ' : ''}${escapeHtml(st.text)}</li>`).join('') + '</ul>';
       const flags = taskFlags(task).map(f => `<span class="flag-pill">${escapeHtml(f)}</span>`).join('');
       const score = taskScore(task);
       const p = priorityOf(task);
@@ -2173,16 +2215,39 @@
       chip.innerHTML = `
         <div class="matrix-chip-head">
           <input type="checkbox" ${task.checked ? 'checked' : ''}>
-          <span class="matrix-chip-title">${escapeHtml(task.title)}</span>
+          <span class="matrix-chip-title" ${isOpen ? 'contenteditable="true" spellcheck="false"' : 'title="Clique para editar"'}>${escapeHtml(task.title)}</span>
+          ${isOpen ? '<button class="matrix-chip-close" title="Fechar edição">×</button>' : ''}
         </div>
         <div class="matrix-chip-meta">${scorePill}${flags}${subCount}</div>${scoreEditor}
-        ${note ? `<div class="matrix-chip-detail">${escapeHtml(note)}</div>` : ''}${subs}`;
+        ${isOpen ? `<div class="task-note" contenteditable="true" spellcheck="false">${escapeHtml(note)}</div>` : note ? `<div class="matrix-chip-note">${escapeHtml(note)}</div>` : ''}${subs}`;
       chip.querySelector('input').addEventListener('change', e => {
         setTaskChecked(task, e.target.checked);
         markChanged();
         renderTasks();
       });
-      chip.querySelector('.matrix-chip-title').addEventListener('click', () => chip.classList.toggle('open'));
+      const titleEl = chip.querySelector('.matrix-chip-title');
+      if (isOpen) {
+        titleEl.addEventListener('keydown', e => {
+          if (e.key === 'Enter') { e.preventDefault(); titleEl.blur(); }
+          if (e.key === 'Escape') { titleEl.textContent = task.title; titleEl.blur(); }
+        });
+        titleEl.addEventListener('blur', async () => {
+          const next = titleEl.textContent.replace(/\s+/g, ' ').trim();
+          if (!next || next === task.title) { titleEl.textContent = task.title; return; }
+          await renameTask(task, next);
+        });
+        chip.querySelector('.matrix-chip-close').addEventListener('click', () => {
+          matrixOpen.delete(priorityKey(task.title));
+          renderTasks();
+        });
+        bindNoteEdit(chip.querySelector('.task-note'), task);
+        bindRankSubs(chip, task);
+      } else {
+        titleEl.addEventListener('click', () => {
+          matrixOpen.add(priorityKey(task.title));
+          renderTasks();
+        });
+      }
       if (scoreOpen) chip.draggable = false;
       chip.querySelector('.score-pill').addEventListener('click', () => {
         const key = priorityKey(task.title);
@@ -2194,7 +2259,7 @@
         selEl.addEventListener('change', async () => {
           if (!selEl.value) return;
           const key = priorityKey(task.title);
-          if (!priorities[key]) priorities[key] = { title: task.title, i: 3, u: 3, e: 3, why: '' };
+          if (!priorities[key]) priorities[key] = { title: task.title, i: 3, u: 3, e: 3 };
           priorities[key][selEl.dataset.field] = +selEl.value;
           await savePriorities();
           renderTasks();
@@ -2237,7 +2302,7 @@
       if (!subsToggle) return;
       subsToggle.style.display = activeMainTab === 'tasks' && SUBS_VIEWS.includes(currentView) ? 'flex' : 'none';
       subsToggleBtn.classList.toggle('active', showSubs);
-      subsToggleBtn.textContent = showSubs ? 'Ocultar subtarefas' : 'Mostrar subtarefas';
+      subsToggleBtn.textContent = showSubs ? 'Ocultar notas e subtarefas' : 'Mostrar notas e subtarefas';
       document.body.classList.toggle('hide-subs', !showSubs);
     }
     subsToggleBtn.addEventListener('click', () => {
