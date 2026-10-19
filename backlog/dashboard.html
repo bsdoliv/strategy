@@ -1103,12 +1103,12 @@
     }
 
     // ===== tasks.csv: uma linha por task (e uma por subtarefa, com parent = id da task) =====
-    // Colunas: id, parent, status, title, frente, dono, today, i, u, e, nota, done. (Até 2026-10-19 havia por_que: ao ler, entra no início da nota;
-    // até 2026-10-19 a flag today se chamava urgente: a coluna antiga é lida como today.)
-    // Arquivo em Latin-1, sem BOM. O score não é gravado: sai de I/U/E. Internamente frente/dono/today viram tags na nota,
+    // Colunas: id, parent, status, title, frente, today, i, u, e, nota, done. (Até 2026-10-19 havia por_que: ao ler, entra no início da nota;
+    // até 2026-10-19 a flag today se chamava urgente: a coluna antiga é lida como today; até 2026-10-19 havia dono: é ignorada.)
+    // Arquivo em Latin-1, sem BOM. O score não é gravado: sai de I/U/E. Internamente frente/today viram tags na nota,
     // que é o que as abas já usam.
     const TASKS_FILE = 'tasks.csv';
-    const CSV_COLUMNS = ['id', 'parent', 'status', 'title', 'frente', 'dono', 'today', 'i', 'u', 'e', 'nota', 'done'];
+    const CSV_COLUMNS = ['id', 'parent', 'status', 'title', 'frente', 'today', 'i', 'u', 'e', 'nota', 'done'];
     const DEFAULT_SECTIONS = ['Someday', 'Active', 'Waiting On', 'Done'];
 
     function parseCsv(text) {
@@ -1177,9 +1177,9 @@
         const title = get(r, 'title');
         if (!title) return;
         const sectionId = ensureSection(get(r, 'status') || 'Someday');
-        const dono = get(r, 'dono'), frente = get(r, 'frente').replace(/^#/, '');
+        const frente = get(r, 'frente').replace(/^#/, '');
         const nota = [get(r, 'por_que'), get(r, 'nota')].filter(Boolean).join(' · ');
-        const note = [nota, dono ? `[${dono}]` : '', frente ? '#' + frente : '', get(r, 'today') || get(r, 'urgente') ? '#today' : '']
+        const note = [nota, frente ? '#' + frente : '', get(r, 'today') || get(r, 'urgente') ? '#today' : '']
           .filter(Boolean).join(' ');
         const task = {
           id: Date.now() + Math.random(), uid: get(r, 'id'), title, note,
@@ -1197,16 +1197,14 @@
       return { sections: resultSections, tasks: resultTasks, priorities: resultPriorities };
     }
 
-    // Separa da nota interna o que vira coluna: frente (#tag), dono ([...]) e #today
+    // Separa da nota interna o que vira coluna: frente (#tag) e #today
     function noteColumns(task) {
       const cat = taskCategory(task);
       const frente = cat === NO_CATEGORY ? '' : cat;
       let nota = task.note || '';
-      const dono = nota.match(/\[([^\]]+)\]/);
-      if (dono) nota = nota.replace(dono[0], '');
       if (frente) nota = nota.replace(new RegExp('#' + frente.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?![\\p{L}\\p{N}_/-])', 'iu'), '');
       nota = nota.replace(/#today(?![\p{L}\p{N}_\/-])/giu, '');
-      return { frente, dono: dono ? dono[1].trim() : '', today: isToday(task), nota: nota.replace(/\s{2,}/g, ' ').trim() };
+      return { frente, today: isToday(task), nota: nota.replace(/\s{2,}/g, ' ').trim() };
     }
 
     function tasksToCsv() {
@@ -1219,10 +1217,10 @@
         seen.add(String(t.uid));
         const c = noteColumns(t);
         const p = priorityOf(t);
-        lines.push([t.uid, '', sec.name, t.title, c.frente, c.dono, c.today ? 'x' : '',
+        lines.push([t.uid, '', sec.name, t.title, c.frente, c.today ? 'x' : '',
           p ? p.i : '', p ? p.u : '', p ? p.e : '', c.nota, t.checked ? 'x' : ''].map(csvField).join(','));
         t.subtasks.forEach((st, k) => {
-          lines.push([`${t.uid}.${k + 1}`, t.uid, sec.name, st.text, '', '', '', '', '', '', '', st.checked ? 'x' : ''].map(csvField).join(','));
+          lines.push([`${t.uid}.${k + 1}`, t.uid, sec.name, st.text, '', '', '', '', '', '', st.checked ? 'x' : ''].map(csvField).join(','));
         });
       }));
       return lines.join('\n') + '\n';
@@ -1373,7 +1371,7 @@
       return `hsl(${h}, 55%, 45%)`;
     }
     function cleanNote(note) {
-      return (note || '').replace(TAG_RE, '').replace(/\[[^\]]*\]/g, '')
+      return (note || '').replace(TAG_RE, '')
         .replace(/\s+/g, ' ').replace(/^[\s,;-]+|[\s,;-]+$/g, '').trim();
     }
     function setTaskFlag(task, flag, on) {
@@ -1381,9 +1379,9 @@
       if (on) note += ' #' + flag;
       task.note = note.replace(/\s{2,}/g, ' ').trim();
     }
-    // Texto livre da nota: as tags (#frente, #today, [dono]) ficam preservadas na frente
+    // Texto livre da nota: as tags (#frente, #today) ficam preservadas na frente
     function setTaskNoteText(task, text) {
-      const tags = (task.note || '').match(new RegExp(TAG_RE.source + '|\\[[^\\]]*\\]', 'gu')) || [];
+      const tags = (task.note || '').match(TAG_RE) || [];
       task.note = [...tags, text.replace(/\s+/g, ' ').trim()].join(' ').trim();
     }
     function bindNoteEdit(el, task) {
