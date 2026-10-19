@@ -32,7 +32,7 @@ for st in order:
     print(f"\n#### {st} ({len(ts)})")
     for r in ts:
         s = score(r)
-        extra = ' · '.join(x for x in [r['frente'], r['dono'], 'URGENTE' if r['urgente'] else '', r['nota']] if x)
+        extra = ' · '.join(x for x in [r['frente'], 'TODAY' if (r.get('today') or r.get('urgente')) else '', r['nota']] if x)
         print(f"- [{r['id']}] {s if s is not None else '–'} {r['title']}" + (f" — {extra}" if extra else ''))
         for c in subs.get(r['id'], []):
             print(f"    - [{'x' if c['done'] else ' '}] {c['title']}")
