@@ -665,6 +665,7 @@
     .owner-pill { background: var(--bg-secondary); color: var(--text-secondary); border: 1px solid var(--border); }
     .flag-pill { background: #2f9e44; color: #fff; border: 1px solid #2f9e44; }
     .flag-pill.attention { background: #fab005; color: #212529; border-color: #fab005; }
+    .flag-pill.victoria { background: #7950f2; color: #fff; border-color: #7950f2; }
 
     .view-toolbar {
       display: flex; flex-wrap: wrap; align-items: center; gap: 16px;
@@ -769,6 +770,10 @@
     .rank-del:hover { color: #c92a2a; background: #fff5f5; }
     .rank-flag.on { opacity: 1; background: #2f9e44; color: #fff; border: 1px solid #2f9e44; }
     .rank-flag.rank-att.on { background: #fab005; color: #212529; border-color: #fab005; }
+    .rank-flag.rank-vic.on { background: #7950f2; color: #fff; border-color: #7950f2; }
+    /* Flag victoria: linha roxa no Scored (attention e today prevalecem) */
+    .rank-table tr.victoria td, .rank-table tr.victoria:hover td { background: #f3f0ff; }
+    .rank-table tr.victoria td:first-child { box-shadow: inset 4px 0 0 #7950f2; }
     /* Flag attention: linha amarela no Scored (today prevalece se tiver as duas) */
     .rank-table tr.attention td, .rank-table tr.attention:hover td { background: #fff9db; }
     .rank-table tr.attention td:first-child { box-shadow: inset 4px 0 0 #fab005; }
@@ -873,6 +878,8 @@
     .matrix-chip.done { opacity: .5; text-decoration: line-through; }
     /* Flag today: card verde no Grid, em qualquer status */
     .matrix-chip.today { background: #ebfbee; border-color: #8ce99a; box-shadow: 0 0 0 1px #8ce99a; }
+    /* Flag victoria: card roxo no Grid; prevalece sobre o today, perde para o attention */
+    .matrix-chip.victoria { background: #f3f0ff; border-color: #b197fc; box-shadow: 0 0 0 1px #b197fc; }
     /* Flag attention: card amarelo no Grid; prevalece sobre o verde do today se tiver as duas */
     .matrix-chip.attention { background: #fff9db; border-color: #ffd43b; box-shadow: 0 0 0 1px #ffd43b; }
     .matrix-chip-head { display: flex; align-items: flex-start; gap: 6px; }
@@ -900,6 +907,7 @@
     .matrix-chip:hover .matrix-today.off, .matrix-chip.open .matrix-today.off, .matrix-chip .matrix-today.off:focus { opacity: 1; }
     .matrix-chip .matrix-today.off:hover { color: #2f9e44; border-color: #2f9e44; }
     .matrix-chip .matrix-att.off:hover { color: #e67700; border-color: #fab005; }
+    .matrix-chip .matrix-vic.off:hover { color: #7950f2; border-color: #7950f2; }
     .matrix-chip .score-pill { cursor: pointer; border: none; font: inherit; font-size: 11px; font-weight: 600; }
     .matrix-chip .score-pill.empty { background: transparent; color: var(--text-muted); border: 1px dashed var(--border); }
     .matrix-chip-score { display: flex; align-items: center; gap: 8px; margin-top: 6px; font-size: 11px; color: var(--text-secondary); }
@@ -1132,12 +1140,13 @@
     }
 
     // ===== tasks.csv: uma linha por task (e uma por subtarefa, com parent = id da task) =====
-    // Colunas: id, parent, status, title, frente, today, attention, i, u, e, nota, done. (attention desde 2026-10-19; CSV sem ela é lido normalmente.) (Até 2026-10-19 havia por_que: ao ler, entra no início da nota;
+    // Colunas: id, parent, status, title, frente, today, attention, tags, i, u, e, nota, done. (attention desde 2026-10-19; tags desde 2026-10-20;
+    // CSV sem elas é lido normalmente.) tags: pares [chave=valor]; por ora só [victoria=1] (flag victoria); outros pares são preservados. (Até 2026-10-19 havia por_que: ao ler, entra no início da nota;
     // até 2026-10-19 a flag today se chamava urgente: a coluna antiga é lida como today; até 2026-10-19 havia dono: é ignorada.)
     // Arquivo em Latin-1, sem BOM. O score não é gravado: sai de I/U/E. Internamente frente/today viram tags na nota,
     // que é o que as abas já usam.
     const TASKS_FILE = 'tasks.csv';
-    const CSV_COLUMNS = ['id', 'parent', 'status', 'title', 'frente', 'today', 'attention', 'i', 'u', 'e', 'nota', 'done'];
+    const CSV_COLUMNS = ['id', 'parent', 'status', 'title', 'frente', 'today', 'attention', 'tags', 'i', 'u', 'e', 'nota', 'done'];
     const DEFAULT_SECTIONS = ['Someday', 'Active', 'Waiting On'];
 
     function parseCsv(text) {
@@ -1212,10 +1221,13 @@
         const sectionId = ensureSection(isLegacyDone ? 'Active' : get(r, 'status') || 'Someday');
         const frente = get(r, 'frente').replace(/^#/, '');
         const nota = [get(r, 'por_que'), get(r, 'nota')].filter(Boolean).join(' · ');
-        const note = [nota, frente ? '#' + frente : '', get(r, 'today') || get(r, 'urgente') ? '#today' : '', get(r, 'attention') ? '#attention' : '']
+        const tags = parseTagsField(get(r, 'tags'));
+        const note = [nota, frente ? '#' + frente : '', get(r, 'today') || get(r, 'urgente') ? '#today' : '', get(r, 'attention') ? '#attention' : '',
+          tags.victoria === '1' ? '#victoria' : '']
           .filter(Boolean).join(' ');
+        delete tags.victoria;
         const task = {
-          id: Date.now() + Math.random(), uid: get(r, 'id'), title, note,
+          id: Date.now() + Math.random(), uid: get(r, 'id'), title, note, extraTags: tags,
           checked: isLegacyDone || !!get(r, 'done'), subtasks: [], section: sectionId,
         };
         resultTasks[sectionId].push(task);
@@ -1230,14 +1242,24 @@
       return { sections: resultSections, tasks: resultTasks, priorities: resultPriorities, legacyDone };
     }
 
-    // Separa da nota interna o que vira coluna: frente (#tag), #today e #attention
+    // Coluna tags: "[victoria=1][chave=valor]..." <-> { victoria: '1', ... }
+    function parseTagsField(v) {
+      const out = {};
+      for (const m of (v || '').matchAll(/\[\s*([^=\]]+?)\s*=\s*([^\]]*?)\s*\]/g)) out[m[1].toLowerCase()] = m[2];
+      return out;
+    }
+    function tagsField(obj) {
+      return Object.entries(obj).map(([k, v]) => `[${k}=${v}]`).join('');
+    }
+    // Separa da nota interna o que vira coluna: frente (#tag), #today, #attention e #victoria (coluna tags)
     function noteColumns(task) {
       const cat = taskCategory(task);
       const frente = cat === NO_CATEGORY ? '' : cat;
       let nota = task.note || '';
       if (frente) nota = nota.replace(new RegExp('#' + frente.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?![\\p{L}\\p{N}_/-])', 'iu'), '');
-      nota = nota.replace(/#(today|attention)(?![\p{L}\p{N}_\/-])/giu, '');
-      return { frente, today: isToday(task), attention: isAttention(task), nota: nota.replace(/\s{2,}/g, ' ').trim() };
+      nota = nota.replace(/#(today|attention|victoria)(?![\p{L}\p{N}_\/-])/giu, '');
+      const tags = tagsField({ ...(isVictoria(task) ? { victoria: '1' } : {}), ...(task.extraTags || {}) });
+      return { frente, today: isToday(task), attention: isAttention(task), tags, nota: nota.replace(/\s{2,}/g, ' ').trim() };
     }
 
     function tasksToCsv() {
@@ -1250,10 +1272,10 @@
         seen.add(String(t.uid));
         const c = noteColumns(t);
         const p = priorityOf(t);
-        lines.push([t.uid, '', sec.name, t.title, c.frente, c.today ? 'x' : '', c.attention ? 'x' : '',
+        lines.push([t.uid, '', sec.name, t.title, c.frente, c.today ? 'x' : '', c.attention ? 'x' : '', c.tags,
           p ? p.i : '', p ? p.u : '', p ? p.e : '', c.nota, t.checked ? 'x' : ''].map(csvField).join(','));
         t.subtasks.forEach((st, k) => {
-          lines.push([`${t.uid}.${k + 1}`, t.uid, sec.name, st.text, '', '', '', '', '', '', '', st.checked ? 'x' : ''].map(csvField).join(','));
+          lines.push([`${t.uid}.${k + 1}`, t.uid, sec.name, st.text, '', '', '', '', '', '', '', '', st.checked ? 'x' : ''].map(csvField).join(','));
         });
       }));
       return lines.join('\n') + '\n';
@@ -1345,7 +1367,7 @@
     // ===== CATEGORIES: #tag in the note = category (column) =====
     // ============================================================
     const NO_CATEGORY = '_none';
-    const FLAG_TAGS = ['today', 'attention'];
+    const FLAG_TAGS = ['today', 'attention', 'victoria'];
     // Subcategories use "group/sub" tags, e.g. #platforms/cfx
     // A ordem aqui é a ordem das colunas do Grid (e das frentes no Scored/Mindmap): CEO na borda esquerda, Release antes de Exploratório
     const CATEGORY_META = {
@@ -1381,6 +1403,8 @@
     function isToday(task) { return taskFlags(task).includes('today'); }
     // Flag "attention": destaque amarelo no Grid e no Scored, em qualquer status
     function isAttention(task) { return taskFlags(task).includes('attention'); }
+    // Flag "victoria": destaque roxo no Grid e no Scored; no CSV vai na coluna tags como [victoria=1]
+    function isVictoria(task) { return taskFlags(task).includes('victoria'); }
     function categoryGroup(cat) {
       return cat.includes('/') ? cat.split('/')[0] : null;
     }
@@ -1540,7 +1564,7 @@
       const t = node.task;
       const score = taskScore(t);
       return (score !== null ? `<span class="owner-pill score-pill">${score}</span> ` : '') +
-        taskFlags(t).map(f => `<span class="flag-pill ${f === 'attention' ? 'attention' : ''}">${escapeHtml(f)}</span> `).join('') + escapeHtml(t.title);
+        taskFlags(t).map(f => `<span class="flag-pill ${f === 'attention' || f === 'victoria' ? f : ''}">${escapeHtml(f)}</span> `).join('') + escapeHtml(t.title);
     }
 
     function renderMindmap() {
@@ -1730,7 +1754,7 @@
       const visible = cats.filter(c => !rankCatHidden.has(c) && c !== NO_CATEGORY);
       const d = rankAddDraft || {
         title: '', cat: visible[0] || cats.find(c => c !== NO_CATEGORY) || NO_CATEGORY,
-        section: sections.find(x => isActiveSection(x.id))?.id || sections[0]?.id, i: 3, u: 3, e: 3, note: '', today: false, attention: false,
+        section: sections.find(x => isActiveSection(x.id))?.id || sections[0]?.id, i: 3, u: 3, e: 3, note: '', today: false, attention: false, victoria: false,
       };
       rankAddDraft = d;
       const form = document.createElement('form');
@@ -1745,6 +1769,7 @@
         ${nums('i')}${nums('u')}${nums('e')}
         <label><input type="checkbox" data-f="today" ${d.today ? 'checked' : ''}> today</label>
         <label><input type="checkbox" data-f="attention" ${d.attention ? 'checked' : ''}> attention</label>
+        <label><input type="checkbox" data-f="victoria" ${d.victoria ? 'checked' : ''}> Victoria</label>
         <input data-f="note" class="rank-add-note" placeholder="Nota (opcional)" value="${escapeHtml(d.note)}">
         <button type="submit" class="primary">Adicionar</button>`;
       form.querySelectorAll('[data-f]').forEach(el => el.addEventListener(el.tagName === 'INPUT' && el.type !== 'checkbox' ? 'input' : 'change', async () => {
@@ -1771,10 +1796,11 @@
         setTaskCategory(task, d.cat);
         if (d.today) setTaskFlag(task, 'today', true);
         if (d.attention) setTaskFlag(task, 'attention', true);
+        if (d.victoria) setTaskFlag(task, 'victoria', true);
         if (d.note.trim()) setTaskNoteText(task, d.note);
         tasks[d.section].push(task);
         priorities[priorityKey(title)] = { title, i: d.i, u: d.u, e: d.e };
-        rankAddDraft = { ...d, title: '', note: '', today: false, attention: false };
+        rankAddDraft = { ...d, title: '', note: '', today: false, attention: false, victoria: false };
         markChanged();
         await savePriorities();
         renderTasks();
@@ -1983,13 +2009,14 @@
         const cat = taskCategory(t);
         const today = isToday(t);
         const attention = isAttention(t);
+        const victoria = isVictoria(t);
         const tr = document.createElement('tr');
-        tr.className = [t.checked ? 'done' : '', attention ? 'attention' : '', today ? 'today' : ''].filter(Boolean).join(' ');
+        tr.className = [t.checked ? 'done' : '', victoria ? 'victoria' : '', attention ? 'attention' : '', today ? 'today' : ''].filter(Boolean).join(' ');
         const sel = (field) => `<select data-field="${field}">${p ? '' : '<option value="">–</option>'}${[1, 2, 3, 4, 5].map(n => `<option ${p && p[field] === n ? 'selected' : ''}>${n}</option>`).join('')}</select>`;
         tr.innerHTML = `
           <td class="rank-num">${idx + 1}</td>
           <td><div class="rank-score">${score ?? '–'}<div class="bar"><div style="width:${(score ?? 0) / 10}%;background:${scoreColor(score ?? 0)}"></div></div></div></td>
-          <td><div class="rank-title" style="--cat-color:${categoryColor(cat)}"><button class="rank-flag ${today ? 'on' : ''}" title="${today ? 'Desmarcar today' : 'Marcar como today'}">${today ? 'today' : '⚑'}</button><button class="rank-flag rank-att ${attention ? 'on' : ''}" title="${attention ? 'Desmarcar attention' : 'Marcar como attention'}">${attention ? 'attention' : '!'}</button><button class="rank-del" title="Excluir tarefa (e o score dela)">🗑</button><span class="rank-title-text" contenteditable="true" spellcheck="false" title="Clique para editar">${escapeHtml(t.title)}</span></div>${rankSubsHtml(t)}</td>
+          <td><div class="rank-title" style="--cat-color:${categoryColor(cat)}"><button class="rank-flag ${today ? 'on' : ''}" title="${today ? 'Desmarcar today' : 'Marcar como today'}">${today ? 'today' : '⚑'}</button><button class="rank-flag rank-att ${attention ? 'on' : ''}" title="${attention ? 'Desmarcar attention' : 'Marcar como attention'}">${attention ? 'attention' : '!'}</button><button class="rank-flag rank-vic ${victoria ? 'on' : ''}" title="${victoria ? 'Desmarcar Victoria' : 'Marcar como Victoria'}">${victoria ? 'Victoria' : 'V'}</button><button class="rank-del" title="Excluir tarefa (e o score dela)">🗑</button><span class="rank-title-text" contenteditable="true" spellcheck="false" title="Clique para editar">${escapeHtml(t.title)}</span></div>${rankSubsHtml(t)}</td>
           <td><select class="rank-cat-edit" title="Mudar a frente" style="background:${categoryColor(cat)}">${catOptions(cat)}</select></td>
           <td><select class="rank-status-edit status-${escapeHtml(sec.id)}" title="Mudar o status">${sections.map(x => `<option value="${escapeHtml(x.id)}" ${x.id === sec.id ? 'selected' : ''}>${escapeHtml(x.name)}</option>`).join('')}</select></td>
           <td>${sel('i')}</td><td>${sel('u')}</td><td>${sel('e')}</td>
@@ -2019,6 +2046,11 @@
         });
         tr.querySelector('.rank-att').addEventListener('click', () => {
           setTaskFlag(t, 'attention', !attention);
+          markChanged();
+          renderTasks();
+        });
+        tr.querySelector('.rank-vic').addEventListener('click', () => {
+          setTaskFlag(t, 'victoria', !victoria);
           markChanged();
           renderTasks();
         });
@@ -2062,7 +2094,7 @@
 
     // Shared filters for Tabela/Ranking/Mindmap
     // quick: '' | 'active' (card Active); onlyToday: card today (só tasks com a flag)
-    const viewFilters = { quick: '', hideDone: true, minScore: 0, onlyToday: false, onlyAttention: false, focusCols: false };
+    const viewFilters = { quick: '', hideDone: true, minScore: 0, onlyToday: false, onlyAttention: false, onlyVictoria: false, focusCols: false };
     const QUICK_FILTER_KEYS = ['active'];
     try { viewFilters.minScore = Math.max(0, Math.min(1000, parseInt(localStorage.getItem('minScore'), 10) || 0)); } catch (e) {}
     // Cards Active/today e "Ocultar Done" sobrevivem ao recarregar (localStorage viewFilters)
@@ -2071,12 +2103,13 @@
       if (saved.quick === '' || QUICK_FILTER_KEYS.includes(saved.quick)) viewFilters.quick = saved.quick;
       if (typeof saved.onlyToday === 'boolean') viewFilters.onlyToday = saved.onlyToday;
       if (typeof saved.onlyAttention === 'boolean') viewFilters.onlyAttention = saved.onlyAttention;
+      if (typeof saved.onlyVictoria === 'boolean') viewFilters.onlyVictoria = saved.onlyVictoria;
       if (typeof saved.hideDone === 'boolean') viewFilters.hideDone = saved.hideDone;
       if (typeof saved.focusCols === 'boolean') viewFilters.focusCols = saved.focusCols;
     } catch (e) {}
     function saveViewFilters() {
-      const { quick, onlyToday, onlyAttention, hideDone, focusCols } = viewFilters;
-      try { localStorage.setItem('viewFilters', JSON.stringify({ quick, onlyToday, onlyAttention, hideDone, focusCols })); } catch (e) {}
+      const { quick, onlyToday, onlyAttention, onlyVictoria, hideDone, focusCols } = viewFilters;
+      try { localStorage.setItem('viewFilters', JSON.stringify({ quick, onlyToday, onlyAttention, onlyVictoria, hideDone, focusCols })); } catch (e) {}
     }
     function setMinScore(v) {
       viewFilters.minScore = Math.max(0, Math.min(1000, Math.round((+v || 0) / 10) * 10));
@@ -2092,6 +2125,7 @@
       if (viewFilters.quick && !QUICK_FILTERS[viewFilters.quick](task)) return false;
       if (viewFilters.onlyToday && !isToday(task)) return false;
       if (viewFilters.onlyAttention && !isAttention(task)) return false;
+      if (viewFilters.onlyVictoria && !isVictoria(task)) return false;
       if (viewFilters.hideDone && task.checked) return false;
       return true;
     }
@@ -2102,12 +2136,14 @@
       // today: só a flag, em qualquer status
       const today = sections.flatMap(sec => tasks[sec.id] || []).filter(isToday).length;
       const attention = sections.flatMap(sec => tasks[sec.id] || []).filter(isAttention).length;
+      const victoria = sections.flatMap(sec => tasks[sec.id] || []).filter(isVictoria).length;
       const statCard = (key, label, n) =>
         `<span class="stat clickable ${viewFilters.quick === key ? 'on' : ''}" data-q="${key}" title="Clique para filtrar">${label}: <strong>${n}</strong></span>`;
       bar.innerHTML = `
         ${statCard('active', 'Active', active.length)}
         <span class="stat clickable ${viewFilters.onlyToday ? 'on' : ''}" data-today title="Clique para mostrar só today">today: <strong>${today}</strong></span>
         <span class="stat clickable ${viewFilters.onlyAttention ? 'on' : ''}" data-attention title="Clique para mostrar só attention">attention: <strong>${attention}</strong></span>
+        <span class="stat clickable ${viewFilters.onlyVictoria ? 'on' : ''}" data-victoria title="Clique para mostrar só Victoria">Victoria: <strong>${victoria}</strong></span>
         ${extraStats || ''}
         <span style="flex:1"></span>
         <span class="score-filter ${viewFilters.minScore ? 'on' : ''}" title="Mostrar só tasks com score a partir deste valor (0 = todas)">
@@ -2129,6 +2165,11 @@
       });
       bar.querySelector('[data-attention]').addEventListener('click', () => {
         viewFilters.onlyAttention = !viewFilters.onlyAttention;
+        saveViewFilters();
+        renderTasks();
+      });
+      bar.querySelector('[data-victoria]').addEventListener('click', () => {
+        viewFilters.onlyVictoria = !viewFilters.onlyVictoria;
         saveViewFilters();
         renderTasks();
       });
@@ -2319,7 +2360,7 @@
     function createMatrixChip(task) {
       const chip = document.createElement('div');
       const isOpen = matrixOpen.has(priorityKey(task.title));
-      chip.className = 'matrix-chip' + (task.checked ? ' done' : '') + (isAttention(task) ? ' attention' : '') + (isToday(task) ? ' today' : '') + (isOpen ? ' open' : '');
+      chip.className = 'matrix-chip' + (task.checked ? ' done' : '') + (isVictoria(task) ? ' victoria' : '') + (isAttention(task) ? ' attention' : '') + (isToday(task) ? ' today' : '') + (isOpen ? ' open' : '');
       chip.draggable = !isOpen;
       chip.style.setProperty('--cat-color', categoryColor(taskCategory(task)));
       const note = cleanNote(task.note);
@@ -2331,6 +2372,9 @@
       const attFlag = isAttention(task)
         ? '<button class="flag-pill attention matrix-today matrix-att" title="Desmarcar attention">attention</button>'
         : '<button class="flag-pill matrix-today matrix-att off" title="Marcar como attention">! attention</button>';
+      const vicFlag = isVictoria(task)
+        ? '<button class="flag-pill victoria matrix-today matrix-vic" title="Desmarcar Victoria">Victoria</button>'
+        : '<button class="flag-pill matrix-today matrix-vic off" title="Marcar como Victoria">V Victoria</button>';
       const score = taskScore(task);
       const p = priorityOf(task);
       const scoreOpen = matrixScoreOpen.has(priorityKey(task.title));
@@ -2347,7 +2391,7 @@
           <button class="matrix-chip-del" title="Excluir tarefa (e o score dela)">🗑</button>
           ${isOpen ? '<button class="matrix-chip-close" title="Fechar edição">×</button>' : ''}
         </div>
-        <div class="matrix-chip-meta">${scorePill}${flags}${attFlag}${subCount}</div>${scoreEditor}
+        <div class="matrix-chip-meta">${scorePill}${flags}${attFlag}${vicFlag}${subCount}</div>${scoreEditor}
         ${isOpen ? `<div class="task-note" contenteditable="true" spellcheck="false">${escapeHtml(note)}</div>` : note ? `<div class="matrix-chip-note">${linkify(note)}</div>` : ''}${subs}`;
       chip.querySelector('.matrix-chip-del').addEventListener('click', e => { e.stopPropagation(); deleteTask(task); });
       // Link abre a URL sem abrir a edição do card
@@ -2399,7 +2443,12 @@
         markChanged();
         renderTasks();
       });
-      chip.querySelector('.matrix-today:not(.matrix-att)').addEventListener('click', () => {
+      chip.querySelector('.matrix-vic').addEventListener('click', () => {
+        setTaskFlag(task, 'victoria', !isVictoria(task));
+        markChanged();
+        renderTasks();
+      });
+      chip.querySelector('.matrix-today:not(.matrix-att):not(.matrix-vic)').addEventListener('click', () => {
         setTaskFlag(task, 'today', !isToday(task));
         markChanged();
         renderTasks();
