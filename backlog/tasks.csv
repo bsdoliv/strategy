@@ -131,7 +131,7 @@ id,parent,status,title,frente,today,attention,i,u,e,nota,done,tags
 16.2,16,Someday,"Data-store layers: (1) blobs, (2) metadados",,,,,,,,,
 16.3,16,Someday,estrategia rsync,,,,,,,,,
 16.4,16,Someday,docstored (engine),,,,,,,,,
-125,,Someday,APURACAO / Earnings / CFXAI / Outubro +victoria,produto/cfx,,x,,,,,,[victoria=1]
+125,,Someday,APURACAO / Earnings / CFXAI / Outubro,produto/cfx,,,,,,,,[victoria=1]
 123,,Someday,Solicitar VIC deixarmos a proposta tecnica (PINE) engatilhada,ceo,,x,,,,,,[victoria=1]
 126,,Someday,evaluate prompt-engineering anthropic,explorar,,x,,,,https://x.com/HeyShobhan/status/2112025721464029537/video/1,,
 118,,Someday,projeto linkedin-intel,platforms/quartix-intel,,x,5,3,3,,,
@@ -147,4 +147,4 @@ id,parent,status,title,frente,today,attention,i,u,e,nota,done,tags
 127,,Active,Safra Now - timeout ngrok,platforms/oxpro,x,,,,,,,
 128,,Active,Arquivos Untitled.jpg* no diretorio strategy/ com visualizacoes / inputs para flowsight,produto/quartix-markets,,x,,,,,,
 129,,Active,remover timer da trading-settings api,platforms/oxpro,,x,,,,,,
-120,,Waiting On,retorno para 5TM,ceo,x,x,5,3,3,aguardando victoria retornar,,[victoria=1]
+120,,Waiting On,retorno para 5TM,ceo,x,x,5,3,3,aguardando victoria retornar,x,[victoria=1]
