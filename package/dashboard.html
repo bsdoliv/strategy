@@ -1379,25 +1379,25 @@
     // ============================================================
     const NO_CATEGORY = '_none';
     const FLAG_TAGS = ['today', 'attention', 'victoria'];
-    // Subcategories use "group/sub" tags, e.g. #platforms/cfx
-    // A ordem aqui é a ordem das colunas do Grid (e das frentes no Scored/Mindmap): CEO na borda esquerda, Release antes de Exploratório
+    // Subcategories use "group/sub" tags, e.g. #engenharia/backend
+    // A ordem aqui é a ordem das colunas do Grid (e das frentes no Scored/Mindmap). Edite labels/cores/ordem para as suas frentes;
+    // frente que não está aqui aparece sozinha no fim
     const CATEGORY_META = {
-      ceo:        { label: 'CEO / Comercial',  color: '#1971c2' },
-      'platforms/quartix-markets': { label: 'quartix-markets', color: '#0c8599' },
-      'platforms/oxpro':           { label: 'oxpro',           color: '#4263eb' },
-      'platforms/cfx':             { label: 'cfx',             color: '#e64980' },
-      'platforms/quartix-intel':   { label: 'quartix-intel',   color: '#74b816' },
-      'platforms/sre':             { label: 'sre',             color: '#d9480f' },
-      'produto/quartix-markets':   { label: 'quartix-markets', color: '#7048e8' },
-      'produto/cfx':               { label: 'cfx',             color: '#ae3ec9' },
-      advisory:   { label: 'Advisory',         color: '#a61e4d' },
+      gestao:     { label: 'Gestão',           color: '#1971c2' },
+      comercial:  { label: 'Comercial',        color: '#0c8599' },
+      'produto/roadmap':     { label: 'roadmap',   color: '#7048e8' },
+      'produto/discovery':   { label: 'discovery', color: '#ae3ec9' },
+      'engenharia/backend':  { label: 'backend',   color: '#4263eb' },
+      'engenharia/frontend': { label: 'frontend',  color: '#e64980' },
+      'engenharia/infra':    { label: 'infra',     color: '#d9480f' },
       marketing:  { label: 'Marketing',        color: '#e67700' },
-      release:    { label: 'Release',          color: '#2f9e44' },
+      financeiro: { label: 'Financeiro',       color: '#2f9e44' },
+      pessoas:    { label: 'Pessoas',          color: '#a61e4d' },
       explorar:   { label: 'Exploratório',     color: '#868e96' },
     };
     const GROUP_META = {
-      platforms: { label: 'Platforms', color: '#343a40' },
-      produto:   { label: 'Produto',   color: '#5f3dc4' },
+      produto:    { label: 'Produto',    color: '#5f3dc4' },
+      engenharia: { label: 'Engenharia', color: '#343a40' },
     };
     const TAG_RE = /#([\p{L}\p{N}_\/-]+)/gu;
 

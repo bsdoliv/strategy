@@ -26,4 +26,4 @@ Backlog pessoal em um único `tasks.csv`, com dashboard local (`dashboard.html`)
 
 - Crie e edite tasks no dashboard (aba Scored) ou peça ao Claude ("adiciona uma task...", "o que tenho para hoje?").
 - `/update` sincroniza tasks e completa lacunas da memória.
-- Frentes (colunas do Grid): o `CATEGORY_META` em `dashboard.html` vem com as frentes de quem criou o framework; edite labels/cores/ordem para as suas. Frentes novas aparecem sozinhas no fim.
+- Frentes (colunas do Grid): vêm genéricas (Gestão, Comercial, Produto, Engenharia, Marketing, Financeiro, Pessoas, Exploratório) no `CATEGORY_META` de `dashboard.html`; edite labels/cores/ordem para as suas. Frentes novas aparecem sozinhas no fim.
