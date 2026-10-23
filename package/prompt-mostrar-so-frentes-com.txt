@@ -1,0 +1,25 @@
+Prompt para o Claude Code, aberto no diretório package/. Independente de outros prompts.
+
+---
+
+No dashboard (dashboard.html), aba Grid, mude o filtro de colunas da toolbar de "Ocultar frentes sem:" para "Mostrar só frentes com:".
+
+Inverter o rótulo, não a lógica.
+"Ocultar as frentes sem X" e "mostrar só as frentes com X" dão o mesmo resultado, então o comportamento continua idêntico, com os chips que existirem em FOCUS_COLS_MODES (não acrescentar nem remover chips). Com chips ligados, a frente que não tiver nenhuma task não-Done (e visível pelos demais filtros) atendendo a algum chip ligado (OR) é recolhida em faixa, igual ao "–" do cabeçalho. Ela não some. Continua entrando na contagem "N colunas ocultas", clicar na faixa reabre a frente e "mostrar todas" desliga todos os chips.
+
+Mudanças:
+- Texto na toolbar: "Mostrar só frentes com:".
+- Tooltip: "Só no Grid: mostra só as frentes com alguma task que atenda a algum dos chips ligados; as outras ficam recolhidas (tasks com Done não contam)".
+- Atualizar os comentários que citam "Ocultar frentes sem" (CSS da .focus-cols, FOCUS_COLS_MODES, cálculo das colunas recolhidas) para o nome novo, registrando que até 2026-10-23 se chamava "Ocultar frentes sem", com a mesma lógica.
+- Não mudar a chave do localStorage (viewFilters.focusCols) nem o formato salvo: os filtros já salvos continuam valendo.
+
+Documentação do pacote:
+- CLAUDE.md, seção Dashboard: trocar "Ocultar frentes sem: [...]" por "Mostrar só frentes com: [...]" (mantendo a lista de chips que estiver lá) e descrever como "mostra só as frentes com tasks que atendam aos chips ligados; as outras ficam recolhidas".
+- README.md: ajustar se mencionar o filtro.
+
+Teste (obrigatório, nunca sobre os arquivos reais):
+- Copiar o dashboard.html para um diretório temporário e injetar um <script> que chame applyTasksCsv(<csv com tasks em frentes diferentes, algumas com today ou attention>) e switchTaskView('matrix').
+- Conferir: o rótulo é "Mostrar só frentes com:"; o número de chips é o mesmo de antes; ligar um chip (ex.: today) recolhe as frentes sem task com a flag (a contagem "N colunas ocultas" bate) e mantém visíveis as que têm; "mostrar todas" desliga tudo.
+- Rodar com Chrome headless --dump-dom (no macOS, sem `timeout`: perl -e 'alarm 30; exec @ARGV' ...). Validar a sintaxe extraindo o <script> e rodando `node --check`.
+
+Não fazer commit.

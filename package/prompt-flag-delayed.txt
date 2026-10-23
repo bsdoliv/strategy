@@ -1,0 +1,37 @@
+Prompt para o Claude Code, aberto no diretório package/. Independente de outros prompts.
+
+---
+
+Crie uma flag nova chamada "delayed" no dashboard (dashboard.html), com a mesma mecânica de funcionamento das demais flags (today, attention, Victoria). Siga exatamente o padrão da flag Victoria, que é a referência mais próxima: tudo o que existe para a Victoria deve existir para a delayed.
+
+Armazenamento (tasks.csv):
+- Não criar coluna nova. A flag vai na coluna `tags` como `[delayed=1]`, igual à `[victoria=1]`.
+- Leitura: `[delayed=1]` vira a tag interna `#delayed` na nota; o par sai de extraTags (como victoria).
+- Gravação: noteColumns() remove `#delayed` da nota e grava `[delayed=1]` na coluna tags (junto com victoria e os pares desconhecidos, que continuam preservados).
+- Incluir 'delayed' em FLAG_TAGS e criar isDelayed(task), ao lado de isVictoria.
+
+Cor: vermelho, no mesmo estilo visual das outras flags (preenchimento claro + borda, nunca um estilo novo):
+- pill/botão ligado: #e03131 (texto branco)
+- fundo de card/linha: #fff5f5; borda do card no Grid: #ffa8a8
+
+Onde a flag aparece:
+- Grid: pill "D delayed" no card, visível no hover para marcar (como "V Victoria"); marcada, vira pill vermelha "delayed", clicável para desmarcar. Card com a flag fica vermelho claro com borda vermelha (classe .matrix-chip.delayed). Precedência no Grid: delayed prevalece sobre today e attention; Victoria continua prevalecendo sobre todas (ordem das regras CSS: today, attention, delayed, victoria). Ajustar o seletor do botão today para excluir também o botão novo (.matrix-today:not(.matrix-att):not(.matrix-vic):not(.matrix-dly)).
+- Grid, filtro de colunas da toolbar (os chips [Active] [today] [attention] em FOCUS_COLS_MODES, seja qual for o rótulo do filtro): acrescentar o chip [delayed] depois de attention: delayed: { label: 'delayed', test: t => isDelayed(t) }, com CSS .focus-chip.on[data-mode="delayed"] { background: #e03131; border-color: #e03131; }. Compatibilidade do localStorage: se o código ler o valor antigo `viewFilters.focusCols === true` como Object.keys(FOCUS_COLS_MODES), trocar por ['active', 'today', 'attention'] explícito, para que o valor antigo continue significando os três de antes e não ligue o delayed.
+- Scored: botão "D" ao lado do "V" (classe própria, ex.: rank-flag rank-del-flag; NÃO usar a classe rank-del, que é a da lixeira); ligado mostra "delayed" em vermelho. Linha com a flag fica vermelha (tr.delayed: fundo #fff5f5 + faixa inset de 4px #e03131 na primeira célula). Precedência no Scored: igual à da Victoria (today e attention prevalecem); delayed prevalece sobre Victoria.
+- Cards de topo (toolbar): card "delayed: N", clicável = filtro que mostra só tasks com a flag, em todas as abas. Novo campo viewFilters.onlyDelayed, persistido no localStorage `viewFilters` (ler e gravar, como onlyVictoria) e aplicado em passesFilters().
+- Formulário "+ Nova tarefa" (Scored): checkbox "delayed" (no draft inicial e no reset após adicionar: delayed: false).
+- Mindmap: pill vermelha (incluir 'delayed' na lista de flags que recebem a própria classe em mmNodeHtml).
+
+Documentação do pacote:
+- CLAUDE.md: na seção tasks.csv, tags passam a ser `[victoria=1]` (roxa) e `[delayed=1]` (vermelha); na seção Dashboard, "Flags: today (verde), attention (amarelo), Victoria (roxo), delayed (vermelho)", cards de topo Active/today/attention/Victoria/delayed e o chip [delayed] no filtro de colunas do Grid.
+- .claude/skills/task-management/SKILL.md: na linha da coluna `tags`, documentar `[delayed=1]` = flag delayed (vermelha).
+- .claude/hooks/session-start.sh: no resumo, imprimir 'DELAYED' quando a coluna tags contiver `[delayed=1]` (logo após 'VICTORIA').
+- Atualizar o comentário do formato CSV no topo do bloco tasks.csv em dashboard.html.
+
+Teste (obrigatório, nunca sobre os arquivos reais):
+- Copiar dashboard.html para um diretório temporário e injetar um <script> que chame applyTasksCsv(<csv com tasks em frentes diferentes, uma delas com [delayed=1]>) e switchTaskView('matrix'), depois 'rank'.
+- Conferir: card .matrix-chip.delayed no Grid; clicar no botão de um card sem a flag marca a flag; card de topo conta certo; ligar só o chip [delayed] do filtro de colunas recolhe as frentes sem task delayed e mantém o card delayed visível; no Scored, o botão "D" marca/desmarca e a linha fica tr.delayed; clicar no card de topo filtra; tasksToCsv() grava `[delayed=1]` na coluna tags e não deixa `#delayed` na nota.
+- Rodar com Chrome headless --dump-dom (no macOS, sem `timeout`: perl -e 'alarm 30; exec @ARGV' ...).
+- Validar a sintaxe extraindo o <script> e rodando `node --check`; `bash -n` no hook.
+
+Não fazer commit.
