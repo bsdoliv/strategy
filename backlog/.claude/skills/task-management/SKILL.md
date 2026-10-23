@@ -28,7 +28,7 @@ id,parent,status,title,frente,today,attention,i,u,e,nota,done,tags
 | `i`,`u`,`e` | Impact, Urgency, Effort, 1–5. Score is **not stored**: 200×(0,5·I + 0,35·U + 0,15·(6−E)) → 0–1000 |
 | `nota` | Single note: score rationale first, then other context, joined with ` · ` (e.g. `Risco de perda de dados; barato · origem: <task de origem>`) — never a list in running text. (A separate `por_que` column existed until 2026-10-19 and was merged here.) |
 | `done` | `x` when done. Independent of `status`: the task keeps its status and position |
-| `tags` | `[key=value]` pairs concatenated (added 2026-10-20). For now only `[victoria=1]` = Victoria flag (purple in the dashboard); unknown pairs are preserved by the dashboard. Last column |
+| `tags` | `[key=value]` pairs concatenated (added 2026-10-20). For now `[victoria=1]` = Victoria flag (purple in the dashboard) and `[delayed=1]` = delayed flag (red; added 2026-10-23); unknown pairs are preserved by the dashboard. Last column |
 
 Rows of a section appear in board order; subtask rows come right after their task. Only task rows carry frente/today/attention/tags/score. (There is no owner column: `dono` was removed on 2026-10-19; the dashboard ignores it in old files.)
 

@@ -149,8 +149,8 @@ id,parent,status,title,frente,today,attention,i,u,e,nota,done,tags
 132,,Active,Merges / Lucas,platforms/cfx,x,,,,,,,
 133,,Active,Responder Rodolfo,ceo,,x,,,,,x,
 130,,Active,Responder Pinelli,ceo,x,,,,,,x,
-129,,Waiting On,remover timer da trading-settings api,platforms/oxpro,x,x,,,,,,
-127,,Waiting On,Safra Now - timeout ngrok,platforms/oxpro,,x,,,,,,
+127,,Active,Safra Now - timeout ngrok,platforms/oxpro,x,,,,,,,[delayed=1]
+129,,Waiting On,remover timer da trading-settings api,platforms/oxpro,,x,,,,,,
 134,,Waiting On,Deploy CFX,produto/quartix-markets,,x,,,,,,
 131,,Waiting On,Responder Geller / Chery,ceo,,,,,,,x,
 135,,Waiting On,Bruno R2,ceo,,,,,,,x,

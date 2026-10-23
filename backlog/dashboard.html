@@ -666,6 +666,7 @@
     .flag-pill { background: #2f9e44; color: #fff; border: 1px solid #2f9e44; }
     .flag-pill.attention { background: #fab005; color: #212529; border-color: #fab005; }
     .flag-pill.victoria { background: #7950f2; color: #fff; border-color: #7950f2; }
+    .flag-pill.delayed { background: #e03131; color: #fff; border-color: #e03131; }
 
     .view-toolbar {
       display: flex; flex-wrap: wrap; align-items: center; gap: 16px;
@@ -772,9 +773,13 @@
     .rank-flag.on { opacity: 1; background: #2f9e44; color: #fff; border: 1px solid #2f9e44; }
     .rank-flag.rank-att.on { background: #fab005; color: #212529; border-color: #fab005; }
     .rank-flag.rank-vic.on { background: #7950f2; color: #fff; border-color: #7950f2; }
+    .rank-flag.rank-del-flag.on { background: #e03131; color: #fff; border-color: #e03131; }
     /* Flag victoria: linha roxa no Scored (attention e today prevalecem) */
     .rank-table tr.victoria td, .rank-table tr.victoria:hover td { background: #f3f0ff; }
     .rank-table tr.victoria td:first-child { box-shadow: inset 4px 0 0 #7950f2; }
+    /* Flag delayed: linha vermelha no Scored (attention e today prevalecem; prevalece sobre victoria) */
+    .rank-table tr.delayed td, .rank-table tr.delayed:hover td { background: #fff5f5; }
+    .rank-table tr.delayed td:first-child { box-shadow: inset 4px 0 0 #e03131; }
     /* Flag attention: linha amarela no Scored (today prevalece se tiver as duas) */
     .rank-table tr.attention td, .rank-table tr.attention:hover td { background: #fff9db; }
     .rank-table tr.attention td:first-child { box-shadow: inset 4px 0 0 #fab005; }
@@ -891,6 +896,8 @@
     .matrix-chip.today { background: #ebfbee; border-color: #8ce99a; box-shadow: 0 0 0 1px #8ce99a; }
     /* Flag attention: card amarelo no Grid; prevalece sobre o verde do today se tiver as duas */
     .matrix-chip.attention { background: #fff9db; border-color: #ffd43b; box-shadow: 0 0 0 1px #ffd43b; }
+    /* Flag delayed: card vermelho no Grid; prevalece sobre today e attention (victoria prevalece sobre ela) */
+    .matrix-chip.delayed { background: #fff5f5; border-color: #ffa8a8; box-shadow: 0 0 0 1px #ffa8a8; }
     /* Flag victoria: card roxo no Grid (borda inteira roxa, inclusive a da frente); prevalece sobre today e attention */
     .matrix-chip.victoria { background: #f3f0ff; border-color: #b197fc; box-shadow: 0 0 0 1px #b197fc; }
     .matrix-chip-head { display: flex; align-items: flex-start; gap: 6px; }
@@ -919,6 +926,7 @@
     .matrix-chip .matrix-today.off:hover { color: #2f9e44; border-color: #2f9e44; }
     .matrix-chip .matrix-att.off:hover { color: #e67700; border-color: #fab005; }
     .matrix-chip .matrix-vic.off:hover { color: #7950f2; border-color: #7950f2; }
+    .matrix-chip .matrix-dly.off:hover { color: #e03131; border-color: #e03131; }
     .matrix-chip .score-pill { cursor: pointer; border: none; font: inherit; font-size: 11px; font-weight: 600; }
     .matrix-chip .score-pill.empty { background: transparent; color: var(--text-muted); border: 1px dashed var(--border); }
     .matrix-chip-score { display: flex; align-items: center; gap: 8px; margin-top: 6px; font-size: 11px; color: var(--text-secondary); }
@@ -1152,7 +1160,7 @@
 
     // ===== tasks.csv: uma linha por task (e uma por subtarefa, com parent = id da task) =====
     // Colunas: id, parent, status, title, frente, today, attention, i, u, e, nota, done, tags. (attention desde 2026-10-19; tags desde 2026-10-20;
-    // CSV sem elas é lido normalmente.) tags: pares [chave=valor]; por ora só [victoria=1] (flag victoria); outros pares são preservados. (Até 2026-10-19 havia por_que: ao ler, entra no início da nota;
+    // CSV sem elas é lido normalmente.) tags: pares [chave=valor]; por ora [victoria=1] (flag victoria) e [delayed=1] (flag delayed, desde 2026-10-23); outros pares são preservados. (Até 2026-10-19 havia por_que: ao ler, entra no início da nota;
     // até 2026-10-19 a flag today se chamava urgente: a coluna antiga é lida como today; até 2026-10-19 havia dono: é ignorada.)
     // Arquivo em Latin-1, sem BOM. O score não é gravado: sai de I/U/E. Internamente frente/today viram tags na nota,
     // que é o que as abas já usam.
@@ -1234,9 +1242,10 @@
         const nota = [get(r, 'por_que'), get(r, 'nota')].filter(Boolean).join(' · ');
         const tags = parseTagsField(get(r, 'tags'));
         const note = [nota, frente ? '#' + frente : '', get(r, 'today') || get(r, 'urgente') ? '#today' : '', get(r, 'attention') ? '#attention' : '',
-          tags.victoria === '1' ? '#victoria' : '']
+          tags.victoria === '1' ? '#victoria' : '', tags.delayed === '1' ? '#delayed' : '']
           .filter(Boolean).join(' ');
         delete tags.victoria;
+        delete tags.delayed;
         const task = {
           id: Date.now() + Math.random(), uid: get(r, 'id'), title, note, extraTags: tags,
           checked: isLegacyDone || !!get(r, 'done'), subtasks: [], section: sectionId,
@@ -1253,7 +1262,7 @@
       return { sections: resultSections, tasks: resultTasks, priorities: resultPriorities, legacyDone };
     }
 
-    // Coluna tags: "[victoria=1][chave=valor]..." <-> { victoria: '1', ... }
+    // Coluna tags: "[victoria=1][delayed=1][chave=valor]..." <-> { victoria: '1', ... }
     function parseTagsField(v) {
       const out = {};
       for (const m of (v || '').matchAll(/\[\s*([^=\]]+?)\s*=\s*([^\]]*?)\s*\]/g)) out[m[1].toLowerCase()] = m[2];
@@ -1262,14 +1271,14 @@
     function tagsField(obj) {
       return Object.entries(obj).map(([k, v]) => `[${k}=${v}]`).join('');
     }
-    // Separa da nota interna o que vira coluna: frente (#tag), #today, #attention e #victoria (coluna tags)
+    // Separa da nota interna o que vira coluna: frente (#tag), #today, #attention, #victoria e #delayed (coluna tags)
     function noteColumns(task) {
       const cat = taskCategory(task);
       const frente = cat === NO_CATEGORY ? '' : cat;
       let nota = task.note || '';
       if (frente) nota = nota.replace(new RegExp('#' + frente.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?![\\p{L}\\p{N}_/-])', 'iu'), '');
-      nota = nota.replace(/#(today|attention|victoria)(?![\p{L}\p{N}_\/-])/giu, '');
-      const tags = tagsField({ ...(isVictoria(task) ? { victoria: '1' } : {}), ...(task.extraTags || {}) });
+      nota = nota.replace(/#(today|attention|victoria|delayed)(?![\p{L}\p{N}_\/-])/giu, '');
+      const tags = tagsField({ ...(isVictoria(task) ? { victoria: '1' } : {}), ...(isDelayed(task) ? { delayed: '1' } : {}), ...(task.extraTags || {}) });
       return { frente, today: isToday(task), attention: isAttention(task), tags, nota: nota.replace(/\s{2,}/g, ' ').trim() };
     }
 
@@ -1378,7 +1387,7 @@
     // ===== CATEGORIES: #tag in the note = category (column) =====
     // ============================================================
     const NO_CATEGORY = '_none';
-    const FLAG_TAGS = ['today', 'attention', 'victoria'];
+    const FLAG_TAGS = ['today', 'attention', 'victoria', 'delayed'];
     // Subcategories use "group/sub" tags, e.g. #platforms/cfx
     // A ordem aqui é a ordem das colunas do Grid (e das frentes no Scored/Mindmap): CEO na borda esquerda, Release antes de Exploratório
     const CATEGORY_META = {
@@ -1416,6 +1425,8 @@
     function isAttention(task) { return taskFlags(task).includes('attention'); }
     // Flag "victoria": destaque roxo no Grid e no Scored; no CSV vai na coluna tags como [victoria=1]
     function isVictoria(task) { return taskFlags(task).includes('victoria'); }
+    // Flag "delayed": destaque vermelho no Grid e no Scored; no CSV vai na coluna tags como [delayed=1]
+    function isDelayed(task) { return taskFlags(task).includes('delayed'); }
     function categoryGroup(cat) {
       return cat.includes('/') ? cat.split('/')[0] : null;
     }
@@ -1575,7 +1586,7 @@
       const t = node.task;
       const score = taskScore(t);
       return (score !== null ? `<span class="owner-pill score-pill">${score}</span> ` : '') +
-        taskFlags(t).map(f => `<span class="flag-pill ${f === 'attention' || f === 'victoria' ? f : ''}">${escapeHtml(f)}</span> `).join('') + escapeHtml(t.title);
+        taskFlags(t).map(f => `<span class="flag-pill ${f === 'attention' || f === 'victoria' || f === 'delayed' ? f : ''}">${escapeHtml(f)}</span> `).join('') + escapeHtml(t.title);
     }
 
     function renderMindmap() {
@@ -1765,7 +1776,7 @@
       const visible = cats.filter(c => !rankCatHidden.has(c) && c !== NO_CATEGORY);
       const d = rankAddDraft || {
         title: '', cat: visible[0] || cats.find(c => c !== NO_CATEGORY) || NO_CATEGORY,
-        section: sections.find(x => isActiveSection(x.id))?.id || sections[0]?.id, i: 3, u: 3, e: 3, note: '', today: false, attention: false, victoria: false,
+        section: sections.find(x => isActiveSection(x.id))?.id || sections[0]?.id, i: 3, u: 3, e: 3, note: '', today: false, attention: false, victoria: false, delayed: false,
       };
       rankAddDraft = d;
       const form = document.createElement('form');
@@ -1781,6 +1792,7 @@
         <label><input type="checkbox" data-f="today" ${d.today ? 'checked' : ''}> today</label>
         <label><input type="checkbox" data-f="attention" ${d.attention ? 'checked' : ''}> attention</label>
         <label><input type="checkbox" data-f="victoria" ${d.victoria ? 'checked' : ''}> Victoria</label>
+        <label><input type="checkbox" data-f="delayed" ${d.delayed ? 'checked' : ''}> delayed</label>
         <input data-f="note" class="rank-add-note" placeholder="Nota (opcional)" value="${escapeHtml(d.note)}">
         <button type="submit" class="primary">Adicionar</button>`;
       form.querySelectorAll('[data-f]').forEach(el => el.addEventListener(el.tagName === 'INPUT' && el.type !== 'checkbox' ? 'input' : 'change', async () => {
@@ -1808,10 +1820,11 @@
         if (d.today) setTaskFlag(task, 'today', true);
         if (d.attention) setTaskFlag(task, 'attention', true);
         if (d.victoria) setTaskFlag(task, 'victoria', true);
+        if (d.delayed) setTaskFlag(task, 'delayed', true);
         if (d.note.trim()) setTaskNoteText(task, d.note);
         tasks[d.section].push(task);
         priorities[priorityKey(title)] = { title, i: d.i, u: d.u, e: d.e };
-        rankAddDraft = { ...d, title: '', note: '', today: false, attention: false, victoria: false };
+        rankAddDraft = { ...d, title: '', note: '', today: false, attention: false, victoria: false, delayed: false };
         markChanged();
         await savePriorities();
         renderTasks();
@@ -2021,13 +2034,14 @@
         const today = isToday(t);
         const attention = isAttention(t);
         const victoria = isVictoria(t);
+        const delayed = isDelayed(t);
         const tr = document.createElement('tr');
-        tr.className = [t.checked ? 'done' : '', victoria ? 'victoria' : '', attention ? 'attention' : '', today ? 'today' : ''].filter(Boolean).join(' ');
+        tr.className = [t.checked ? 'done' : '', victoria ? 'victoria' : '', delayed ? 'delayed' : '', attention ? 'attention' : '', today ? 'today' : ''].filter(Boolean).join(' ');
         const sel = (field) => `<select data-field="${field}">${p ? '' : '<option value="">–</option>'}${[1, 2, 3, 4, 5].map(n => `<option ${p && p[field] === n ? 'selected' : ''}>${n}</option>`).join('')}</select>`;
         tr.innerHTML = `
           <td class="rank-num">${idx + 1}</td>
           <td><div class="rank-score">${score ?? '–'}<div class="bar"><div style="width:${(score ?? 0) / 10}%;background:${scoreColor(score ?? 0)}"></div></div></div></td>
-          <td><div class="rank-title" style="--cat-color:${categoryColor(cat)}"><button class="rank-flag ${today ? 'on' : ''}" title="${today ? 'Desmarcar today' : 'Marcar como today'}">${today ? 'today' : '⚑'}</button><button class="rank-flag rank-att ${attention ? 'on' : ''}" title="${attention ? 'Desmarcar attention' : 'Marcar como attention'}">${attention ? 'attention' : '!'}</button><button class="rank-flag rank-vic ${victoria ? 'on' : ''}" title="${victoria ? 'Desmarcar Victoria' : 'Marcar como Victoria'}">${victoria ? 'Victoria' : 'V'}</button><button class="rank-del" title="Excluir tarefa (e o score dela)">🗑</button><span class="rank-title-text" contenteditable="true" spellcheck="false" title="Clique para editar">${escapeHtml(t.title)}</span></div>${rankSubsHtml(t)}</td>
+          <td><div class="rank-title" style="--cat-color:${categoryColor(cat)}"><button class="rank-flag ${today ? 'on' : ''}" title="${today ? 'Desmarcar today' : 'Marcar como today'}">${today ? 'today' : '⚑'}</button><button class="rank-flag rank-att ${attention ? 'on' : ''}" title="${attention ? 'Desmarcar attention' : 'Marcar como attention'}">${attention ? 'attention' : '!'}</button><button class="rank-flag rank-vic ${victoria ? 'on' : ''}" title="${victoria ? 'Desmarcar Victoria' : 'Marcar como Victoria'}">${victoria ? 'Victoria' : 'V'}</button><button class="rank-flag rank-del-flag ${delayed ? 'on' : ''}" title="${delayed ? 'Desmarcar delayed' : 'Marcar como delayed'}">${delayed ? 'delayed' : 'D'}</button><button class="rank-del" title="Excluir tarefa (e o score dela)">🗑</button><span class="rank-title-text" contenteditable="true" spellcheck="false" title="Clique para editar">${escapeHtml(t.title)}</span></div>${rankSubsHtml(t)}</td>
           <td><select class="rank-cat-edit" title="Mudar a frente" style="background:${categoryColor(cat)}">${catOptions(cat)}</select></td>
           <td><select class="rank-status-edit status-${escapeHtml(sec.id)}" title="Mudar o status">${sections.map(x => `<option value="${escapeHtml(x.id)}" ${x.id === sec.id ? 'selected' : ''}>${escapeHtml(x.name)}</option>`).join('')}</select></td>
           <td>${sel('i')}</td><td>${sel('u')}</td><td>${sel('e')}</td>
@@ -2062,6 +2076,11 @@
         });
         tr.querySelector('.rank-vic').addEventListener('click', () => {
           setTaskFlag(t, 'victoria', !victoria);
+          markChanged();
+          renderTasks();
+        });
+        tr.querySelector('.rank-del-flag').addEventListener('click', () => {
+          setTaskFlag(t, 'delayed', !delayed);
           markChanged();
           renderTasks();
         });
@@ -2105,7 +2124,7 @@
 
     // Shared filters for Tabela/Ranking/Mindmap
     // quick: '' | 'active' (card Active); onlyToday: card today (só tasks com a flag)
-    const viewFilters = { quick: '', hideDone: true, minScore: 0, onlyToday: false, onlyAttention: false, onlyVictoria: false, focusCols: [] };
+    const viewFilters = { quick: '', hideDone: true, minScore: 0, onlyToday: false, onlyAttention: false, onlyVictoria: false, onlyDelayed: false, focusCols: [] };
     const QUICK_FILTER_KEYS = ['active'];
     // Grid, "Ocultar frentes sem": recolhe a frente sem nenhuma task (não-Done, visível) que atenda a algum modo ligado
     const FOCUS_COLS_MODES = {
@@ -2121,6 +2140,7 @@
       if (typeof saved.onlyToday === 'boolean') viewFilters.onlyToday = saved.onlyToday;
       if (typeof saved.onlyAttention === 'boolean') viewFilters.onlyAttention = saved.onlyAttention;
       if (typeof saved.onlyVictoria === 'boolean') viewFilters.onlyVictoria = saved.onlyVictoria;
+      if (typeof saved.onlyDelayed === 'boolean') viewFilters.onlyDelayed = saved.onlyDelayed;
       if (typeof saved.hideDone === 'boolean') viewFilters.hideDone = saved.hideDone;
       // focusCols: lista de modos ligados (active/today/attention). Até 2026-10-21 era boolean: true = os três
       if (saved.focusCols === true) viewFilters.focusCols = Object.keys(FOCUS_COLS_MODES);
@@ -2128,8 +2148,8 @@
       else if (FOCUS_COLS_MODES[saved.focusCols]) viewFilters.focusCols = [saved.focusCols];
     } catch (e) {}
     function saveViewFilters() {
-      const { quick, onlyToday, onlyAttention, onlyVictoria, hideDone, focusCols } = viewFilters;
-      try { localStorage.setItem('viewFilters', JSON.stringify({ quick, onlyToday, onlyAttention, onlyVictoria, hideDone, focusCols })); } catch (e) {}
+      const { quick, onlyToday, onlyAttention, onlyVictoria, onlyDelayed, hideDone, focusCols } = viewFilters;
+      try { localStorage.setItem('viewFilters', JSON.stringify({ quick, onlyToday, onlyAttention, onlyVictoria, onlyDelayed, hideDone, focusCols })); } catch (e) {}
     }
     function setMinScore(v) {
       viewFilters.minScore = Math.max(0, Math.min(1000, Math.round((+v || 0) / 10) * 10));
@@ -2146,6 +2166,7 @@
       if (viewFilters.onlyToday && !isToday(task)) return false;
       if (viewFilters.onlyAttention && !isAttention(task)) return false;
       if (viewFilters.onlyVictoria && !isVictoria(task)) return false;
+      if (viewFilters.onlyDelayed && !isDelayed(task)) return false;
       if (viewFilters.hideDone && task.checked) return false;
       return true;
     }
@@ -2157,6 +2178,7 @@
       const today = sections.flatMap(sec => tasks[sec.id] || []).filter(isToday).length;
       const attention = sections.flatMap(sec => tasks[sec.id] || []).filter(isAttention).length;
       const victoria = sections.flatMap(sec => tasks[sec.id] || []).filter(isVictoria).length;
+      const delayed = sections.flatMap(sec => tasks[sec.id] || []).filter(isDelayed).length;
       const statCard = (key, label, n) =>
         `<span class="stat clickable ${viewFilters.quick === key ? 'on' : ''}" data-q="${key}" title="Clique para filtrar">${label}: <strong>${n}</strong></span>`;
       bar.innerHTML = `
@@ -2164,6 +2186,7 @@
         <span class="stat clickable ${viewFilters.onlyToday ? 'on' : ''}" data-today title="Clique para mostrar só today">today: <strong>${today}</strong></span>
         <span class="stat clickable ${viewFilters.onlyAttention ? 'on' : ''}" data-attention title="Clique para mostrar só attention">attention: <strong>${attention}</strong></span>
         <span class="stat clickable ${viewFilters.onlyVictoria ? 'on' : ''}" data-victoria title="Clique para mostrar só Victoria">Victoria: <strong>${victoria}</strong></span>
+        <span class="stat clickable ${viewFilters.onlyDelayed ? 'on' : ''}" data-delayed title="Clique para mostrar só delayed">delayed: <strong>${delayed}</strong></span>
         ${extraStats || ''}
         <span style="flex:1"></span>
         <span class="score-filter ${viewFilters.minScore ? 'on' : ''}" title="Mostrar só tasks com score a partir deste valor (0 = todas)">
@@ -2192,6 +2215,11 @@
       });
       bar.querySelector('[data-victoria]').addEventListener('click', () => {
         viewFilters.onlyVictoria = !viewFilters.onlyVictoria;
+        saveViewFilters();
+        renderTasks();
+      });
+      bar.querySelector('[data-delayed]').addEventListener('click', () => {
+        viewFilters.onlyDelayed = !viewFilters.onlyDelayed;
         saveViewFilters();
         renderTasks();
       });
@@ -2388,7 +2416,7 @@
     function createMatrixChip(task) {
       const chip = document.createElement('div');
       const isOpen = matrixOpen.has(priorityKey(task.title));
-      chip.className = 'matrix-chip' + (task.checked ? ' done' : '') + (isVictoria(task) ? ' victoria' : '') + (isAttention(task) ? ' attention' : '') + (isToday(task) ? ' today' : '') + (isOpen ? ' open' : '');
+      chip.className = 'matrix-chip' + (task.checked ? ' done' : '') + (isVictoria(task) ? ' victoria' : '') + (isDelayed(task) ? ' delayed' : '') + (isAttention(task) ? ' attention' : '') + (isToday(task) ? ' today' : '') + (isOpen ? ' open' : '');
       chip.draggable = !isOpen;
       chip.style.setProperty('--cat-color', categoryColor(taskCategory(task)));
       const note = cleanNote(task.note);
@@ -2403,6 +2431,9 @@
       const vicFlag = isVictoria(task)
         ? '<button class="flag-pill victoria matrix-today matrix-vic" title="Desmarcar Victoria">Victoria</button>'
         : '<button class="flag-pill matrix-today matrix-vic off" title="Marcar como Victoria">V Victoria</button>';
+      const dlyFlag = isDelayed(task)
+        ? '<button class="flag-pill delayed matrix-today matrix-dly" title="Desmarcar delayed">delayed</button>'
+        : '<button class="flag-pill matrix-today matrix-dly off" title="Marcar como delayed">D delayed</button>';
       const score = taskScore(task);
       const p = priorityOf(task);
       const scoreOpen = matrixScoreOpen.has(priorityKey(task.title));
@@ -2419,7 +2450,7 @@
           <button class="matrix-chip-del" title="Excluir tarefa (e o score dela)">🗑</button>
           ${isOpen ? '<button class="matrix-chip-close" title="Fechar edição">×</button>' : ''}
         </div>
-        <div class="matrix-chip-meta">${scorePill}${flags}${attFlag}${vicFlag}${subCount}</div>${scoreEditor}
+        <div class="matrix-chip-meta">${scorePill}${flags}${attFlag}${vicFlag}${dlyFlag}${subCount}</div>${scoreEditor}
         ${isOpen ? `<div class="task-note" contenteditable="true" spellcheck="false">${escapeHtml(note)}</div>` : note ? `<div class="matrix-chip-note">${linkify(note)}</div>` : ''}${subs}`;
       chip.querySelector('.matrix-chip-del').addEventListener('click', e => { e.stopPropagation(); deleteTask(task); });
       // Link abre a URL sem abrir a edição do card
@@ -2476,7 +2507,12 @@
         markChanged();
         renderTasks();
       });
-      chip.querySelector('.matrix-today:not(.matrix-att):not(.matrix-vic)').addEventListener('click', () => {
+      chip.querySelector('.matrix-dly').addEventListener('click', () => {
+        setTaskFlag(task, 'delayed', !isDelayed(task));
+        markChanged();
+        renderTasks();
+      });
+      chip.querySelector('.matrix-today:not(.matrix-att):not(.matrix-vic):not(.matrix-dly)').addEventListener('click', () => {
         setTaskFlag(task, 'today', !isToday(task));
         markChanged();
         renderTasks();
