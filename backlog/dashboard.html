@@ -860,7 +860,7 @@
     .matrix-table thead th.collapsed:hover { background: var(--bg-card); }
     .matrix-col-vert { writing-mode: vertical-rl; transform: rotate(180deg); font-size: 11px; font-weight: 600; color: var(--text-secondary); white-space: nowrap; margin: 0 auto; }
     .matrix-table td.collapsed { width: 26px; padding: 4px 3px; text-align: center; font-size: 11px; color: var(--text-muted); background: var(--bg-secondary); }
-    /* Grid, "Ocultar frentes sem": chips liga/desliga; ligado = cor da flag */
+    /* Grid, "Mostrar só frentes com": chips liga/desliga; ligado = cor da flag */
     .focus-cols { display: inline-flex; align-items: center; gap: 6px; }
     .focus-chip {
       font: inherit; font-size: 12px; font-weight: 600; line-height: 1; padding: 5px 10px; border-radius: 999px; cursor: pointer;
@@ -870,6 +870,7 @@
     .focus-chip.on { background: var(--accent); border-color: var(--accent); color: #fff; }
     .focus-chip.on[data-mode="today"] { background: #2f9e44; border-color: #2f9e44; }
     .focus-chip.on[data-mode="attention"] { background: #fab005; border-color: #fab005; color: #212529; }
+    .focus-chip.on[data-mode="delayed"] { background: #e03131; border-color: #e03131; }
     .view-toolbar .stat.cols-hidden { cursor: pointer; }
     .view-toolbar .stat.cols-hidden:hover { border-color: var(--accent); color: var(--accent); }
     .matrix-table td.drop-target { background: var(--bg-secondary); outline: 2px dashed var(--accent); outline-offset: -3px; }
@@ -2126,11 +2127,12 @@
     // quick: '' | 'active' (card Active); onlyToday: card today (só tasks com a flag)
     const viewFilters = { quick: '', hideDone: true, minScore: 0, onlyToday: false, onlyAttention: false, onlyVictoria: false, onlyDelayed: false, focusCols: [] };
     const QUICK_FILTER_KEYS = ['active'];
-    // Grid, "Ocultar frentes sem": recolhe a frente sem nenhuma task (não-Done, visível) que atenda a algum modo ligado
+    // Grid, "Mostrar só frentes com" (até 2026-10-23: "Ocultar frentes sem", mesma lógica): recolhe a frente sem nenhuma task (não-Done, visível) que atenda a algum modo ligado
     const FOCUS_COLS_MODES = {
       active:    { label: 'Active',    test: t => isActiveSection(t.section) },
       today:     { label: 'today',     test: t => isToday(t) },
       attention: { label: 'attention', test: t => isAttention(t) },
+      delayed:   { label: 'delayed',   test: t => isDelayed(t) },
     };
     try { viewFilters.minScore = Math.max(0, Math.min(1000, parseInt(localStorage.getItem('minScore'), 10) || 0)); } catch (e) {}
     // Cards Active/today e "Ocultar Done" sobrevivem ao recarregar (localStorage viewFilters)
@@ -2142,8 +2144,8 @@
       if (typeof saved.onlyVictoria === 'boolean') viewFilters.onlyVictoria = saved.onlyVictoria;
       if (typeof saved.onlyDelayed === 'boolean') viewFilters.onlyDelayed = saved.onlyDelayed;
       if (typeof saved.hideDone === 'boolean') viewFilters.hideDone = saved.hideDone;
-      // focusCols: lista de modos ligados (active/today/attention). Até 2026-10-21 era boolean: true = os três
-      if (saved.focusCols === true) viewFilters.focusCols = Object.keys(FOCUS_COLS_MODES);
+      // focusCols: lista de modos ligados (active/today/attention/delayed). Até 2026-10-21 era boolean: true = active/today/attention
+      if (saved.focusCols === true) viewFilters.focusCols = ['active', 'today', 'attention'];
       else if (Array.isArray(saved.focusCols)) viewFilters.focusCols = saved.focusCols.filter(m => FOCUS_COLS_MODES[m]);
       else if (FOCUS_COLS_MODES[saved.focusCols]) viewFilters.focusCols = [saved.focusCols];
     } catch (e) {}
@@ -2195,7 +2197,7 @@
           ${viewFilters.minScore ? '<button type="button" title="Limpar filtro de score">×</button>' : ''}
         </span>
         <label><input type="checkbox" data-f="hideDone" ${viewFilters.hideDone ? 'checked' : ''}> Ocultar Done</label>
-        ${container === matrixView ? `<span class="focus-cols" title="Só no Grid: recolhe as frentes sem nenhuma task que atenda a algum dos chips ligados (tasks com Done não contam)">Ocultar frentes sem:
+        ${container === matrixView ? `<span class="focus-cols" title="Só no Grid: mostra só as frentes com alguma task que atenda a algum dos chips ligados; as outras ficam recolhidas (tasks com Done não contam)">Mostrar só frentes com:
           ${Object.entries(FOCUS_COLS_MODES).map(([k, m]) => `<button type="button" class="focus-chip ${viewFilters.focusCols.includes(k) ? 'on' : ''}" data-mode="${k}">${m.label}</button>`).join('')}
         </span>` : ''}`;
       bar.querySelectorAll('[data-q]').forEach(el => el.addEventListener('click', () => {
@@ -2263,7 +2265,7 @@
       matrixView.innerHTML = '';
       const allTasks = sections.flatMap(sec => tasks[sec.id] || []);
       const cats = orderedCategories(allTasks);
-      // Filtro "Ocultar frentes sem" (chips Active/today/attention): recolhe (igual ao "–") a frente sem task aberta que atenda a algum chip ligado
+      // Filtro "Mostrar só frentes com" (chips Active/today/attention/delayed): recolhe (igual ao "–") a frente sem task aberta que atenda a algum chip ligado
       const focusTests = viewFilters.focusCols.map(m => FOCUS_COLS_MODES[m].test);
       const inFocus = c => allTasks.some(t => taskCategory(t) === c && !t.checked && passesFilters(t) && focusTests.some(f => f(t)));
       const isCollapsed = c => gridColHidden.has(c) || (focusTests.length && !gridColPinned.has(c) && !inFocus(c));
