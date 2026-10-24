@@ -1,0 +1,76 @@
+{
+  "erro": "nao achei o corpo do post",
+  "versao": 12,
+  "url": "https://www.linkedin.com/pulse/fal%C3%A1cia-do-hedge-natural-luiz-carlos-g-ribeiro-yb36f/",
+  "titulo_pagina": "(3) A Falácia do Hedge Natural | LinkedIn",
+  "body_chars": 5796,
+  "body_quebras": 2,
+  "parou_em": "BODY",
+  "candidatos": [
+    {
+      "tag": "BODY",
+      "dir": "ltr",
+      "chars": 5791,
+      "quebras": 2,
+      "ps": 22,
+      "amostra": "0 notifications total\nSkip to search\nSkip to main content\nKeyboard shortcuts\nClose jump menu\nnew feed updates notifications\nHome\nNetwork\nJobs\nMessaging\n3\n3 new notifications\nNotifications\nMe\nFor Business\nAdvertise\nA Falácia do Hedge Natural\nLuiz Carlos Ribeiro\nHead of Trading Desk at Pif Paf Foods\nO"
+    },
+    {
+      "tag": "ARTICLE",
+      "dir": "",
+      "chars": 4303,
+      "quebras": 0,
+      "ps": 18,
+      "amostra": "A Falácia do Hedge Natural\nLuiz Carlos Ribeiro\nHead of Trading Desk at Pif Paf Foods\nOctober 15, 2026\n\nHá um mito confortável que circula há décadas no mercado e que escuto bastante de clientes/tesourarias ainda em 2026: \"Não preciso me proteger, minha operação já tem hedge natural.\"\n\nA lógica parec"
+    },
+    {
+      "tag": "DIV",
+      "dir": "ltr",
+      "chars": 4200,
+      "quebras": 0,
+      "ps": 18,
+      "amostra": "Há um mito confortável que circula há décadas no mercado e que escuto bastante de clientes/tesourarias ainda em 2026: \"Não preciso me proteger, minha operação já tem hedge natural.\"\n\nA lógica parece irretocável. O exportador recebe em dólar e tem custos em dólar — os movimentos se anulam. O importad"
+    },
+    {
+      "tag": "P",
+      "dir": "",
+      "chars": 324,
+      "quebras": 0,
+      "ps": 0,
+      "amostra": "A lógica parece irretocável. O exportador recebe em dólar e tem custos em dólar — os movimentos se anulam. O importador que também exporta acredita que a receita em moeda forte compensa os compromissos na mesma moeda. O produtor rural vende soja cotada em dólar e assume que a alta da moeda americana"
+    },
+    {
+      "tag": "P",
+      "dir": "",
+      "chars": 301,
+      "quebras": 0,
+      "ps": 0,
+      "amostra": "Há, de fato, uma falácia do hedge natural em empresas importadoras ou exportadoras. Hedge natural exige que volume, tempo (duration) e ciclos de caixa sejam muito razoavelmente compatíveis. Fora isso, é quase uma ilusão — pode ter dado certo a vida toda, até o dia em que o mercado mostre o contrário"
+    },
+    {
+      "tag": "P",
+      "dir": "",
+      "chars": 339,
+      "quebras": 0,
+      "ps": 0,
+      "amostra": "O problema central é que poucas empresas possuem um casamento perfeito entre suas entradas e saídas em moeda estrangeira. Muitas empresas atuam com o chamado \"hedge natural\" — volume de exportações e importações equivalente — porém com fluxo financeiro \"descasado\", com saídas e entradas em moeda est"
+    },
+    {
+      "tag": "P",
+      "dir": "",
+      "chars": 345,
+      "quebras": 0,
+      "ps": 0,
+      "amostra": "Na prática, o importador paga fornecedores em 30 dias, mas recebe do cliente doméstico em 90. O exportador embarca hoje, mas só recebe em 120 dias. Qualquer atraso no embarque, alteração na rota ou mudança no tempo de trânsito pode causar um descompasso entre o fluxo de caixa estimado e a data do câ"
+    },
+    {
+      "tag": "P",
+      "dir": "",
+      "chars": 203,
+      "quebras": 0,
+      "ps": 0,
+      "amostra": "O caso clássico é o de exportadores com receita em dólar e despesas em reais: parece proteção natural, mas a exposição pode continuar relevante por prazo, margem e descasamento entre recebimento e custo."
+    }
+  ],
+  "amostra": "0 notifications total\nSkip to search\nSkip to main content\nKeyboard shortcuts\nClose jump menu\nnew feed updates notifications\nHome\nNetwork\nJobs\nMessaging\n3\n3 new notifications\nNotifications\nMe\nFor Business\nAdvertise\nA Falácia do Hedge Natural\nLuiz Carlos Ribeiro\nHead of Trading Desk at Pif Paf Foods\nOctober 15, 2026\n\nHá um mito confortável que circula há décadas no mercado e que escuto bastante de clientes/tesourarias ainda em 2026: \"Não preciso me proteger, minha operação já tem hedge natural.\"\n\nA lógica parece irretocável. O exportador recebe em dólar e tem custos em dólar — os movimentos se anulam. O importador que também exporta acredita que a receita em moeda forte compensa os compromissos na mesma moeda. O produtor rural vende soja cotada em dólar e assume que a alta da moeda americana sempre será sua aliada.\n\nÉ uma ilusão perigosa.\n\nHá, de fato, uma falácia do hedge natural em empresas importadoras ou exportadoras. Hedge natural exige que volume, tempo (duration) e ciclos de caixa sejam muito razoavelmente compatíveis. Fora isso, é quase uma ilusão — pode ter dado certo a vida toda, até o dia em que o mercado mostre o contrário.\n\nO Descasamento Invisível\n\nO problema central é que poucas empresas possuem um casamento perfeito entre suas entradas e saídas em moeda estrangeira. Muitas empresas atuam com o chamado \"hedge natural\" — volume de exportações e importações equivalente — porém com fluxo financeiro \"descasado\", com saídas e entradas em moeda estrangeira ocorrendo em"
+}

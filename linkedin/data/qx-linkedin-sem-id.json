@@ -1,0 +1,59 @@
+{
+  "fonte": "linkedin-bookmarklet",
+  "versao": 9,
+  "url": "https://www.linkedin.com/pulse/understanding-market-microstructure-simulating-how-financial-modak-qlitf/",
+  "capturado_em": "2026-08-26T00:43:00.178Z",
+  "autor": "Vedant Modak",
+  "autor_cargo": "Quant | Algorithmic Trading | Option Pricing | Portfolio Optimization | Trading strategies | Python",
+  "publicado": "July 30, 2026",
+  "engajamento_bruto": "8 comments | 1 Comment on Saksham Verma’s comment | 1 Comment on Mallinath Mulage’s comment",
+  "texto": "In my previous projects, I focused on strategies like Pairs Trading, ETF Arbitrage, and Factor Investing. Those projects assumed market prices already existed. This project takes a step further by asking, How are prices actually created. This is the field of Market Microstructure, the study of how buy and sell orders interact to determine prices, liquidity, and execution. Instead of downloading historical prices, this notebook builds a miniature stock exchange from scratch.\n\nStep 1 : Building the Limit Order Book\n\nThe notebook implements its own Limit Order Book (LOB). A Limit Order Book is the mechanism every electronic stock exchange uses to match buyers and sellers. Instead of storing only one price, the order book stores every buy order, every sell order, every price level and every quantity waiting to be traded. Why build a Limit Order Book? Because prices do not magically appear. They are created through supply and demand. Whenever a buyer and seller agree, a trade occurs. The order book manages this entire process.\n\nThe notebook follows Price-Time Priority. This means 1. Better prices are matched first. 2. If two traders offer the same price, whoever placed the order first gets executed first. This is how most modern exchanges operate.\n\nMarket Orders vs Limit Orders, The notebook supports both order types. Limit Orders specify \"I want to buy only at this price.\" If nobody accepts, the order waits in the book.\n\nMarket Orders specify \"Buy immediately.\" Price becomes secondary. Execution speed becomes the priority. Supporting both order types makes the simulator behave much closer to real financial markets.\n\nStep 2 : Testing the Matching Engine\n\nBefore running a full simulation, the notebook performs several small manual tests. Orders are inserted into the book. Trades are executed. The resulting state of the order book is inspected. Testing individual components first helps verify that the matching engine behaves correctly before introducing thousands of simulated orders. This is similar to unit testing in software engineering.\n\nStep 3 : Simulating Order Flow\n\nReal exchanges receive thousands of orders every second. Since historical order book data is difficult to obtain, the notebook generates synthetic order flow. This is handled by the OrderFlowSimulator.\n\nWhat does it simulate? It randomly creates limit buy orders, limit sell orders, market buy orders, market sell orders and order cancellations using predefined probabilities. Why simulate order flow? Without incoming orders, the order book would never change. The simulator continuously updates market activity, allowing realistic trading behaviour to emerge.\n\nStep 4 : Running the Simulation\n\nThe notebook now runs the simulator over many events. Each event updates the order book. Snapshots of the market are saved periodically. These snapshots include best bid, best ask, bid depth, ask depth, mid-price and order book state. Why store snapshots? Because later analysis requires historical market states. Without snapshots, there would be nothing to analyse after the simulation ends.\n\nStep 5 : Creating Market Data\n\nThe snapshots are converted into a structured DataFrame. Instead of working with raw objects, the notebook creates columns such as Time, Best Bid, Best Ask, Mid Price and Spread. DataFrames make later analysis, visualisation, and feature engineering much easier.\n\nStep 6 : Visualising Market Behaviour\n\nSeveral charts are created showing Mid-price movement, Bid-Ask Spread and Liquidity changes. Financial markets generate enormous amounts of data. Visualisation helps researchers quickly understand whether the simulated market behaves realistically.\n\nStep 7 : Order Book Heatmap\n\nOne of the most interesting visualisations is the Order Book Depth Heatmap. Each colour represents how much liquidity exists at different prices through time. Bright regions indicate heavy buying or selling interest. Traders often study liquidity concentrations to understand where large buyers or sellers may be waiting. This provides insight into market structure that simple price charts cannot.\n\nStep 8 : Order Flow Imbalance\n\nThe notebook then calculates Order Flow Imbalance (OFI). This measures whether buying pressure is stronger than selling pressure. Instead of only looking at completed trades, OFI studies the flow of incoming orders. Research has shown that order imbalance often contains information about future short-term price movements. A market dominated by buyers may experience upward pressure. Likewise, strong selling pressure may push prices lower.\n\nStep 9 : Predicting Future Price Changes\n\nThe notebook compares Order Flow Imbalance with future changes in the mid-price. The objective is to determine whether imbalance contains predictive information. If a relationship exists, order flow becomes a useful feature for quantitative trading models.\n\nStep 10 : Estimating Price Impact\n\nNext, the notebook estimates Kyle's Lambda. Kyle's Lambda measures how much prices move for a given amount of buying or selling. Think of it as measuring market sensitivity. If a small trade causes a large price move, the market is relatively illiquid. If even large trades barely move prices, the market is highly liquid. This provides a quantitative measure of execution cost and market impact.\n\nThis notebook goes beyond analysing market prices. It recreates the mechanics that generate them. By building a limit order book, simulating order flow, visualising liquidity, measuring order imbalance, and estimating market impact, it demonstrates how prices emerge from the interaction of buyers and sellers rather than appearing as isolated data points.\n\nUnderstanding these mechanics is fundamental to algorithmic trading, high-frequency trading, and execution research. Before designing strategies that react to prices, it is equally important to understand how those prices are formed, how liquidity evolves, and how every order influences the market itself.\n\nEvery price tells a story, the order book writes it !\n\nYou can go through the code here : https://github.com/Vedant-Modak/Market-microstucture-simulation\n\nPortfolio link is available on my profile.",
+  "titulo_pagina": "Understanding Market Microstructure: Simulating How Financial Markets Actually Work ! | LinkedIn",
+  "tem_video": false,
+  "imagens": [
+    {
+      "url": "https://media.licdn.com/dms/image/v2/D4D12AQFWActkS950hg/article-cover_image-shrink_720_1280/B4DZ.y5q6.JMAQ-/0/1785412890580?e=1787184000&v=beta&t=ZEfwJg-3yzY79JeQ_CEaN108GvGOooleLblghpX6TYU",
+      "alt": "",
+      "tipo": "imagem",
+      "erro": "TypeError: Failed to fetch"
+    },
+    {
+      "url": "https://media.licdn.com/dms/image/v2/D4D12AQG_NR6z6Tc5AQ/article-inline_image-shrink_1500_2232/B4DZ.y5149IEAQ-/0/1785412935517?e=1787184000&v=beta&t=CfPwGIMHLkF9fyKL-ssJyBiUVKgUgyemJ9rgmsfHEwo",
+      "alt": "Article content",
+      "tipo": "imagem",
+      "erro": "TypeError: Failed to fetch"
+    },
+    {
+      "url": "https://media.licdn.com/dms/image/v2/D4D12AQFQhfKI0vrAzw/article-inline_image-shrink_1500_2232/B4DZ.y54t3IoAU-/0/1785412947075?e=1787184000&v=beta&t=c2sXYjGJSL5pK1_FGvh0XO7e83HVrqjefUbe6cEdOSg",
+      "alt": "Article content",
+      "tipo": "imagem",
+      "erro": "TypeError: Failed to fetch"
+    },
+    {
+      "url": "https://media.licdn.com/dms/image/v2/D4D12AQE1HUJrxiVFXg/article-cover_image-shrink_423_752/B4DZWYdFZ2G4AU-/0/1742019516823?e=1787184000&v=beta&t=ZjpsfRM_xQXQINTqFBODy4TOFvF-4L8NWWidkh5G2sI",
+      "alt": "Article cover image",
+      "tipo": "imagem",
+      "erro": "TypeError: Failed to fetch"
+    },
+    {
+      "url": "https://media.licdn.com/dms/image/v2/D5612AQFdARjIkRyeZA/article-cover_image-shrink_423_752/B56ZyWEEp9HUAU-/0/1772044176639?e=1787184000&v=beta&t=uY5CXGE7tGLMJmnix-tP9QjZ7I56M_1BSud0PyNoTw8",
+      "alt": "Article cover image",
+      "tipo": "imagem",
+      "erro": "TypeError: Failed to fetch"
+    },
+    {
+      "url": "https://media.licdn.com/dms/image/v2/D4E12AQHuxIDhK2M_yg/article-cover_image-shrink_423_752/B4EZX75F_dHgAc-/0/1743687805583?e=1787184000&v=beta&t=-YPwFdxlXE9q82-wJ2HqdzfcHOGvUYaHPzzF7DPOOSI",
+      "alt": "Article cover image",
+      "tipo": "imagem",
+      "erro": "TypeError: Failed to fetch"
+    },
+    {
+      "url": "https://media.licdn.com/dms/image/v2/D4D12AQHUSqcH3ZhI5g/article-cover_image-shrink_423_752/B4DZebI_NIHkAU-/0/1750654515286?e=1787184000&v=beta&t=f3vQo2Y6wMDbfu4Qc1zqDh0DYVra4ydvsAYnWvdhBxY",
+      "alt": "Article cover image",
+      "tipo": "imagem",
+      "erro": "TypeError: Failed to fetch"
+    }
+  ],
+  "metodo": "reparo-offline",
+  "reparado_em": "2026-08-28T01:43:02Z"
+}

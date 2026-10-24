@@ -1,0 +1,23 @@
+{
+  "fonte": "linkedin-bookmarklet",
+  "versao": 9,
+  "url": "https://www.linkedin.com/posts/jaredbroad_quantcommunity-executionalgorithms-fourier-share-7486405687330398209-zq96/?utm_source=share&utm_medium=member_desktop&rcm=ACoAAABmF_kBLhh-K6-QtfIk4SKp4DaqyfRVbGw",
+  "capturado_em": "2026-08-26T00:48:56.387Z",
+  "autor": "Jared Broad",
+  "autor_cargo": "CEO/Founder at QuantConnect | Democratizing quant trading | Disrupting algorithmic trading with OS innovation",
+  "publicado": "1h •",
+  "engajamento_bruto": "2 comments",
+  "texto": "Algorithmic execution leaves a unique fingerprint on the market 🫆🔍\n\nWhen large orders are divided into smaller child orders on recurring schedules, intraday volume can develop measurable periodic patterns. In our latest research, we use a new Spectral Tick-Flow Signal dataset to test whether those patterns contain useful cross-sectional information. Using a Fourier transform, we can identify potential trading rhythms and expose the cadence of suspected execution algorithms.\n\nThe strategy ranks the 100 most liquid US equities by volume periodicity, selects the top 25% each week, and tilts allocations toward stocks with stronger, persistent execution-flow confirmation.\n\nFrom July 2021 to July 2026, the portfolio achieved a 0.792 Sharpe ratio, compared with 0.406 for SPY. A parameter sensitivity test showed all 25 tested combinations of universe size and signal smoothing outperformed the benchmark.\n\nThe result is a practical example of translating market-microstructure research into a systematic equity strategy.\n\nWork inspired by Wu, Zhang, and Dai. Read the research and clone the strategy code here: https://qnt.co/4wjJ8Hk\n\nhashtag\n#quantcommunity\nhashtag\n#executionalgorithms\nhashtag\n#fourier\nhashtag\n#finallyusedmath428",
+  "titulo_pagina": "Post | LinkedIn",
+  "tem_video": false,
+  "imagens": [
+    {
+      "url": "https://media.licdn.com/dms/image/v2/D4E22AQFoWmGc9aAspw/feedshare-shrink_800/B4EZ.UOTj6IgAc-/0/1784898206218?e=1786579200&v=beta&t=KbV8Cj3pwJP3t2Q1diPYP_6hup8OuFDASKRt7aImGsM",
+      "alt": "chart",
+      "tipo": "imagem",
+      "erro": "Error: HTTP 403"
+    }
+  ],
+  "metodo": "reparo-offline",
+  "reparado_em": "2026-08-28T01:43:02Z"
+}

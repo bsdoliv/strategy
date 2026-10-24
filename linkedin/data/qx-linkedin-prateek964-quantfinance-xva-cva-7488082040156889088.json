@@ -1,0 +1,21 @@
+{
+  "fonte": "linkedin-bookmarklet",
+  "versao": 9,
+  "url": "https://www.linkedin.com/posts/prateek964_quantfinance-xva-cva-share-7488082040156889088-wYdS/?utm_source=share&utm_medium=member_desktop&rcm=ACoAAABmF_kBLhh-K6-QtfIk4SKp4DaqyfRVbGw",
+  "capturado_em": "2026-08-26T00:41:20.710Z",
+  "autor": "Prateek Yadav, FRM, CQF",
+  "autor_cargo": " • 2nd",
+  "publicado": "Founder, Risk Hub | Building NextGen Talent Infrastructure Layer for BFSI Professionals",
+  "engajamento_bruto": "3 comments",
+  "texto": "XVA SUMMARIZED\n\nBefore 2008, pricing a derivative was relatively straightforward:\n- Build a pricing model.\n- Discount the expected cash flows.\n- Execute the trade.\n\nThen the financial crisis happened.\n\nLehman Brothers collapsed.\n\nCounterparties that were once considered “too big to fail” suddenly defaulted.\n\nBanks realized that a perfectly priced derivative can still lose money if your counterparty fails.\n\nThat realization gave birth to XVA.\n\n⸻\n\nDEFINITION\n\nXVA stands for Valuation Adjustments.\n\nInstead of asking, “What is this derivative worth?”\n\nXVA asks, “What is this derivative worth after accounting for every real-world cost and risk?”\n\nToday, almost every major investment bank computes XVA before executing OTC derivative trades.\n\n⸻\n\nFIVE PILLARS OF XVA\n\n1. CVA (Credit Valuation Adjustment)\n\nThe expected loss if your counterparty defaults.\n\nEven a profitable trade has value only if the other party survives long enough to pay.\n\n2. DVA (Debt Valuation Adjustment)\n\nThe impact of your own institution’s default risk.\n\nIronically, if your own credit quality deteriorates, certain liabilities become cheaper to settle.\n\n3. FVA (Funding Valuation Adjustment)\n\nTrading isn’t free.\n\nBanks borrow money to fund collateral and hedging activities.\n\nFVA captures those funding costs.\n\n4. MVA (Margin Valuation Adjustment)\n\nRegulations require banks to post initial margin on many derivatives.\n\nThat capital cannot be deployed elsewhere.\n\nMVA measures the economic cost of locking up that collateral.\n\n5. KVA (Capital Valuation Adjustment)\n\nBanks must hold regulatory capital against trading exposures.\n\nShareholders expect a return on that capital.\n\nKVA incorporates the cost of maintaining regulatory capital into the trade price.\n\n⸻\n\nIMPORTANCE OF XVA:\n\nA trade that appears profitable under Black-Scholes can become unprofitable after accounting for:\n• Counterparty default\n• Funding costs\n• Regulatory capital\n• Initial margin\n• Balance sheet constraints\n\n⸻\n\nWHERE IS XVA USED?\n\nXVA desks exist at nearly every global investment bank.\n\nApplications include:\n• OTC Derivatives Pricing\n• Interest Rate Swaps\n• FX Derivatives\n• Credit Derivatives\n• Counterparty Risk Management\n• Basel III & IV Compliance\n• Collateral Optimization\n• Capital Allocation\n\n⸻\n\nTHE BIGGEST LESSON\n\nBlack-Scholes tells you the theoretical value of a derivative.\n\nXVA tells you what it actually costs a bank to trade it.\n\nThat’s why XVA has become one of the most concepts in quant finance.\n\n⸻\n\nReady to master the maths behind quantitative finance?\n\n👉 Maths for Quant Finance (MQF) Program:\nhttps://lnkd.in/gtZJBgP5\n\n👉 FRM Program:\nhttps://riskhub.org/frm/\n\n👉 CFA Program:\nhttps://riskhub.org/cfa/\n\n📱 Download our Mobile App:\nhttps://lnkd.in/gCTuZCwf\n\nhashtag\n#QuantFinance \nhashtag\n#XVA \nhashtag\n#CVA \nhashtag\n#DVA \nhashtag\n#FVA \nhashtag\n#MVA \nhashtag\n#KVA \nhashtag\n#FinancialEngineering \nhashtag\n#Derivatives \nhashtag\n#CounterpartyRisk \nhashtag\n#StochasticCalculus \nhashtag\n#InvestmentBanking \nhashtag\n#BaselIII \nhashtag\n#QuantResearch \nhashtag\n#RiskManagement \nhashtag\n#RiskHub",
+  "titulo_pagina": "Post | LinkedIn",
+  "tem_video": false,
+  "imagens": [
+    {
+      "url": "https://media.licdn.com/dms/image/v2/D5622AQEftrD3fFyJGA/feedshare-shrink_800/B56Z.sC75iG0Ac-/0/1785297878935?e=1787184000&v=beta&t=gdCJXROLr8AviC--LleTD0-v5ixo028HsmUjsGfV6_E",
+      "alt": "View image",
+      "tipo": "imagem",
+      "erro": "TypeError: Failed to fetch"
+    }
+  ]
+}

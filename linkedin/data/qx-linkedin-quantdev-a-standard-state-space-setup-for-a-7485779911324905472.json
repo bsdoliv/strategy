@@ -1,0 +1,23 @@
+{
+  "fonte": "linkedin-bookmarklet",
+  "versao": 9,
+  "url": "https://www.linkedin.com/posts/quantdev_a-standard-state-space-setup-for-a-dynamic-share-7485779911324905472-an8u/?utm_source=share&utm_medium=member_desktop&rcm=ACoAAABmF_kBLhh-K6-QtfIk4SKp4DaqyfRVbGw",
+  "capturado_em": "2026-08-26T00:48:14.551Z",
+  "autor": "Dr. Heather Dempsey",
+  "autor_cargo": "Quantitative Researcher | Quant Strategist",
+  "publicado": "4d • Edited •",
+  "engajamento_bruto": "19 comments | 1 Comment on Alex Mind’s comment | 1 Comment on Oscar Soppelsa’s comment | 1 Comment on Emlyn Flint’s comment",
+  "texto": "A standard state-space setup for a dynamic hedge ratio writes\n yₜ = xₜβₜ + vₜ\n βₜ = βₜ₋₁ + wₜ\n where vₜ ∼ N(0, R) and wₜ ∼ N(0, Q).\nThe Kalman filter estimates βₜ recursively and adapts on its own to slow drift in the relationship.\n\nIn a pairs setting the spread is usually sₜ = yₜ − xₜβ̂ₜ, and trade P&L gets computed as s_exit − s_entry. Here is the problem. If β̂ₜ keeps updating between entry and exit, the measured P&L splits into two pieces: a true price-return component, and a parameter-adaptation component proportional to (β̂_entry − β̂_exit)·x_exit. The second piece is not tradeable. It is the filter moving the goalposts.\n\nWhat goes wrong from there is subtle. A filter can explain away a structural break by re-centering the spread around a moving equilibrium, so the backtest never sees the break at all. Win rates come out high and drawdowns come out shallow, and a good share of both is coming from changes in β̂ₜ rather than from prices actually converging.\n\nTwo approaches deal with it. One freezes the hedge ratio for the life of each trade, so the P&L is pure price return and the adaptation term is zero by design; the cost is a stale hedge on longer holds. The other lets the filter keep updating but decomposes the backtest P&L into its price and adaptation components, and counts only the first as evidence the strategy works. Either way, break detection moves to the innovations, eₜ = yₜ − xₜβ̂ₜ⁻, where β̂ₜ⁻ is the one-step-ahead prediction, and a CUSUM on eₜ catches persistent one-sided deviations. The filter stays an estimator instead of becoming a hidden source of P&L.\n\n*Personal views. Educational content; not investment advice or an offer of any security or fund interest. Any results shown are illustrative. Past or hypothetical results do not guarantee future results.",
+  "titulo_pagina": "Post | LinkedIn",
+  "tem_video": false,
+  "imagens": [
+    {
+      "url": "https://media.licdn.com/dms/image/v2/D5622AQFaMEtiqIpxPQ/feedshare-shrink_800/B56Z.LUK_oGoAc-/0/1784748750678?e=1786579200&v=beta&t=Z_yuF6Xc-AjItH6TosRiU81fD6MIXoRo_DFM1NfmWtc",
+      "alt": "chart, line chart",
+      "tipo": "imagem",
+      "erro": "Error: HTTP 403"
+    }
+  ],
+  "metodo": "reparo-offline",
+  "reparado_em": "2026-08-28T01:43:02Z"
+}

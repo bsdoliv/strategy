@@ -1,0 +1,23 @@
+{
+  "fonte": "linkedin-bookmarklet",
+  "versao": 9,
+  "url": "https://www.linkedin.com/posts/vedant-modak01_understanding-market-microstructure-simulating-ugcPost-7488564794204098560-3XUO/?utm_source=share&utm_medium=member_desktop&rcm=ACoAAABmF_kBLhh-K6-QtfIk4SKp4DaqyfRVbGw",
+  "capturado_em": "2026-08-26T00:42:53.220Z",
+  "autor": "Vedant Modak",
+  "autor_cargo": "Quant | Algorithmic Trading | Option Pricing | Portfolio Optimization | Trading strategies | Python",
+  "publicado": "5d • Edited •",
+  "engajamento_bruto": "8 comments | 1 Comment on Saksham Verma’s comment | 1 Comment on Mallinath Mulage’s comment",
+  "texto": "Understanding Market Microstructure: Simulating How Financial Markets Actually Work !\n\nIn my previous projects, I focused on strategies like Pairs Trading, ETF Arbitrage, and Factor Investing. Those projects assumed market prices already existed. This project takes a step further by asking, How are prices actually created. This is the field of Market Microstructure.\n\nI built a Market Microstructure Simulator that recreates the core mechanics of a modern electronic exchange. From building a Limit Order Book and implementing a matching engine to simulating market and limit orders, order flow, liquidity, bid-ask spreads, and price impact, the goal was to understand how the interaction between buyers and sellers shapes market prices. Instead of downloading historical prices, this notebook builds a miniature stock exchange from scratch.\n\nUnderstanding these mechanics is fundamental to algorithmic trading, high-frequency trading, and execution research. Before designing strategies that react to prices, it is equally important to understand how those prices are formed, how liquidity evolves, and how every order influences the market itself.\n\nI have covered the complete implementation and technical details in the article below.\n\nEvery price tells a story, the order book writes it !\n\nYou can go through the code here : https://lnkd.in/dcnf4_6H\nPortfolio link is available on my profile.\nUnderstanding Market Microstructure: Simulating How Financial Markets Actually Work !\nVedant Modak",
+  "titulo_pagina": "Post | LinkedIn",
+  "tem_video": false,
+  "imagens": [
+    {
+      "url": "https://media.licdn.com/dms/image/v2/D4D12AQFWActkS950hg/article-cover_image-shrink_720_1280/B4DZ.y5q6.JMAQ-/0/1785412890580?e=1787184000&v=beta&t=ZEfwJg-3yzY79JeQ_CEaN108GvGOooleLblghpX6TYU",
+      "alt": "",
+      "tipo": "imagem",
+      "erro": "TypeError: Failed to fetch"
+    }
+  ],
+  "metodo": "reparo-offline",
+  "reparado_em": "2026-08-28T01:43:02Z"
+}

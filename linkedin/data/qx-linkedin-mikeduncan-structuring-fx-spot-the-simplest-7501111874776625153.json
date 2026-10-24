@@ -1,0 +1,24 @@
+{
+  "fonte": "linkedin-bookmarklet",
+  "versao": 12,
+  "url": "https://www.linkedin.com/posts/mikeduncan-structuring_fx-spot-the-simplest-fx-transaction-with-share-7501111874776625153-Ssef/?utm_source=share&utm_medium=member_desktop&rcm=ACoAAABmF_kBLhh-K6-QtfIk4SKp4DaqyfRVbGw",
+  "capturado_em": "2026-09-11T00:31:35.369Z",
+  "autor": "Mike Duncan",
+  "autor_cargo": " • 1st",
+  "publicado": "The Portfolio Surgeon for Institutions & Corporate Treasuries | Structural drag is silent. Until it isn’t. | Independent Financial Markets, Treasury & Derivatives Advisory | Structuring | Risk | Capital Efficiency",
+  "engajamento_bruto": "3 comments | 2 reactions\n2 | 1 reaction\n1",
+  "texto": "FX spot. The simplest FX transaction, with two days of settlement risk sitting underneath it.\n\nMost FX transactions are executed at spot. The rate is agreed, but in most major currency pairs the exchange of currencies takes place two business days later. That gap introduces a number of risks that are easy to overlook because the transaction itself is straightforward.\n\nThere are five things worth understanding.\n\n1. What FX spot is\n\nFX spot is an agreement to exchange two currencies at the prevailing market rate, normally settling in two business days.\n\nT+0 is when the rate is agreed. T+2 is when the currencies are exchanged.\n\nMost G10 pairs follow this convention, although there are exceptions.\n\nThe spot rate is also the reference point for the broader FX market. Forwards, swaps, options and NDFs are all priced from the underlying spot market.\n\n2. How the spot rate is determined\n\nThere is no central authority setting the FX spot rate. It is a continuously changing market price determined by supply and demand across the global FX market.\n\nInterest rate differentials, trade and capital flows, central bank policy and intervention, and changes in risk sentiment can all influence the price.\n\nThese factors do not necessarily move in the same direction. The exchange rate at any point reflects the combined effect of the flows and positioning in the market.\n\n3. Bid, offer and the spread\n\nA spot FX price consists of a bid and an offer.\n\nThe bid is the rate at which the dealer will buy the base currency. The offer is the rate at which the dealer will sell it. A client buying the base currency therefore pays the offer, while a client selling it receives the bid.\n\nThe difference is the spread and represents a transaction cost.\n\nIn liquid G10 pairs under normal conditions, spreads can be very tight. In less liquid markets, or around major data releases, central bank decisions or periods of market stress, they can widen considerably.\n\nLiquidity is therefore an important part of the cost of executing spot FX, particularly for larger transactions.\n\n4. Settlement risk\n\nThe two-day period between execution and settlement creates counterparty settlement risk. The classic example is the failure of Bankhaus Herstatt in 1974. Counterparties had delivered Marks but had not yet received the corresponding US dollars when the bank was closed by regulators. Hence the term \"Herstatt risk\".\n\nCLS, or Continuous Linked Settlement, was subsequently established to reduce this risk through payment-versus-payment settlement, where both currency legs are settled together.\n\n5. Where the risks appear in practice\n\nThree areas worth monitoring.\n\nLiquidity: spreads can widen materially during periods of stress or reduced liquidity.\n\nMarket gaps: FX prices can move through multiple levels following unexpected economic data, geopolitical events or central bank decisions. \n\nSettlement failure: where a transaction is settled bilaterally.\n\nparabellumadvisors.com",
+  "metodo": "quebras",
+  "titulo_pagina": "Post | LinkedIn",
+  "tem_video": false,
+  "tem_documento": false,
+  "paginas_faltando": [],
+  "imagens": [
+    {
+      "url": "https://media.licdn.com/dms/image/v2/D5610AQHjgYTc6jGzbQ/image-shrink_1280/B56aBlNal9JUAc-/0/1788404411370?e=1789045200&v=beta&t=3hlHtLd1U-hYvFWTiGGjaghhtu8nadaohPzqGeLAmf8",
+      "alt": "View image",
+      "tipo": "imagem",
+      "erro": "TypeError: Failed to fetch"
+    }
+  ]
+}

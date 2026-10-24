@@ -1,0 +1,23 @@
+{
+  "fonte": "linkedin-bookmarklet",
+  "versao": 9,
+  "url": "https://www.linkedin.com/posts/andre-luiz-df-rodrigues_quantitativefinance-capitalmarkets-yieldcurve-share-7486505868533080064-fHly/?utm_source=share&utm_medium=member_desktop&rcm=ACoAAABmF_kBLhh-K6-QtfIk4SKp4DaqyfRVbGw",
+  "capturado_em": "2026-08-26T00:41:07.528Z",
+  "autor": "André Luiz Rodrigues",
+  "autor_cargo": "Capital Markets Technology Director | Product & AI Strategist | Driving Innovation Across Trading, Risk & Market Architecture",
+  "publicado": "1d •",
+  "engajamento_bruto": "2 comments",
+  "texto": "While global markets spent the last decade agonizing over the massive architectural shift away from LIBOR, Brazil was quietly running one of the most mathematically elegant curves in the world: the BRL PRE.\n\nWhen building pricing engines across emerging and G10 markets, the Brazilian yield curve stands out for its structural purity. Here is why the BRL PRE curve is a masterclass in market design:\n\n1. The Foundation: B3 DI Futures and Bus/252 The BRL PRE curve is driven by the immensely liquid DI (Interbank Deposit) Futures traded on the B3 exchange. Unlike G10 markets that often use an Actual/360 or Actual/365 day-count, the Brazilian mathematical convention relies strictly on Business/252. Rates are annualized over 252 business days, with the math compounding daily exclusively on valid trading days, perfectly aligning the time value of money with actual market access.\n\n2. The Elegance of Calibration If you have spent time wrestling with the convexity traps, overlapping instrument types, and dual-curve dependencies of the USD Fed Funds or SOFR curves, the BRL PRE curve is a breath of fresh air.\n\nBecause the vast majority of the term structure is built using a single, homogenous instrument (the DI Future) calibration is remarkably straightforward. You can effectively bootstrap the zero-coupon rates directly from the futures prices. There are no messy transitions between short-term OIS and long-term arithmetic average swaps to reconcile, keeping the root solver clean and the forward rates incredibly smooth.\n\n3. Why CDI Ignored the Global RFR Transition When global central banks were forced to abandon LIBOR in favor of Secured Overnight Risk-Free Rates (RFRs like SOFR or SARON), many wondered why Brazil didn't overhaul its primary benchmark, the CDI (Certificado de Depósito Interbancário).\n\nThe answer is simple: they didn't need to.\n\nThe structural flaw that doomed LIBOR was its unsecured term-credit risk. CDI, however, has always been an overnight, highly liquid, and transaction-based rate closely tethered to the sovereign Selic rate. It inherently lacks the phantom bank-credit risk that plagued legacy G10 benchmarks. Brazil essentially adopted an RFR-style benchmark decades before the rest of the world realized it was structurally necessary.\n\nFor those architecting multi-currency pricing systems: how does your engine handle the dynamic calendar generation required to cleanly transition from standard Actual/360 math to the strict Bus/252 compounding of the Brazilian market?\n\nhashtag\n#QuantitativeFinance\nhashtag\n#CapitalMarkets\nhashtag\n#YieldCurve\nhashtag\n#BRL\nhashtag\n#B3\nhashtag\n#DerivativesPricing\nhashtag\n#FinancialEngineering\nhashtag\n#MathematicalModeling",
+  "titulo_pagina": "Post | LinkedIn",
+  "tem_video": false,
+  "imagens": [
+    {
+      "url": "https://media.licdn.com/dms/image/v2/D4E22AQFyOhtI_8G4_w/feedshare-shrink_800/B4EZ.Vpa0kH8Ag-/0/1784922091105?e=1787184000&v=beta&t=mvulKBqzl2h4vVRz5mBMn7xD7PNsH3IVIk4emSTY5NQ",
+      "alt": "text, whiteboard",
+      "tipo": "imagem",
+      "erro": "TypeError: Failed to fetch"
+    }
+  ],
+  "metodo": "reparo-offline",
+  "reparado_em": "2026-08-28T01:43:02Z"
+}
