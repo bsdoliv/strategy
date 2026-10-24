@@ -146,6 +146,7 @@ id,parent,status,title,frente,today,attention,i,u,e,nota,done,tags
 120,,Someday,retorno para 5TM,ceo,x,x,5,3,3,aguardando victoria retornar,x,[victoria=1]
 124,,Someday,Falar com Adelcio sobre Evostack,ceo,x,,,,,,x,
 139,,Someday,build book references for blog,ceo,,,,,,https://aosabook.org/en/,,
+140,,Someday,FIX vs API blog,ceo,,,,,,https://www.linkedin.com/posts/algotrading_electronictrading-fixprotocol-apitrading-share-7503654734969421825-Vpp7/ content also available in strategy/linkedin/data,,
 122,,Active,Aguardando Isabel retornar calendario/agenda publis,marketing,x,,,,,,x,
 132,,Active,Merges / Lucas,platforms/cfx,x,,,,,,,
 133,,Active,Responder Rodolfo,ceo,,x,,,,,x,
