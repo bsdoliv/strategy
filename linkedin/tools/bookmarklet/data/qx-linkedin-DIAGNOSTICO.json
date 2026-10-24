@@ -1,0 +1,44 @@
+{
+  "erro": "nao achei o corpo do post",
+  "versao": 11,
+  "url": "https://www.linkedin.com/posts/marcoscscarreira_learning-interest-rate-interpolation-ugcPost-6473510335646035968-dlCT/",
+  "titulo_pagina": "Post | LinkedIn",
+  "body_chars": 5694,
+  "body_quebras": 4,
+  "parou_em": "BODY",
+  "candidatos": [
+    {
+      "tag": "HTML",
+      "dir": "ltr",
+      "chars": 5683,
+      "quebras": 4,
+      "ps": 149,
+      "amostra": "0 notifications\nSkip to search\nSkip to main content\nSkip to sidebar\nSkip to primary content\nSkip to aside\nHome\nMy Network\nJobs\nMessaging\n1\nNotifications\nMore\n\nMe\n\nFor Business\nAdvertise\n\nPremium\n\nAndre de Oliveira\n\nFounder | FX & Derivatives | Algorithmic Strategies\n\nSão Paulo, São Paulo\n\nquartix.io"
+    },
+    {
+      "tag": "P",
+      "dir": "",
+      "chars": 404,
+      "quebras": 0,
+      "ps": 0,
+      "amostra": "Learning Interest Rate Interpolation was presented at Research in Options 2018 (the event honours Bruno Dupire's 60th birthday). This work was inspired by Bruno's \"Theoretical Skew\" (also referred to as \"Breakeven Volatilities\") and describes how to learn the correct interpolation for interest rates"
+    },
+    {
+      "tag": "P",
+      "dir": "",
+      "chars": 624,
+      "quebras": 2,
+      "ps": 0,
+      "amostra": "Another great example pointing out the fallacy of pricing swaps or bonds without an underlying option model (dynamics of rates). Markets fooled themselves into the fact that infinite balance sheets and Generous Credit Support Annex docs allowed us for a while to price swaps on a yield curve and « sw"
+    },
+    {
+      "tag": "P",
+      "dir": "",
+      "chars": 622,
+      "quebras": 0,
+      "ps": 0,
+      "amostra": "Yes, I started my reading on IR curves, their shapes and modes of fluctuation (to use the expression of Chapter 18 in Garbade's \"Fixed Income Analytics\") more than 15 years ago, and consistency between the current shape of the curve and the perceived risk is not something discussed that frequently; "
+    }
+  ],
+  "amostra": "0 notifications\nSkip to search\nSkip to main content\nSkip to sidebar\nSkip to primary content\nSkip to aside\nHome\nMy Network\nJobs\nMessaging\n1\nNotifications\nMore\n\nMe\n\nFor Business\nAdvertise\n\nPremium\n\nAndre de Oliveira\n\nFounder | FX & Derivatives | Algorithmic Strategies\n\nSão Paulo, São Paulo\n\nquartix.io | high-precision tech for capital markets\n\nProfile viewers\n\n48\n\nPost impressions\n\n13\n\nYour Premium features\n\nFeed post\n\nMarcos Carreira\n\n • 2nd\n\nQuant, Risk Manager, co-author of “Brazilian Derivatives and Securities”\n\n7yr • \n\nConnect\n\nLearning Interest Rate Interpolation was presented at Research in Options 2018 (the event honours Bruno Dupire's 60th birthday). This work was inspired by Bruno's \"Theoretical Skew\" (also referred to as \"Breakeven Volatilities\") and describes how to learn the correct interpolation for interest rates by replication. I also (briefly) discuss learning Black&Scholes and similar optimal hedging strategies. \n\nLearning Interest Rate Interpo\n\n·\n\n73 pages\n\n241 reactions\n241\n\n20 comments\n20 comments\n\n•\n\n9 reposts\n9 reposts\n\nLike\nComment\nRepost\nSend\n\nMost relevant\n\nAli Mirkhani, Open to work Verified Profile 2nd\nAli Mirkhani \n • 2nd\n\nAvailable\n\n8yr\n\nFollow\n\nThanks for sharing Roman Lascu, and well done Marcos Carreira you wrestled a tough subject into a manageable slide deck.\n\n2 reactions\n2\n\nAndersson DeGaspari Verified Profile 2nd\nAndersson DeGaspari \n • 2nd\n\nExadel Financial Services\n\n8yr\n\nFollow\n\nObrigado por publicar.\n\n1 reaction\n1\n\nLuc Faucheux, Ph.D., FR"
+}

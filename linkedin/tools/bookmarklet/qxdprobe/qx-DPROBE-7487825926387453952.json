@@ -1,0 +1,70 @@
+{
+  "sonda": "qxdprobe",
+  "versao": 1,
+  "url": "https://www.linkedin.com/posts/dhrumilsavaliya-delta_basic-infrastructure-for-mft-ugcPost-7487825926387453952-BxV-/?utm_source=share&utm_medium=member_desktop&rcm=ACoAAABmF_kBLhh-K6-QtfIk4SKp4DaqyfRVbGw",
+  "quando": "2026-08-26T01:42:14.195Z",
+  "html_chars": 180650,
+  "paginas_no_dom": 5,
+  "contador_do_visualizador": "",
+  "paginas": [
+    {
+      "pagina": 1,
+      "largura": 800,
+      "tem_alt": true,
+      "url": "https://media.licdn.com/dms/image/v2/D4D1FAQHFA7cFgZEHew/feedshare-document-images_800/B4DZ.oXDB.GwAo-/1/1785236042764?e=1788393600&v=beta&t=p0jOr5Zq_VRYXNMVfK6GQ5j1i6NNbFcxqEp6dIkbvNE"
+    },
+    {
+      "pagina": 2,
+      "largura": 800,
+      "tem_alt": true,
+      "url": "https://media.licdn.com/dms/image/v2/D4D1FAQHFA7cFgZEHew/feedshare-document-images_800/B4DZ.oXDB.GwAo-/2/1785236042764?e=1788393600&v=beta&t=kR7Jp2tzff1rnV-MhPQxtt_PX-tsb74l-08ggd7vFRY"
+    },
+    {
+      "pagina": 3,
+      "largura": 800,
+      "tem_alt": true,
+      "url": "https://media.licdn.com/dms/image/v2/D4D1FAQHFA7cFgZEHew/feedshare-document-images_800/B4DZ.oXDB.GwAo-/3/1785236042764?e=1788393600&v=beta&t=Zll-u6WRw1hdcLvD8YQXyjX2nJsXqZCngzMH-PErOAc"
+    },
+    {
+      "pagina": 4,
+      "largura": 800,
+      "tem_alt": true,
+      "url": "https://media.licdn.com/dms/image/v2/D4D1FAQHFA7cFgZEHew/feedshare-document-images_800/B4DZ.oXDB.GwAo-/4/1785236042764?e=1788393600&v=beta&t=yYaYJu1BnVQIUybB4G7xDlct-DAGZ9m3RaC4Blf7C4s"
+    },
+    {
+      "pagina": 5,
+      "largura": 800,
+      "tem_alt": true,
+      "url": "https://media.licdn.com/dms/image/v2/D4D1FAQHFA7cFgZEHew/feedshare-document-images_800/B4DZ.oXDB.GwAo-/5/1785236042764?e=1788393600&v=beta&t=uS233ZC5YZQWRS3UMxu_evamOhas3ha5uSdECe5svyM"
+    }
+  ],
+  "iframes": [
+    {
+      "src": "about:blank",
+      "title": "advertisement",
+      "id": "",
+      "classe": "_0bce2e68 _1167bb36 f70cd76e _317e343b fc058521 _560d4666 db60524b _828dd191 _8e408ff5 _72f42485"
+    },
+    {
+      "src": "https://www.linkedin.com/preload/?_bprMode=vanilla",
+      "title": "",
+      "id": "",
+      "classe": ""
+    }
+  ],
+  "embeds": [],
+  "urls": {
+    "pdf": [],
+    "dms_document": [],
+    "document_images": [
+      "https://media.licdn.com/dms/image/v2/D4D1FAQHFA7cFgZEHew/feedshare-document-images_800/B4DZ.oXDB.GwAo-/1/1785236042764?e=1788393600&v=beta&t=p0jOr5Zq_VRYXNMVfK6GQ5j1i6NNbFcxqEp6dIkbvNE",
+      "https://media.licdn.com/dms/image/v2/D4D1FAQHFA7cFgZEHew/feedshare-document-images_800/B4DZ.oXDB.GwAo-/2/1785236042764?e=1788393600&v=beta&t=kR7Jp2tzff1rnV-MhPQxtt_PX-tsb74l-08ggd7vFRY",
+      "https://media.licdn.com/dms/image/v2/D4D1FAQHFA7cFgZEHew/feedshare-document-images_800/B4DZ.oXDB.GwAo-/3/1785236042764?e=1788393600&v=beta&t=Zll-u6WRw1hdcLvD8YQXyjX2nJsXqZCngzMH-PErOAc",
+      "https://media.licdn.com/dms/image/v2/D4D1FAQHFA7cFgZEHew/feedshare-document-images_800/B4DZ.oXDB.GwAo-/4/1785236042764?e=1788393600&v=beta&t=yYaYJu1BnVQIUybB4G7xDlct-DAGZ9m3RaC4Blf7C4s",
+      "https://media.licdn.com/dms/image/v2/D4D1FAQHFA7cFgZEHew/feedshare-document-images_800/B4DZ.oXDB.GwAo-/5/1785236042764?e=1788393600&v=beta&t=uS233ZC5YZQWRS3UMxu_evamOhas3ha5uSdECe5svyM"
+    ],
+    "outros_document": []
+  },
+  "chaves_no_html": {},
+  "tentativas_de_fetch": []
+}

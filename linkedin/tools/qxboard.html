@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>qxboard - pipeline QUARTIX blog</title>
+<style>
+  :root{
+    --bg:#0e1116; --panel:#161b22; --panel2:#1c222b; --line:#2a323d;
+    --fg:#e6edf3; --dim:#8b98a5; --faint:#5c6773;
+    --ok:#3fb950; --warn:#d29922; --bad:#f85149; --info:#58a6ff; --idle:#6e7681;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme: light){
+    :root{ --bg:#f6f8fa; --panel:#fff; --panel2:#f0f3f6; --line:#d8dee4;
+           --fg:#1f2328; --dim:#5c6773; --faint:#8b98a5;
+           --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e; --info:#0969da; --idle:#8b98a5; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);
+       font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+  .wrap{max-width:1180px;margin:0 auto;padding:20px 20px 60px}
+
+  header.top{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+  header.top h1{font-size:15px;margin:0;font-weight:600;letter-spacing:.3px}
+  header.top .root{font:11px/1 var(--mono);color:var(--faint)}
+  .spacer{flex:1}
+  #scan{font:11px/1 var(--mono);color:var(--faint)}
+  #scan b{color:var(--dim);font-weight:600}
+  .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--ok);
+       margin-right:5px;vertical-align:middle;transition:opacity .5s}
+  .dot.blink{opacity:.15}
+  .dot.err{background:var(--bad)}
+
+  .banner{border-radius:8px;padding:14px 16px;margin-bottom:16px;border:1px solid var(--line);
+          background:var(--panel);display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+  .banner.run{border-left:4px solid var(--ok)}
+  .banner.pause{border-left:4px solid var(--warn);background:color-mix(in srgb,var(--warn) 8%,var(--panel))}
+  .banner.stop{border-left:4px solid var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--panel))}
+  .state{font:600 20px/1 var(--mono);text-transform:uppercase;letter-spacing:1px}
+  .banner.run .state{color:var(--ok)} .banner.pause .state{color:var(--warn)}
+  .banner.stop .state{color:var(--bad)}
+  .ver{font:12px/1 var(--mono);color:var(--dim)}
+  .ver b{color:var(--fg)}
+  .stages{display:flex;gap:6px;flex-wrap:wrap}
+  .stages span{font:11px/1 var(--mono);padding:4px 7px;border-radius:4px;background:var(--panel2);
+               border:1px solid var(--line);color:var(--dim)}
+  .stages span.ov{color:var(--warn);border-color:var(--warn)}
+  .why{width:100%;font-size:12px;color:var(--dim);margin:0}
+  .why em{color:var(--faint);font-style:normal}
+
+  .strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:18px}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+  .stat .n{font:600 22px/1.1 var(--mono)}
+  .stat .k{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px}
+
+  section{background:var(--panel);border:1px solid var(--line);border-radius:8px;margin-bottom:16px}
+  section > h2{margin:0;padding:11px 14px;font-size:12px;font-weight:600;letter-spacing:.6px;
+               text-transform:uppercase;color:var(--dim);border-bottom:1px solid var(--line);
+               display:flex;gap:8px;align-items:center}
+  section > h2 .badge{font:11px/1 var(--mono);background:var(--panel2);border:1px solid var(--line);
+                      border-radius:10px;padding:3px 8px;color:var(--fg);text-transform:none;letter-spacing:0}
+  section > h2 .badge.bad{background:var(--bad);border-color:var(--bad);color:#fff}
+  section > h2.sub{color:var(--faint)}
+  section > h2 .hint{margin-left:auto;font-weight:400;text-transform:none;letter-spacing:0;
+                     color:var(--faint);font-size:11px}
+
+  table{width:100%;border-collapse:collapse}
+  th{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--faint);
+     text-align:left;padding:8px 14px;font-weight:600;border-bottom:1px solid var(--line)}
+  td{padding:9px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+  tbody tr:last-child td{border-bottom:none}
+  td.mono,th.mono{font-family:var(--mono);font-size:12px}
+  .tblwrap{overflow-x:auto}
+
+  .pill{display:inline-block;font:11px/1 var(--mono);padding:3px 7px;border-radius:10px;
+        border:1px solid var(--line);background:var(--panel2);color:var(--dim);white-space:nowrap}
+  .pill.ok{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 45%,transparent)}
+  .pill.warn{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 45%,transparent)}
+  .pill.bad{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 45%,transparent)}
+  .pill.info{color:var(--info);border-color:color-mix(in srgb,var(--info) 45%,transparent)}
+  .pill.idle{color:var(--idle)}
+  .age{font-family:var(--mono);font-size:12px}
+  .age.warn{color:var(--warn)} .age.bad{color:var(--bad);font-weight:600}
+  .note{color:var(--faint);font-size:12px;max-width:44ch;overflow:hidden;text-overflow:ellipsis;
+        white-space:nowrap;display:block}
+  /* a Frota e o painel que mais se le: a nota dela ganha duas linhas em vez de uma truncada */
+  #fleet .note{max-width:60ch;white-space:normal;text-overflow:clip;
+               display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+  a.doc{color:var(--info);text-decoration:none;border-bottom:1px dotted currentColor}
+  a.doc:hover{border-bottom-style:solid}
+  .ttl{display:block;max-width:56ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pills{display:flex;gap:4px;flex-wrap:wrap}
+  .empty{padding:16px 14px;color:var(--faint);font-size:13px}
+  .empty b{color:var(--dim);font-weight:600}
+  .bar{height:3px;background:var(--panel2);border-radius:2px;overflow:hidden;margin-top:5px;width:110px}
+  .bar i{display:block;height:100%;background:var(--ok)}
+  .bar i.warn{background:var(--warn)} .bar i.bad{background:var(--bad)}
+  footer{color:var(--faint);font-size:11px;text-align:center;margin-top:6px}
+  footer code{font-family:var(--mono)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <h1>qxboard</h1>
+    <span class="root" id="root"></span>
+    <span class="spacer"></span>
+    <span id="scan"><span class="dot" id="dot"></span><span id="scantxt">conectando...</span></span>
+  </header>
+
+  <div class="banner run" id="banner">
+    <span class="state" id="cstate">--</span>
+    <span class="ver">config <b id="cver">--</b> &middot; por <b id="cby">--</b> &middot; <span id="cwhen">--</span></span>
+    <span class="stages" id="cstages"></span>
+    <p class="why" id="cwhy"></p>
+  </div>
+
+  <div class="strip" id="strip"></div>
+
+  <section>
+    <h2>Claims abertos <span class="badge" id="livecount">0</span>
+        <span class="hint">item reivindicado no wip, cruzado com workdir/locks/ - agente de pe sem item aparece na Frota</span></h2>
+    <div class="tblwrap"><table>
+      <thead><tr>
+        <th>agente</th><th>stage</th><th class="mono">item</th><th>lock</th>
+        <th>sem evento ha</th><th>claim ha</th><th>rascunho</th><th>ultima nota</th>
+      </tr></thead>
+      <tbody id="live"></tbody>
+    </table></div>
+    <div class="empty" id="live-empty" hidden></div>
+  </section>
+
+  <section>
+    <h2>Frota <span class="badge" id="activecount">0 ativos</span>
+        <span class="hint">ultimo evento por agente em agents.log.csv + master.log.csv</span></h2>
+    <div class="tblwrap"><table>
+      <thead><tr>
+        <th>agente</th><th>stage</th><th>ultimo evento</th><th>ha</th>
+        <th>config vista</th><th>nota</th>
+      </tr></thead>
+      <tbody id="fleet"></tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <h2 class="sub">Produzidos <span class="badge" id="postcount">0</span>
+        <span class="hint">workdir/posts/&lt;item&gt;.md + o sidecar -meta.txt, cruzados com o done do ledger</span></h2>
+    <div class="tblwrap"><table>
+      <thead><tr>
+        <th>meta</th><th>social</th><th class="mono">item</th><th>titulo</th><th>palavras</th><th>categoria</th>
+        <th>agente</th><th>publicado ha</th><th>estado</th>
+      </tr></thead>
+      <tbody id="posts"></tbody>
+    </table></div>
+    <div class="empty" id="posts-empty" hidden></div>
+  </section>
+
+  <section>
+    <h2 class="sub">Social <span class="badge" id="socialcount">0</span>
+        <span class="hint">ledger/social.done.csv + a arte em workdir/posts/social/&lt;item&gt;/ -
+        o link do item abre a pasta da arte, o do titulo abre o Doc</span></h2>
+    <div class="tblwrap"><table>
+      <thead><tr>
+        <th class="mono">item</th><th>pacote</th><th>plataformas</th><th>arte</th>
+        <th>agente</th><th>entregue ha</th><th>estado</th>
+      </tr></thead>
+      <tbody id="social"></tbody>
+    </table></div>
+    <div class="empty" id="social-empty" hidden></div>
+  </section>
+
+  <section>
+    <h2 class="sub">Locks <span class="badge" id="lockcount">0</span>
+        <span class="hint">desalinhamento entre workdir/locks/ e os claims do wip</span></h2>
+    <div id="lockbody"></div>
+  </section>
+
+  <footer>
+    read-only &middot; nao escreve em <code>ledger/</code> nem em <code>workdir/</code> &middot;
+    reclaim aos <span id="thr">90</span> min (runbook)
+  </footer>
+</div>
+
+<script>
+"use strict";
+const POLL_MS = 10000;
+let fp = "", ui = "", timer = null, thr = {stale_lock_s: 5400, heartbeat_warn_s: 900};
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c =>
+  ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function dur(s){
+  if (s == null) return "--";
+  if (s < 60) return s + "s";
+  const m = Math.floor(s / 60);
+  if (m < 60) return m + "m";
+  const h = Math.floor(m / 60), r = m % 60;
+  if (h < 48) return h + "h" + String(r).padStart(2, "0");
+  return Math.floor(h / 24) + "d";
+}
+// idade contra os dois limiares do runbook: 15 min sem heartbeat = suspeito, 90 min = reclaimavel
+function ageCell(s){
+  if (s == null) return '<span class="age">--</span>';
+  const c = s >= thr.stale_lock_s ? " bad" : s >= thr.heartbeat_warn_s ? " warn" : "";
+  return '<span class="age' + c + '">' + dur(s) + "</span>";
+}
+function ageBar(s){
+  const pct = Math.min(100, Math.round((s / thr.stale_lock_s) * 100));
+  const c = s >= thr.stale_lock_s ? "bad" : s >= thr.heartbeat_warn_s ? "warn" : "";
+  return '<div class="bar"><i class="' + c + '" style="width:' + pct + '%"></i></div>';
+}
+
+function renderControl(c){
+  const st = (c.state || "run").toLowerCase();
+  $("banner").className = "banner " + (["run","pause","stop"].includes(st) ? st : "run");
+  $("cstate").textContent = st;
+  $("cver").textContent = "v" + (c.config_version || "?");
+  $("cby").textContent = c.updated_by || "?";
+  $("cwhen").textContent = c.updated_at ? "ha " + dur(c.updated_age_s) : "--";
+  $("cstages").innerHTML = Object.entries(c.stages || {}).map(([k, v]) =>
+    '<span class="' + (v.override ? "ov" : "") + '">' + esc(k) + ": " +
+    esc(v.effective) + (v.override ? " (override)" : "") + "</span>").join("");
+  const bits = [];
+  if (c.reason) bits.push("<em>reason:</em> " + esc(c.reason));
+  if (c.note) bits.push("<em>note:</em> " + esc(c.note));
+  $("cwhy").innerHTML = bits.join("<br>");
+}
+
+function renderStrip(n, liveN, activeN){
+  const cells = [
+    ["agentes ativos", activeN], ["claims abertos", liveN],
+    ["fila de write", n.write_queue], ["fila de review", n.review_queue],
+    ["fila de smedia", n.smedia_queue || 0], ["fila de recut", n.recut_queue || 0],
+    ["publicados", n.published],
+    ["smedia feitos", n.smedia_done ?? "?"], ["recut feitos", n.recut_done ?? "?"],
+    ["revisados", n.reviewed], ["itens no backlog", n.todo],
+  ];
+  $("strip").innerHTML = cells.map(([k, v]) =>
+    '<div class="stat"><div class="n">' + v + '</div><div class="k">' + k + "</div></div>").join("");
+}
+
+function renderLive(live, drafts){
+  const byItem = {};
+  drafts.forEach(d => { byItem[d.agent_id + "/" + d.item_id] = d; });
+  $("livecount").textContent = live.length;
+  $("livecount").className = "badge" + (live.some(c => c.reclaimable) ? " bad" : "");
+  const tb = $("live"), em = $("live-empty");
+  if (!live.length){
+    tb.innerHTML = "";
+    em.hidden = false;
+    em.innerHTML = "<b>Nenhum item reivindicado.</b> Isto nao quer dizer que nao ha agente de pe: " +
+      "um agente que ainda esta orientando, que esta entre itens, ou cujo estagio nao reivindica " +
+      "nada aparece so na <b>Frota</b> abaixo. E fila vazia num instante tambem nao significa " +
+      "trabalho terminado - pode ser o estagio anterior ainda nao ter entregue.";
+    return;
+  }
+  em.hidden = true;
+  tb.innerHTML = live.map(c => {
+    const d = byItem[c.agent_id + "/" + c.item_id];
+    let lock = c.has_lock
+      ? '<span class="pill ok">presente</span>'
+      : '<span class="pill bad">AUSENTE</span>';
+    if (c.has_lock && c.reclaimable) lock = '<span class="pill bad">reclaimavel</span>';
+    const flags = [];
+    if (c.already_published) flags.push('<span class="pill warn">ja publicado</span>');
+    return "<tr>" +
+      '<td class="mono">' + esc(c.agent_id) + "</td>" +
+      '<td><span class="pill info">' + esc(c.stage) + "</span></td>" +
+      '<td class="mono">' + esc(c.item_id) + (flags.length ? " " + flags.join("") : "") + "</td>" +
+      "<td>" + lock + "</td>" +
+      "<td>" + ageCell(c.idle_s) + ageBar(c.idle_s || 0) + "</td>" +
+      '<td class="age">' + dur(c.claim_age_s) + "</td>" +
+      '<td class="mono">' + (d ? Math.round(d.bytes / 1024) + "kb ha " + dur(d.age_s)
+                               : '<span class="pill idle">nenhum</span>') + "</td>" +
+      '<td><span class="note" title="' + esc(c.note) + '">' + esc(c.note || "-") + "</span></td>" +
+      "</tr>";
+  }).join("");
+}
+
+function renderPosts(posts, missing){
+  const b = $("postcount");
+  b.textContent = posts.length + (missing.length ? " (+" + missing.length + " so no Drive)" : "");
+  b.className = "badge";
+  const tb = $("posts"), em = $("posts-empty");
+  if (!posts.length){
+    tb.innerHTML = "";
+    em.hidden = false;
+    em.innerHTML = "<b>Nada em workdir/posts/.</b> A copia local do post passou a ser obrigatoria " +
+      "na calibracao de 2026-08-23; post publicado antes disso existe so no Drive.";
+    return;
+  }
+  // a nota so aparece quando ha divergencia: o painel normal e a tabela, nao o aviso
+  em.hidden = !missing.length;
+  if (missing.length){
+    em.innerHTML = "<b>" + missing.length + " item(ns) com <code>published</code> no done e sem .md aqui:</b> " +
+      missing.map(esc).join(", ") + ". Post anterior a regra da copia local, ou copia que nao foi salva.";
+  }
+  tb.innerHTML = posts.map(p => {
+    // banda da calibracao: 850-1100 palavras, teto duro em 1100
+    const wc = p.words ? '<span class="pill' + (p.over_cap ? " bad" : p.words < 850 ? " warn" : " ok") +
+                         '">' + p.words + "</span>" : '<span class="pill idle">--</span>';
+    const st = [];
+    st.push(p.in_done ? '<span class="pill ok">no done</span>'
+                      : '<span class="pill warn">so em disco</span>');
+    if (p.reviewed) st.push('<span class="pill info">revisado</span>');
+    if (!p.has_meta) st.push('<span class="pill bad">sem meta</span>');
+    const item = p.url
+      ? '<a class="doc" href="' + esc(p.url) + '" target="_blank" rel="noopener">' + esc(p.item_id) + "</a>"
+      : esc(p.item_id);
+    // o sidecar servido pelo proprio qxboard (/meta/<item>.txt): o link do item ja vai para o
+    // Doc no Drive, entao esta coluna e o unico caminho para o metadado sem sair do painel.
+    const meta = p.has_meta
+      ? '<a class="doc" href="/meta/' + encodeURIComponent(p.item_id) + '.txt" target="_blank" ' +
+        'rel="noopener" title="workdir/posts/' + esc(p.item_id) + '-meta.txt">meta</a>'
+      : '<span class="pill idle">--</span>';
+    // o pacote do QX-SMEDIA nao tem copia local (o Doc e a unica fonte), entao aqui o link
+    // vai direto para o Drive - a arte pendente vira o titulo do link, sem gastar coluna
+    const soc = p.social
+      ? '<a class="doc" href="' + esc(p.social_url) + '" target="_blank" rel="noopener" ' +
+        'title="pacote de social' + (p.social_art ? " - " + p.social_art + " arquivo(s) de arte"
+                                                  : " - arte pendente") + '">social</a>'
+      : '<span class="pill idle">--</span>';
+    return "<tr>" +
+      '<td class="mono">' + meta + "</td>" +
+      '<td class="mono">' + soc + "</td>" +
+      '<td class="mono">' + item + "</td>" +
+      '<td><span class="ttl" title="' + esc(p.title) + '">' + esc(p.title || "-") + "</span></td>" +
+      '<td class="mono">' + wc + "</td>" +
+      '<td class="mono">' + esc(p.category || "-") + "</td>" +
+      '<td class="mono">' + esc(p.agent_id || "-") + "</td>" +
+      '<td class="age">' + dur(p.published_age_s != null ? p.published_age_s : p.file_age_s) + "</td>" +
+      '<td><span class="pills">' + st.join("") + "</span></td>" +
+      "</tr>";
+  }).join("");
+}
+
+// O QX-SMEDIA nao produz post: produz um Doc `<item>-social` com os blocos de LinkedIn/IG,
+// mais uma pasta de arte que quase sempre chega depois. Sem esta tabela o unico rastro dele
+// no painel era a pilula `social` la em Produzidos - o que ele entregou nao aparecia.
+function renderSocial(rows, orphans){
+  const b = $("socialcount"), tb = $("social"), em = $("social-empty");
+  const pend = rows.filter(r => !r.art_files).length;
+  b.textContent = rows.length + (pend ? " (" + pend + " sem arte)" : "");
+  b.className = "badge" + (orphans.length ? " bad" : "");
+  if (!rows.length){
+    tb.innerHTML = "";
+    em.hidden = false;
+    em.innerHTML = "<b>Nada em ledger/social.done.csv.</b> Nenhum pacote de social fechado ainda.";
+    return;
+  }
+  em.hidden = !orphans.length;
+  if (orphans.length){
+    em.innerHTML = "<b>" + orphans.length + " pasta(s) de arte sem linha no ledger:</b> " +
+      orphans.map(esc).join(", ") + ". Pacote em andamento, ou entrega que nao foi registrada.";
+  }
+  tb.innerHTML = rows.map(r => {
+    // o title_final repete o id e o sufixo -social; a coluna item ja mostra os dois
+    const ttl = (r.title || "").replace(/^QXB-[0-9a-f]{8}-social\s*-\s*/, "") || "-";
+    const plats = (r.platforms || []).map(x =>
+      '<span class="pill info">' + esc(x.trim()) + "</span>").join("") ||
+      '<span class="pill idle">--</span>';
+    const art = r.art_files
+      ? '<span class="pill ok">' + r.art_files + (r.art_files > 1 ? " arquivos" : " arquivo") + "</span>"
+      : r.art_dir ? '<span class="pill warn">pendente</span>'
+                  : '<span class="pill bad">sem pasta</span>';
+    const st = [];
+    if (r.status && r.status !== "published") st.push('<span class="pill warn">' + esc(r.status) + "</span>");
+    if (r.revisions > 1) st.push('<span class="pill info">' + r.revisions + " recuts</span>");
+    // pacote sem o .md de origem: o QX-SMEDIA le workdir/posts/<item>.md, entao isso e
+    // pacote escrito a partir do Drive - releitura impossivel de auditar daqui
+    if (!r.has_post) st.push('<span class="pill bad">sem post local</span>');
+    if (!st.length) st.push('<span class="pill ok">ok</span>');
+    // a coluna item leva para a PASTA da arte (workdir/posts/social/<item>/), servida por
+    // /art/ porque o navegador bloqueia file:// vindo de uma pagina http. O Doc do Drive
+    // saiu daqui e virou o link do titulo, na coluna pacote.
+    const item = '<a class="doc" href="/art/' + encodeURIComponent(r.item_id) + '/" ' +
+      'target="_blank" rel="noopener" title="workdir/posts/social/' + esc(r.item_id) + '/">' +
+      esc(r.item_id) + "</a>";
+    const ttlh = r.drive_url
+      ? '<a class="doc ttl" href="' + esc(r.drive_url) + '" target="_blank" rel="noopener" ' +
+        'title="' + esc(r.title) + '">' + esc(ttl) + "</a>"
+      : '<span class="ttl" title="' + esc(r.title) + '">' + esc(ttl) + "</span>";
+    return "<tr>" +
+      '<td class="mono">' + item + "</td>" +
+      '<td>' + ttlh +
+        '<span class="note" title="' + esc(r.note) + '">' + esc(r.note) + "</span></td>" +
+      '<td><span class="pills">' + plats + "</span></td>" +
+      '<td class="mono">' + art + "</td>" +
+      '<td class="mono">' + esc(r.agent_id || "-") + "</td>" +
+      '<td class="age">' + dur(r.age_s) + "</td>" +
+      '<td><span class="pills">' + st.join("") + "</span></td>" +
+      "</tr>";
+  }).join("");
+}
+
+function renderLocks(l){
+  $("lockcount").textContent = l.total;
+  const bad = l.orphans.length + l.unlocked_claims.length;
+  $("lockcount").className = "badge" + (bad ? " bad" : "");
+  const box = $("lockbody");
+  if (!bad){
+    box.innerHTML = '<div class="empty"><b>Alinhado.</b> ' + l.total +
+      " lock(s) em disco, todos com claim aberto correspondente.</div>";
+    return;
+  }
+  let h = '<div class="tblwrap"><table><thead><tr><th class="mono">item</th><th>problema</th>' +
+          "<th>idade</th><th>o que fazer</th></tr></thead><tbody>";
+  l.orphans.forEach(o => {
+    h += '<tr><td class="mono">' + esc(o.item_id) + "</td>" +
+      '<td><span class="pill bad">lock orfao</span></td>' +
+      "<td>" + ageCell(o.age_s) + "</td><td>" +
+      (o.reclaimable
+        ? "passou dos 90 min sem claim aberto: reclaimavel, e qxnext limpa sozinho"
+        : "lock sem claim no wip - agente morreu entre o mkdir e o append, ou soltou o claim sem rmdir") +
+      "</td></tr>";
+  });
+  l.unlocked_claims.forEach(i => {
+    h += '<tr><td class="mono">' + esc(i) + "</td>" +
+      '<td><span class="pill bad">claim sem lock</span></td><td>--</td>' +
+      "<td>o lock sumiu com o claim ainda aberto - outro agente pode reclamar o mesmo item</td></tr>";
+  });
+  box.innerHTML = h + "</tbody></table></div>";
+}
+
+function renderFleet(f){
+  const n = f.filter(a => a.active).length;
+  $("activecount").textContent = n + (n === 1 ? " ativo" : " ativos");
+  f = f.slice().sort((x, y) => (y.active | 0) - (x.active | 0));
+  $("fleet").innerHTML = f.map(a => {
+    let ev = esc(a.last_event);
+    if (a.exited) ev = '<span class="pill idle">exit</span>';
+    else if (a.last_event === "pause") ev = '<span class="pill warn">pause</span>';
+    else if (a.last_event === "bump") ev = '<span class="pill info">bump</span>';
+    else ev = '<span class="pill">' + ev + "</span>";
+    const ver = a.stale_config
+      ? '<span class="pill bad">v' + esc(a.version) + " defasada</span>"
+      : '<span class="pill' + (a.exited ? " idle" : " ok") + '">v' + esc(a.version || "?") + "</span>";
+    const flag = a.active ? ' <span class="pill ok">ativo</span>' : "";
+    return "<tr" + (a.exited ? ' style="opacity:.55"' : "") + ">" +
+      '<td class="mono">' + esc(a.agent_id) + flag + "</td>" +
+      '<td class="mono">' + esc(a.stage) + "</td><td>" + ev + "</td>" +
+      '<td class="age">' + dur(a.idle_s) + "</td><td>" + ver + "</td>" +
+      '<td><span class="note" title="' + esc(a.note) + '">' + esc(a.note || "-") + "</span></td></tr>";
+  }).join("");
+}
+
+function stamp(txt, err){
+  $("scantxt").innerHTML = txt;
+  $("dot").className = "dot" + (err ? " err" : "");
+}
+
+async function scan(){
+  const d = $("dot");
+  d.classList.add("blink");
+  try{
+    const r = await fetch("/api/state.json" + (fp ? "?fp=" + encodeURIComponent(fp) : ""),
+                          {cache: "no-store"});
+    const s = await r.json();
+    const hhmm = new Date().toTimeString().slice(0, 8);
+    if (s.unchanged){ stamp("<b>" + hhmm + "</b> sem mudanca"); return; }
+    // o HTML mudou em disco: esta aba esta rodando JS velho contra dados novos. Recarrega
+    // antes de desenhar, senao a tela mente sobre o que o painel tem.
+    if (ui && s.ui && s.ui !== ui){ location.reload(); return; }
+    ui = s.ui || ui;
+    fp = s.fp;
+    thr = s.thresholds;
+    $("thr").textContent = Math.round(thr.stale_lock_s / 60);
+    $("root").textContent = s.root;
+    renderControl(s.control);
+    renderStrip(s.counts, s.live.length, s.fleet.filter(a => a.active).length);
+    renderLive(s.live, s.drafts);
+    renderPosts(s.posts || [], s.posts_missing_local || []);
+    renderSocial(s.social || [], s.social_orphan_art || []);
+    renderLocks(s.locks);
+    renderFleet(s.fleet);
+    stamp("<b>" + hhmm + "</b> scan &middot; disco mudou");
+  }catch(e){
+    stamp("servidor fora do ar - qxboard.py caiu?", true);
+  }finally{
+    setTimeout(() => d.classList.remove("blink"), 250);
+  }
+}
+
+function loop(){
+  clearInterval(timer);
+  if (document.hidden) return;           // aba escondida nao consome scan
+  scan();
+  timer = setInterval(scan, POLL_MS);
+}
+document.addEventListener("visibilitychange", loop);
+loop();
+</script>
+</body>
+</html>

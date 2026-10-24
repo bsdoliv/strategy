@@ -1,0 +1,5 @@
+- rsync
+- then rm the following
+	- all __pycache__ dirs
+	- all pyc files
+	- bookmarklet/linkedin dir

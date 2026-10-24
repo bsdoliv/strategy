@@ -1,0 +1,66 @@
+{
+  "sonda": "qxvprobe",
+  "versao": 1,
+  "url": "https://www.linkedin.com/posts/hedgepoint-riskmanagement-hedging-ugcPost-7492941315974918147-klA8/?utm_source=share&utm_medium=member_desktop&rcm=ACoAAABmF_kBLhh-K6-QtfIk4SKp4DaqyfRVbGw",
+  "quando": "2026-08-25T23:35:53.646Z",
+  "html_chars": 194110,
+  "videos_no_dom": 1,
+  "videos": [
+    {
+      "src": "blob:https://www.linkedin.com/f467bd4a-472d-4dd9-9f6b-14b4f6a82fb7",
+      "currentSrc": "blob:https://www.linkedin.com/f467bd4a-472d-4dd9-9f6b-14b4f6a82fb7",
+      "eh_blob": true,
+      "poster": "",
+      "duracao": 119,
+      "readyState": 4,
+      "atributos": {
+        "id": "H2sNrthbQ5mRM4u0IMSPfw\\3d\\3d_html5_api",
+        "tabindex": "-1",
+        "class": "vjs-tech",
+        "preload": "metadata",
+        "playsinline": "playsinline",
+        "muted": "muted",
+        "src": "blob:https://www.linkedin.com/f467bd4a-472d-4dd9-9f6b-14b4f6a82fb7"
+      },
+      "atributos_do_pai": {
+        "data-vjs-player": "true",
+        "class": "video-js _019170d9 _8029779e _2d1c8b4e vjs-controls-disabled vjs-workinghover vjs-v8 vjs-has-started H2sNrthbQ5mRM4u0IMSPfw\\3d\\3d-dimensions vjs-playing vjs-user-inactive",
+        "style": "--dc756b8a: 32px;",
+        "id": "H2sNrthbQ5mRM4u0IMSPfw\\3d\\3d",
+        "tabindex": "-1",
+        "lang": "en_us",
+        "translate": "no",
+        "role": "region",
+        "aria-label": "Video Player"
+      },
+      "source_filhos": [],
+      "pai_tag": "DIV",
+      "pai_classe": "video-js _019170d9 _8029779e _2d1c8b4e vjs-controls-disabled vjs-workinghover vjs-v8 vjs-has-started H2sNrthbQ5mRM4u0IMSPfw\\3d\\3d-dimensions vjs-playing vjs-user-inactive"
+    }
+  ],
+  "urls_no_html": {
+    "playlist": {
+      "total": 0,
+      "amostra": []
+    },
+    "mp4": {
+      "total": 0,
+      "amostra": []
+    },
+    "m3u8": {
+      "total": 0,
+      "amostra": []
+    },
+    "mpd": {
+      "total": 0,
+      "amostra": []
+    },
+    "videocover": {
+      "total": 2,
+      "amostra": [
+        "https://media.licdn.com/dms/image/v2/D4D05AQF7RPsnbsAW_g/videocover-high/B4DZ_xGenDGkBM-/0/1786456441585?e=1788307200&amp;v=beta&amp;t=71lAEehHrLydwX1M8mDPT7-fT6xqR8QdAJaMrlnGfHE&quot;);",
+        "https://media.licdn.com/dms/image/v2/D4D05AQF7RPsnbsAW_g/videocover-high/B4DZ_xGenDGkBM-/0/1786456441585?e=1788307200&amp;v=beta&amp;t=71lAEehHrLydwX1M8mDPT7-fT6xqR8QdAJaMrlnGfHE"
+      ]
+    }
+  }
+}
