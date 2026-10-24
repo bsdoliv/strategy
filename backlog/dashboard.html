@@ -710,11 +710,14 @@
       font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--text-muted);
       padding: 8px 10px; border-bottom: 1px solid var(--border);
     }
+    .rank-table th.rank-sort { cursor: pointer; user-select: none; white-space: nowrap; }
+    .rank-table th.rank-sort:hover, .rank-table th.rank-sort.on { color: var(--text-primary); }
     .rank-table td { padding: 8px 10px; border-bottom: 1px solid var(--border-light); vertical-align: middle; }
     .rank-table tr.done td { opacity: .5; }
     .rank-table tr.done .rank-title-text, .rank-table tr.done .rank-note { text-decoration: line-through; }
     .rank-table tr:hover td { background: var(--bg-secondary); }
     .rank-num { color: var(--text-muted); font-variant-numeric: tabular-nums; width: 32px; }
+    .rank-id { color: var(--text-muted); font-variant-numeric: tabular-nums; font-size: 11px; width: 32px; }
     .rank-score { display: flex; align-items: center; gap: 8px; min-width: 120px; font-weight: 700; font-variant-numeric: tabular-nums; }
     .rank-score .bar { flex: 1; height: 6px; background: var(--bg-secondary); border-radius: 3px; overflow: hidden; }
     .rank-score .bar div { height: 100%; border-radius: 3px; }
@@ -1755,6 +1758,14 @@
     let rankStatusHidden = new Set();
     try { rankStatusHidden = new Set(JSON.parse(localStorage.getItem('rankStatusHidden') || '[]')); } catch (e) {}
     let rankStatusMenuOpen = false;
+    // Ordenação do Scored: 'score' (padrão: status e depois score) | 'id' | 'id-desc' (só pelo id, ignora status)
+    let rankSort = 'score';
+    try { const v = localStorage.getItem('rankSort'); if (['score', 'id', 'id-desc'].includes(v)) rankSort = v; } catch (e) {}
+    function setRankSort(next) {
+      rankSort = next;
+      try { localStorage.setItem('rankSort', next); } catch (e) {}
+      renderRanking();
+    }
     function setRankStatusHidden(next) {
       rankStatusHidden = next;
       try { localStorage.setItem('rankStatusHidden', JSON.stringify([...next])); } catch (e) {}
@@ -1984,12 +1995,16 @@
       const list = sections
         .flatMap(sec => (tasks[sec.id] || []).map(t => ({ t, sec })))
         .filter(({ t, sec }) => passesFilters(t) && matchesRankCat(t) && !rankStatusHidden.has(sec.id))
-        .sort((a, b) => (rankStatusOrder(a.sec.id) - rankStatusOrder(b.sec.id)) ||
-          ((taskScore(b.t) ?? -1) - (taskScore(a.t) ?? -1)));
+        .sort(rankSort === 'score'
+          ? (a, b) => (rankStatusOrder(a.sec.id) - rankStatusOrder(b.sec.id)) ||
+            ((taskScore(b.t) ?? -1) - (taskScore(a.t) ?? -1))
+          : (a, b) => ((parseInt(a.t.uid, 10) || Infinity) - (parseInt(b.t.uid, 10) || Infinity)) * (rankSort === 'id-desc' ? -1 : 1));
 
       const table = document.createElement('table');
       table.className = 'rank-table';
-      table.innerHTML = `<thead><tr><th>#</th><th>Score</th><th>Tarefa</th><th>Frente ${catMenu}</th><th>Status ${statusMenu}</th><th title="Impacto">IMP</th><th title="Urgência">URG</th><th title="Esforço">EFF</th><th>Nota</th></tr></thead>`;
+      table.innerHTML = `<thead><tr><th>#</th><th class="rank-sort ${rankSort !== 'score' ? 'on' : ''}" data-sort="id" title="id da task no tasks.csv (fixo). Clique para ordenar pelo id">ID${rankSort === 'id' ? ' ▲' : rankSort === 'id-desc' ? ' ▼' : ''}</th><th class="rank-sort ${rankSort === 'score' ? 'on' : ''}" data-sort="score" title="Clique para ordenar por status e score (padrão)">Score${rankSort === 'score' ? ' ▼' : ''}</th><th>Tarefa</th><th>Frente ${catMenu}</th><th>Status ${statusMenu}</th><th title="Impacto">IMP</th><th title="Urgência">URG</th><th title="Esforço">EFF</th><th>Nota</th></tr></thead>`;
+      table.querySelector('[data-sort="id"]').addEventListener('click', () => setRankSort(rankSort === 'id' ? 'id-desc' : 'id'));
+      table.querySelector('[data-sort="score"]').addEventListener('click', () => setRankSort('score'));
       const statusMenuEl = table.querySelector('.rank-cat-menu[data-menu="status"]');
       statusMenuEl.querySelector('.rank-cat-toggle').addEventListener('click', () => {
         rankStatusMenuOpen = !rankStatusMenuOpen;
@@ -2041,6 +2056,7 @@
         const sel = (field) => `<select data-field="${field}">${p ? '' : '<option value="">–</option>'}${[1, 2, 3, 4, 5].map(n => `<option ${p && p[field] === n ? 'selected' : ''}>${n}</option>`).join('')}</select>`;
         tr.innerHTML = `
           <td class="rank-num">${idx + 1}</td>
+          <td class="rank-id">${escapeHtml(t.uid || '')}</td>
           <td><div class="rank-score">${score ?? '–'}<div class="bar"><div style="width:${(score ?? 0) / 10}%;background:${scoreColor(score ?? 0)}"></div></div></div></td>
           <td><div class="rank-title" style="--cat-color:${categoryColor(cat)}"><button class="rank-flag ${today ? 'on' : ''}" title="${today ? 'Desmarcar today' : 'Marcar como today'}">${today ? 'today' : '⚑'}</button><button class="rank-flag rank-att ${attention ? 'on' : ''}" title="${attention ? 'Desmarcar attention' : 'Marcar como attention'}">${attention ? 'attention' : '!'}</button><button class="rank-flag rank-vic ${victoria ? 'on' : ''}" title="${victoria ? 'Desmarcar Victoria' : 'Marcar como Victoria'}">${victoria ? 'Victoria' : 'V'}</button><button class="rank-flag rank-del-flag ${delayed ? 'on' : ''}" title="${delayed ? 'Desmarcar delayed' : 'Marcar como delayed'}">${delayed ? 'delayed' : 'D'}</button><button class="rank-del" title="Excluir tarefa (e o score dela)">🗑</button><span class="rank-title-text" contenteditable="true" spellcheck="false" title="Clique para editar">${escapeHtml(t.title)}</span></div>${rankSubsHtml(t)}</td>
           <td><select class="rank-cat-edit" title="Mudar a frente" style="background:${categoryColor(cat)}">${catOptions(cat)}</select></td>
