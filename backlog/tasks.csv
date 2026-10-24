@@ -163,6 +163,7 @@ id,parent,status,title,frente,today,attention,i,u,e,nota,done,tags
 131,,Waiting On,Responder Geller / Chery,ceo,,,3,3,1,Chery; resposta barata,x,
 135,,Waiting On,Bruno R2,ceo,,,2,2,1,Contexto pouco claro,x,
 136,,Waiting On,preparar com claude para encontro presencial / Chery,ceo,x,,3,4,2,Chery (Release PortAR); encontro marcado,,
-137,,Waiting On,Review feedback playbooks sdr/parceiro,ceo,x,,4,3,2,"Frente comercial, ligada aos 10 melhores alvos",,
+137,,Waiting On,Review feedback playbooks sdr/parceiro,ceo,x,,4,3,2,"Frente comercial, ligada aos 10 melhores alvos https://claude.ai/chat/1bc184cc-7342-4d5d-871f-b629fd2368e6?artifact=86762f5b-50e2-4a1b-9ecc-972d5152a056 file:///Users/andredeoliveira/Downloads/sugestoes%20de%20ajustes-Playbooks.pdf",,
 132,,Waiting On,Merges / Lucas,platforms/cfx,x,,4,4,3,"Como retorno do lucas (940), mais generica",,
-127,,Waiting On,Safra Now - timeout ngrok,platforms/oxpro,x,,5,4,2,Safra Now (800) atrasada e com attention; duplica a subtarefa 1.1,,[delayed=1]
+127,,Waiting On,Safra Now - timeout ngrok,platforms/oxpro,,,5,4,2,Safra Now (800) atrasada e com attention; duplica a subtarefa 1.1,,[delayed=1]
+148,,Waiting On,marketing bloomberg benchmark,marketing,,,,,,https://www.linkedin.com/posts/integrated-earnings-tools-ugcPost-7518657401944846338-k_V2/?utm_source=share&utm_medium=member_desktop&rcm=ACoAAABmF_kBLhh-K6-QtfIk4SKp4DaqyfRVbGw,,
