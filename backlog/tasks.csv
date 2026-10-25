@@ -157,7 +157,7 @@ id,parent,status,title,frente,today,attention,i,u,e,nota,done,tags
 122,,Active,Aguardando Isabel retornar calendario/agenda publis,marketing,x,,2,3,1,"Marketing, mas bloqueia as publicacoes",x,
 133,,Active,Responder Rodolfo,ceo,,x,3,4,1,Resposta esfria se demorar; barato,x,
 130,,Active,Responder Pinelli,ceo,x,,3,4,1,Resposta esfria se demorar; barato,x,
-138,,Active,olhar posts empresas tech-finance ycombinator,ceo,,x,2,2,1,Benchmark de posicionamento; barato,,
+138,,Active,olhar posts empresas tech-finance ycombinator,ceo,x,x,2,2,1,Benchmark de posicionamento; barato,,
 129,,Waiting On,remover timer da trading-settings api,platforms/oxpro,,x,4,3,2,Ligada a Safra Unknown (ajustar suspend / tradingsettings_api),,
 134,,Waiting On,Deploy CFX,produto/quartix-markets,,x,5,4,3,Sem deploy o release nao chega ao cliente; como Deploy quartix-markets / cfxui over cloudrun,,
 131,,Waiting On,Responder Geller / Chery,ceo,,,3,3,1,Chery; resposta barata,x,
@@ -167,3 +167,5 @@ id,parent,status,title,frente,today,attention,i,u,e,nota,done,tags
 132,,Waiting On,Merges / Lucas,platforms/cfx,x,,4,4,3,"Como retorno do lucas (940), mais generica",,
 127,,Waiting On,Safra Now - timeout ngrok,platforms/oxpro,,,5,4,2,Safra Now (800) atrasada e com attention; duplica a subtarefa 1.1,,[delayed=1]
 148,,Waiting On,marketing bloomberg benchmark,marketing,,,,,,https://www.linkedin.com/posts/integrated-earnings-tools-ugcPost-7518657401944846338-k_V2/?utm_source=share&utm_medium=member_desktop&rcm=ACoAAABmF_kBLhh-K6-QtfIk4SKp4DaqyfRVbGw,,
+150,,Waiting On,criar agent-farm pipeline para evolucoes clearfxai,platforms/cfx,,x,3,2,3,,,[auto=27:132:37]
+149,,Waiting On,tunel ngrok / artur / TLS,platforms/oxpro,,x,4,3,3,,,[auto=127:115:67]
