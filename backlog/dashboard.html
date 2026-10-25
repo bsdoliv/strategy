@@ -745,6 +745,16 @@
       border: 1px dashed var(--border); background: transparent; color: var(--text-muted); opacity: .35;
     }
     .rank-table tr:hover .rank-flag { opacity: 1; }
+    /* Botão "auto" (score preliminar por similaridade, autoscore.js) e score com tag [auto=...] em itálico */
+    .score-auto {
+      flex: none; font: inherit; font-size: 10px; font-weight: 600; line-height: 1; padding: 3px 6px; border-radius: 999px; cursor: pointer;
+      border: 1px dashed var(--border); background: transparent; color: var(--text-muted);
+    }
+    .score-auto:hover { border-color: var(--accent); color: var(--accent); }
+    .rank-table .rank-score .score-auto { opacity: .35; }
+    .rank-table tr:hover .rank-score .score-auto { opacity: 1; }
+    .auto-score { font-style: italic; font-weight: 600; }
+    .matrix-chip .score-pill.auto { font-style: italic; }
     .rank-subs-toggle {
       display: inline-block; margin: 3px 0 0 30px; font-size: 11px; color: var(--text-muted); cursor: pointer;
       border-radius: 4px; padding: 0 4px; user-select: none;
@@ -1021,6 +1031,8 @@
 
   <div class="status-bar" id="status"></div>
 
+  <!-- Score preliminar do botão "auto" (script clássico: funciona em file://; se faltar, o botão some) -->
+  <script src="autoscore.js"></script>
   <script>
       // Remembered project folder (IndexedDB) so one click loads everything
       function idbOpen() {
@@ -1547,6 +1559,33 @@
     function priorityOf(task) { return priorities[priorityKey(task.title)] || null; }
     function priorityScore(p) { return Math.round(200 * (0.5 * p.i + 0.35 * p.u + 0.15 * (6 - p.e))); }
     function taskScore(task) { const p = priorityOf(task); return p ? priorityScore(p) : null; }
+    // Score preliminar (botão "auto"; lógica em autoscore.js): grava i/u/e e a tag [auto=<ids dos vizinhos separados por :>].
+    // Só calcula sob clique; editar IMP/URG/EFF à mão tira a tag. Tasks com score auto não servem de base.
+    const hasAutoScore = () => typeof window.AutoScore !== 'undefined';
+    function isAutoScored(task) { return !!(task.extraTags && 'auto' in task.extraTags); }
+    function clearAutoScore(task) { if (task.extraTags) delete task.extraTags.auto; }
+    function suggestScore(target, exclude) {
+      const pool = sections.flatMap(sec => (tasks[sec.id] || []).filter(t => t !== exclude && !isAutoScored(t) && priorityOf(t)).map(t => {
+        const p = priorityOf(t), cat = taskCategory(t);
+        return { id: t.uid, title: t.title, frente: cat === NO_CATEGORY ? '' : cat, status: sec.id, i: p.i, u: p.u, e: p.e };
+      }));
+      const cat = target.cat === NO_CATEGORY ? '' : target.cat;
+      return window.AutoScore.suggest({ title: target.title, frente: cat, status: target.section }, pool);
+    }
+    async function applyAutoScore(task) {
+      const s = suggestScore({ title: task.title, cat: taskCategory(task), section: task.section }, task);
+      if (!s) { showStatus('Sem tasks pontuadas para comparar'); return; }
+      priorities[priorityKey(task.title)] = { title: task.title, i: s.i, u: s.u, e: s.e };
+      task.extraTags = { ...(task.extraTags || {}), auto: s.neighbors.join(':') };
+      await savePriorities();
+      renderTasks();
+    }
+    function autoScoreTip(task) {
+      const all = sections.flatMap(sec => tasks[sec.id] || []);
+      const ids = String(task.extraTags.auto || '').split(/[:,]/).filter(Boolean);
+      const names = ids.map(id => { const t = all.find(x => String(x.uid) === id); return '#' + id + (t ? ' ' + t.title : ''); });
+      return 'Score preliminar (auto)' + (names.length ? ' · similar a: ' + names.join('; ') : '') + ' · editar IMP/URG/EFF torna o score manual';
+    }
     function scoreColor(score) { return score >= 750 ? '#e03131' : score >= 550 ? '#f08c00' : '#868e96'; }
 
     async function savePriorities() {
@@ -1800,7 +1839,7 @@
         <input data-f="title" class="rank-add-title" placeholder="Título da tarefa" value="${escapeHtml(d.title)}">
         <select data-f="cat" class="rank-cat-edit" style="background:${categoryColor(d.cat)}">${catOptions(d.cat)}</select>
         <select data-f="section">${sections.map(x => `<option value="${escapeHtml(x.id)}" ${x.id === d.section ? 'selected' : ''}>${escapeHtml(x.name)}</option>`).join('')}</select>
-        ${nums('i')}${nums('u')}${nums('e')}
+        ${nums('i')}${nums('u')}${nums('e')}${hasAutoScore() ? `<button type="button" class="score-auto" title="Preencher IMP/URG/EFF por similaridade com as tasks pontuadas">auto</button>${d.auto ? '<span class="auto-score" title="Score preliminar (auto)">~auto</span>' : ''}` : ''}
         <label><input type="checkbox" data-f="today" ${d.today ? 'checked' : ''}> today</label>
         <label><input type="checkbox" data-f="attention" ${d.attention ? 'checked' : ''}> attention</label>
         <label><input type="checkbox" data-f="victoria" ${d.victoria ? 'checked' : ''}> Victoria</label>
@@ -1817,8 +1856,18 @@
           return;
         }
         d[f] = el.type === 'checkbox' ? el.checked : ['i', 'u', 'e'].includes(f) ? +el.value : el.value;
+        if (['i', 'u', 'e'].includes(f)) d.auto = null;
         if (f === 'cat') el.style.background = categoryColor(d.cat);
       }));
+      form.querySelector('.score-auto')?.addEventListener('click', () => {
+        const title = d.title.replace(/\s+/g, ' ').trim();
+        if (!title) { form.querySelector('.rank-add-title').focus(); showStatus('Digite o título antes do auto'); return; }
+        const s = suggestScore({ title, cat: d.cat, section: d.section });
+        if (!s) { showStatus('Sem tasks pontuadas para comparar'); return; }
+        Object.assign(d, { i: s.i, u: s.u, e: s.e, auto: s.neighbors.join(':') });
+        renderRanking();
+        rankView.querySelector('.rank-add-title')?.focus();
+      });
       form.addEventListener('submit', async e => {
         e.preventDefault();
         const title = d.title.replace(/\s+/g, ' ').trim();
@@ -1834,9 +1883,10 @@
         if (d.victoria) setTaskFlag(task, 'victoria', true);
         if (d.delayed) setTaskFlag(task, 'delayed', true);
         if (d.note.trim()) setTaskNoteText(task, d.note);
+        if (d.auto) task.extraTags = { auto: d.auto };
         tasks[d.section].push(task);
         priorities[priorityKey(title)] = { title, i: d.i, u: d.u, e: d.e };
-        rankAddDraft = { ...d, title: '', note: '', today: false, attention: false, victoria: false, delayed: false };
+        rankAddDraft = { ...d, title: '', note: '', today: false, attention: false, victoria: false, delayed: false, auto: null };
         markChanged();
         await savePriorities();
         renderTasks();
@@ -2057,7 +2107,7 @@
         tr.innerHTML = `
           <td class="rank-num">${idx + 1}</td>
           <td class="rank-id">${escapeHtml(t.uid || '')}</td>
-          <td><div class="rank-score">${score ?? '–'}<div class="bar"><div style="width:${(score ?? 0) / 10}%;background:${scoreColor(score ?? 0)}"></div></div></div></td>
+          <td><div class="rank-score">${score !== null && isAutoScored(t) ? `<span class="auto-score" title="${escapeHtml(autoScoreTip(t))}">~${score}</span>` : score ?? '–'}<div class="bar"><div style="width:${(score ?? 0) / 10}%;background:${scoreColor(score ?? 0)}"></div></div>${hasAutoScore() ? '<button class="score-auto" title="Calcular score preliminar por similaridade com as tasks pontuadas">auto</button>' : ''}</div></td>
           <td><div class="rank-title" style="--cat-color:${categoryColor(cat)}"><button class="rank-flag ${today ? 'on' : ''}" title="${today ? 'Desmarcar today' : 'Marcar como today'}">${today ? 'today' : '⚑'}</button><button class="rank-flag rank-att ${attention ? 'on' : ''}" title="${attention ? 'Desmarcar attention' : 'Marcar como attention'}">${attention ? 'attention' : '!'}</button><button class="rank-flag rank-vic ${victoria ? 'on' : ''}" title="${victoria ? 'Desmarcar Victoria' : 'Marcar como Victoria'}">${victoria ? 'Victoria' : 'V'}</button><button class="rank-flag rank-del-flag ${delayed ? 'on' : ''}" title="${delayed ? 'Desmarcar delayed' : 'Marcar como delayed'}">${delayed ? 'delayed' : 'D'}</button><button class="rank-del" title="Excluir tarefa (e o score dela)">🗑</button><span class="rank-title-text" contenteditable="true" spellcheck="false" title="Clique para editar">${escapeHtml(t.title)}</span></div>${rankSubsHtml(t)}</td>
           <td><select class="rank-cat-edit" title="Mudar a frente" style="background:${categoryColor(cat)}">${catOptions(cat)}</select></td>
           <td><select class="rank-status-edit status-${escapeHtml(sec.id)}" title="Mudar o status">${sections.map(x => `<option value="${escapeHtml(x.id)}" ${x.id === sec.id ? 'selected' : ''}>${escapeHtml(x.name)}</option>`).join('')}</select></td>
@@ -2068,9 +2118,11 @@
           if (!priorities[key]) priorities[key] = { title: t.title, i: 3, u: 3, e: 3 };
           return priorities[key];
         };
-        tr.querySelectorAll('select').forEach(selEl => selEl.addEventListener('change', async () => {
+        tr.querySelector('.score-auto')?.addEventListener('click', () => applyAutoScore(t));
+        tr.querySelectorAll('select[data-field]').forEach(selEl => selEl.addEventListener('change', async () => {
           if (!selEl.value) return;
           ensure()[selEl.dataset.field] = +selEl.value;
+          clearAutoScore(t);
           await savePriorities();
           renderTasks();
         }));
@@ -2455,11 +2507,13 @@
       const score = taskScore(task);
       const p = priorityOf(task);
       const scoreOpen = matrixScoreOpen.has(priorityKey(task.title));
-      const scorePill = score !== null
+      const scorePill = score !== null && isAutoScored(task)
+        ? `<button class="owner-pill score-pill auto" style="background:${scoreColor(score)}" title="${escapeHtml(autoScoreTip(task))}">~${score}</button>`
+        : score !== null
         ? `<button class="owner-pill score-pill" style="background:${scoreColor(score)}" title="Editar score (IMP/URG/EFF)">${score}</button>`
         : '<button class="owner-pill score-pill empty" title="Dar score (IMP/URG/EFF)">+ score</button>';
       const scoreSel = (field, label) => `<label>${label} <select data-field="${field}">${p ? '' : '<option value="">–</option>'}${[1, 2, 3, 4, 5].map(n => `<option ${p && p[field] === n ? 'selected' : ''}>${n}</option>`).join('')}</select></label>`;
-      const scoreEditor = scoreOpen ? `<div class="matrix-chip-score">${scoreSel('i', 'IMP')}${scoreSel('u', 'URG')}${scoreSel('e', 'EFF')}</div>` : '';
+      const scoreEditor = scoreOpen ? `<div class="matrix-chip-score">${scoreSel('i', 'IMP')}${scoreSel('u', 'URG')}${scoreSel('e', 'EFF')}${hasAutoScore() ? '<button class="score-auto" title="Calcular score preliminar por similaridade com as tasks pontuadas">auto</button>' : ''}</div>` : '';
       const subCount = task.subtasks.length ? `<span class="owner-pill matrix-chip-subcount">${task.subtasks.filter(s => s.checked).length}/${task.subtasks.length}</span>` : '';
       chip.innerHTML = `
         <div class="matrix-chip-head">
@@ -2547,10 +2601,16 @@
           const key = priorityKey(task.title);
           if (!priorities[key]) priorities[key] = { title: task.title, i: 3, u: 3, e: 3 };
           priorities[key][selEl.dataset.field] = +selEl.value;
+          clearAutoScore(task);
           await savePriorities();
           renderTasks();
         });
       });
+      const autoBtn = chip.querySelector('.matrix-chip-score .score-auto');
+      if (autoBtn) {
+        autoBtn.addEventListener('mousedown', e => e.stopPropagation());
+        autoBtn.addEventListener('click', e => { e.stopPropagation(); applyAutoScore(task); });
+      }
       chip.addEventListener('dragstart', () => { matrixDragTask = task; });
       chip.addEventListener('dragend', () => { matrixDragTask = null; });
       return chip;
