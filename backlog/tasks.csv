@@ -50,10 +50,9 @@ id,parent,status,title,frente,today,attention,i,u,e,nota,done,tags
 34,,Someday,FK Partners,ceo,,,1,1,2,Como o pai: pipeline hedgeOS · origem: Alvos hedgeOS,,
 35,,Someday,Instituições de ensino,ceo,,,1,1,2,Canal de baixo valor imediato · origem: Alvos hedgeOS,,
 36,,Someday,Integração com Port.AR,ceo,,,1,1,3,Ligada ao hedgeOS; contexto pouco claro,,
-37,,Someday,clearfxai / quartix advisory,advisory,,,3,2,3,Linha de serviço; ainda difusa,,
-38,,Someday,Integração com bancos,advisory,,,3,2,4,Serviço de advisory; integração pesada · origem: clearfxai / quartix advisory,,
-39,,Someday,Automação de workflows,advisory,,,3,2,3,Serviço de advisory recorrente · origem: clearfxai / quartix advisory,,
-40,,Someday,chery,advisory,,,2,2,3,"Ligado a ""Release cherry / PortAR"" · origem: clearfxai / quartix advisory",,
+38,,Someday,Integração com bancos,platforms/cfx,,,2,3,4,Serviço de advisory; integração pesada · origem: clearfxai / quartix advisory,,[auto=36:83:24]
+39,,Someday,Automação de workflows,platforms/cfx,,,4,3,4,Serviço de advisory recorrente · origem: clearfxai / quartix advisory,,[auto=16:18:9]
+40,,Someday,chery,ceo,,,3,3,2,"Ligado a ""Release cherry / PortAR"" · origem: clearfxai / quartix advisory",,[auto=131:2:136]
 41,,Someday,Frentes Marcos I9DC,ceo,,,1,2,2,Frente estratégica; contexto pouco claro,,
 42,,Someday,MOU empresa nova / QUARTIX ADVISORY,ceo,,,1,3,2,Parceria/novo negócio pendente; estava parado · estava em postponed,,
 43,,Someday,Pitch e segmentos,marketing,,,1,3,3,Necessário para captação e para vender hedgeOS,,
@@ -154,6 +153,8 @@ id,parent,status,title,frente,today,attention,i,u,e,nota,done,tags
 145,,Someday,calculadora de taxa anualizada versus mensal,explorar,,,1,1,1,Utilitario pequeno; pode virar conteudo · https://chatgpt.com/c/6a748838-4ae8-83e9-83ea-0bd062f9fad5,,
 146,,Someday,imgproxy olhar uso redis pubsub e lsyncd,explorar,,,2,1,2,Ligada a Document Workflows (estrategia rsync),,
 147,,Someday,platform-cfx migrar operacao euro hbex para mesa quartix,produto/cfx,,x,4,3,3,Operacao/receita do cfx; esforco medio,,
+148,,Someday,marketing bloomberg benchmark,marketing,,x,2,1,3,https://www.linkedin.com/posts/integrated-earnings-tools-ugcPost-7518657401944846338-k_V2/?utm_source=share&utm_medium=member_desktop&rcm=ACoAAABmF_kBLhh-K6-QtfIk4SKp4DaqyfRVbGw,,[auto=56:51:53]
+151,,Someday,"Normalizar taglines em todas as midias, considerar nossos numeros do site",marketing,,,1,2,3,,,[auto=44:49:46]
 122,,Active,Aguardando Isabel retornar calendario/agenda publis,marketing,x,,2,3,1,"Marketing, mas bloqueia as publicacoes",x,
 133,,Active,Responder Rodolfo,ceo,,x,3,4,1,Resposta esfria se demorar; barato,x,
 130,,Active,Responder Pinelli,ceo,x,,3,4,1,Resposta esfria se demorar; barato,x,
@@ -166,6 +167,5 @@ id,parent,status,title,frente,today,attention,i,u,e,nota,done,tags
 137,,Waiting On,Review feedback playbooks sdr/parceiro,ceo,x,,4,3,2,"Frente comercial, ligada aos 10 melhores alvos https://claude.ai/chat/1bc184cc-7342-4d5d-871f-b629fd2368e6?artifact=86762f5b-50e2-4a1b-9ecc-972d5152a056 file:///Users/andredeoliveira/Downloads/sugestoes%20de%20ajustes-Playbooks.pdf",,
 132,,Waiting On,Merges / Lucas,platforms/cfx,x,,4,4,3,"Como retorno do lucas (940), mais generica",,
 127,,Waiting On,Safra Now - timeout ngrok,platforms/oxpro,,,5,4,2,Safra Now (800) atrasada e com attention; duplica a subtarefa 1.1,,[delayed=1]
-148,,Waiting On,marketing bloomberg benchmark,marketing,,,,,,https://www.linkedin.com/posts/integrated-earnings-tools-ugcPost-7518657401944846338-k_V2/?utm_source=share&utm_medium=member_desktop&rcm=ACoAAABmF_kBLhh-K6-QtfIk4SKp4DaqyfRVbGw,,
 150,,Waiting On,criar agent-farm pipeline para evolucoes clearfxai,platforms/cfx,,x,3,2,3,,,[auto=27:132:37]
 149,,Waiting On,tunel ngrok / artur / TLS,platforms/oxpro,,x,4,3,3,,,[auto=127:115:67]
