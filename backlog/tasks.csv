@@ -169,3 +169,4 @@ id,parent,status,title,frente,today,attention,i,u,e,nota,done,tags
 127,,Waiting On,Safra Now - timeout ngrok,platforms/oxpro,,,5,4,2,Safra Now (800) atrasada e com attention; duplica a subtarefa 1.1,,[delayed=1]
 150,,Waiting On,criar agent-farm pipeline para evolucoes clearfxai,platforms/cfx,,x,3,2,3,,,[auto=27:132:37]
 149,,Waiting On,tunel ngrok / artur / TLS,platforms/oxpro,,x,4,3,3,,,[auto=127:115:67]
+151,,Waiting On,rodrigo mahlmeister,explorar,,,1,1,2,(1) https://www.youtube.com/watch?v=WtA6Bj06t4k (2) https://x.com/ro_mahl (3) https://neofeed.com.br/finde/como-um-pesquisador-brasileiro-criou-um-algoritmo-que-simulou-e-acertou-o-resultado-do-1o-turno/ (4),,[auto=142:71:84]
