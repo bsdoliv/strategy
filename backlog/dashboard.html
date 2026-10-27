@@ -950,6 +950,82 @@
     .matrix-link:hover { color: var(--text-primary); }
     .matrix-chip-subs { margin: 6px 0 0 16px; padding: 0; color: var(--text-secondary); font-size: 12px; }
 
+    /* ===== Notes: coluna de cards (estilo Grid) + editor grande; grava em notes.json ===== */
+    .notes-layout { flex: 1; min-height: 0; display: none; gap: 16px; }
+    .notes-layout.on { display: flex; }
+    .notes-col { width: 300px; flex: none; display: flex; flex-direction: column; min-height: 0; border: 1px solid var(--border-light); border-radius: 8px; background: var(--bg-card); }
+    .notes-col-head { padding: 8px; border-top: 4px solid var(--accent); border-radius: 8px 8px 0 0; background: var(--bg-secondary); border-bottom: 1px solid var(--border-light); display: flex; flex-wrap: wrap; align-items: flex-start; gap: 6px; }
+    .notes-col-head > div { flex: 1; }
+    .notes-col-head .notes-search { flex-basis: 100%; margin-top: 0; }
+    .notes-list { flex: 1; min-height: 0; overflow-y: auto; padding: 8px; }
+    .notes-list .matrix-add { opacity: 1; margin-bottom: 6px; }
+    .note-card { cursor: pointer; --cat-color: var(--accent); }
+    .note-card.open { box-shadow: 0 0 0 2px var(--accent); }
+    .note-card.drag-over { border-top: 2px solid var(--accent); }
+    .note-card-title { flex: 1; font-weight: 600; color: var(--text-primary); }
+    .note-card-title.untitled { color: var(--text-muted); font-weight: 500; font-style: italic; }
+    .note-card-excerpt { margin-top: 3px; color: var(--text-secondary); font-size: 12px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .note-card-meta { margin-top: 4px; font-size: 11px; color: var(--text-muted); }
+    .notes-editor { flex: 1; min-width: 0; display: flex; flex-direction: column; border: 1px solid var(--border-light); border-radius: 8px; background: var(--bg-card); }
+    .notes-editor-empty { margin: auto; color: var(--text-muted); font-size: 14px; }
+    .notes-editor-head { display: flex; align-items: center; gap: 8px; padding: 14px 20px 6px; }
+    .notes-title { flex: 1; font: inherit; font-size: 20px; font-weight: 600; letter-spacing: -0.01em; border: none; outline: none; background: transparent; color: var(--text-primary); }
+    .notes-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 2px; padding: 4px 16px 8px; border-bottom: 1px solid var(--border-light); }
+    .notes-toolbar button { padding: 3px 8px; font-size: 12.5px; border: 1px solid transparent; background: transparent; color: var(--text-secondary); border-radius: 5px; min-width: 28px; }
+    .notes-toolbar button:hover { background: var(--bg-secondary); border-color: var(--border); color: var(--text-primary); }
+    .notes-toolbar .sep { width: 1px; height: 18px; background: var(--border); margin: 0 6px; }
+    .notes-toolbar .notes-meta { margin-left: auto; font-size: 11px; color: var(--text-muted); }
+    .notes-body { flex: 1; min-height: 0; overflow-y: auto; padding: 16px 20px 40px; outline: none; font-size: 14px; line-height: 1.6; color: var(--text-primary); }
+    .notes-body:empty::before { content: attr(data-placeholder); color: var(--text-muted); }
+    .notes-body h1 { font-size: 20px; margin: 14px 0 6px; } .notes-body h2 { font-size: 16px; color: var(--text-primary); margin: 12px 0 4px; }
+    .notes-body ul, .notes-body ol { padding-left: 24px; margin: 4px 0; }
+    .notes-body blockquote { border-left: 3px solid var(--border); padding-left: 10px; color: var(--text-secondary); margin: 6px 0; }
+    .notes-body pre, .notes-body code { font-family: ui-monospace, Menlo, monospace; font-size: 12.5px; background: var(--bg-secondary); border-radius: 4px; }
+    .notes-body pre { padding: 8px 10px; white-space: pre-wrap; }
+    .notes-body code { padding: 1px 4px; }
+    .notes-body a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+    .notes-empty { margin: auto; }
+    .notes-panel-btn { flex: none; font-size: 12px; font-weight: 600; padding: 4px 9px; border-radius: 6px; color: var(--text-secondary); }
+    .notes-panel-btn.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .notes-panel-btn.on:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+    .notes-search { width: 100%; margin-top: 6px; font: inherit; font-size: 12.5px; padding: 5px 8px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg-card); color: var(--text-primary); outline: none; }
+    .notes-search:focus { border-color: var(--accent); }
+    .notes-none { font-size: 12px; color: var(--text-muted); padding: 4px 6px; }
+    /* Tasks vinculadas (só em notes.json): chips com a cor da frente */
+    .note-tasks { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+    .note-task-chip { display: inline-flex; align-items: center; gap: 4px; max-width: 100%; font-size: 11px; font-weight: 500; line-height: 1.2; padding: 2px 7px; border-radius: 999px; border: 1px solid var(--border); border-left: 3px solid var(--cat-color, var(--border)); background: var(--bg-secondary); color: var(--text-secondary); cursor: pointer; }
+    .note-task-chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .note-task-chip:hover { border-color: var(--accent); color: var(--text-primary); }
+    .note-task-chip.done span { text-decoration: line-through; }
+    .note-task-chip.missing { font-style: italic; opacity: .6; }
+    .note-task-chip .unlink { border: none; background: transparent; padding: 0 0 0 2px; font-size: 12px; line-height: 1; color: var(--text-muted); cursor: pointer; }
+    .note-task-chip .unlink:hover { color: #e03131; }
+    .note-card .note-tasks, .note-tile .note-tasks { margin-top: 5px; }
+    .notes-links { padding: 8px 20px; border-bottom: 1px solid var(--border-light); font-size: 12px; color: var(--text-muted); position: relative; }
+    .notes-links .note-tasks { gap: 6px; }
+    .note-link-add { font-size: 11.5px; color: var(--text-muted); padding: 2px 6px; border-radius: 6px; cursor: pointer; }
+    .note-link-add:hover { background: var(--bg-secondary); color: var(--accent); }
+    .note-link-picker { position: relative; }
+    .note-link-picker input { font: inherit; font-size: 12px; width: 320px; padding: 3px 8px; border: 2px solid var(--accent); border-radius: 6px; outline: none; background: var(--bg-card); color: var(--text-primary); }
+    .note-link-results { position: absolute; z-index: 20; top: 100%; left: 0; width: 420px; margin-top: 4px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 6px 20px var(--shadow-hover); overflow: hidden; }
+    .note-link-results div { padding: 6px 10px; font-size: 12.5px; color: var(--text-primary); cursor: pointer; border-left: 3px solid var(--cat-color, transparent); }
+    .note-link-results div.sel, .note-link-results div:hover { background: var(--bg-secondary); }
+    .note-link-results small { color: var(--text-muted); margin-right: 6px; }
+    .note-link-results .done { text-decoration: line-through; opacity: .6; }
+    /* Painel: nenhuma nota aberta -> resumo de todas */
+    .notes-panel { flex: 1; min-height: 0; overflow-y: auto; padding: 16px 20px 24px; }
+    .notes-panel-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 12px; }
+    .notes-panel-head h2 { margin: 0; color: var(--text-primary); }
+    .notes-panel-head span { font-size: 12px; color: var(--text-muted); }
+    .notes-panel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; align-items: start; }
+    .note-tile { border: 1px solid var(--border-light); border-top: 3px solid var(--accent); border-radius: 8px; padding: 10px 12px; background: var(--bg-card); box-shadow: 0 1px 2px var(--shadow); cursor: pointer; font-size: 12.5px; }
+    .note-tile:hover { box-shadow: 0 2px 8px var(--shadow-hover); border-color: var(--border); border-top-color: var(--accent); }
+    .note-tile-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+    .note-tile-title.untitled { color: var(--text-muted); font-weight: 500; font-style: italic; }
+    .note-tile-excerpt { margin-top: 4px; color: var(--text-secondary); display: -webkit-box; -webkit-line-clamp: 8; -webkit-box-orient: vertical; overflow: hidden; white-space: pre-line; }
+    .note-tile-add { display: flex; align-items: center; justify-content: center; min-height: 80px; border: 1px dashed var(--border); border-top: 1px dashed var(--border); color: var(--text-muted); box-shadow: none; }
+    .note-tile-add:hover { color: var(--accent); border-color: var(--accent); border-top-color: var(--accent); }
+
 </style>
 </head>
 <body>
@@ -970,6 +1046,7 @@
       <div class="view-toggle" id="mainTabToggle">
         <button id="tasksTabBtn" class="active">Tasks</button>
         <button id="memoryTabBtn">Memory</button>
+        <button id="notesTabBtn">Notes</button>
       </div>
       <div class="view-toggle" id="taskViewToggle">
         <button id="matrixViewBtn" class="active">Grid</button>
@@ -1011,6 +1088,27 @@
       <div class="memory-content-area">
         <div id="memoryContentContainer"></div>
       </div>
+    </div>
+  </div>
+
+  <!-- NOTES TAB PANEL (notes.json) -->
+  <div class="tab-panel" id="notesPanel">
+    <div class="empty-state notes-empty" id="notesEmptyState">
+      <p style="margin-bottom: 24px; font-size: 18px; font-weight: 600; color: var(--text-primary);">Conecte a pasta backlog/ (lê o notes.json)</p>
+      <button id="openNotesBtnLarge">Conectar pasta backlog/</button>
+    </div>
+    <div class="notes-layout" id="notesLayout">
+      <div class="notes-col">
+        <div class="notes-col-head"><div>
+          <div class="matrix-col-title">Notes</div>
+          <div class="matrix-col-sub" id="notesCount"></div>
+          </div>
+          <button class="notes-panel-btn" id="notesPanelBtn" title="Painel: resumo de todas as notas">▦ Painel</button>
+          <input class="notes-search" id="notesSearch" type="search" placeholder="Buscar notas (título, texto, tasks)" spellcheck="false">
+        </div>
+        <div class="notes-list" id="notesList"></div>
+      </div>
+      <div class="notes-editor" id="notesEditor"></div>
     </div>
   </div>
 
@@ -1079,6 +1177,7 @@
           await loadTaskHandle(await root.getFileHandle(TASKS_FILE));
         } catch (e) { showStatus(TASKS_FILE + ' não encontrado em ' + root.name); }
         await loadMemoryDirectory(root);
+        await loadNotes(root);
       }
 
       // Shift+click picks a different folder
@@ -1123,6 +1222,8 @@
     const memoryTabBtn = document.getElementById('memoryTabBtn');
     const tasksPanel = document.getElementById('tasksPanel');
     const memoryPanel = document.getElementById('memoryPanel');
+    const notesTabBtn = document.getElementById('notesTabBtn');
+    const notesPanel = document.getElementById('notesPanel');
     const taskViewToggle = document.getElementById('taskViewToggle');
     const openTaskBtn = document.getElementById('openTaskBtn');
     const openMemoryBtn = document.getElementById('openMemoryBtn');
@@ -1130,32 +1231,40 @@
 
     function switchMainTab(tab) {
       activeMainTab = tab;
+      try { localStorage.setItem('mainTab', tab); } catch (e) {}
 
       tasksTabBtn.classList.toggle('active', tab === 'tasks');
       memoryTabBtn.classList.toggle('active', tab === 'memory');
+      notesTabBtn.classList.toggle('active', tab === 'notes');
 
       tasksPanel.classList.toggle('active', tab === 'tasks');
       memoryPanel.classList.toggle('active', tab === 'memory');
+      notesPanel.classList.toggle('active', tab === 'notes');
 
       // Show/hide view toggle for tasks
       taskViewToggle.style.display = tab === 'tasks' ? 'flex' : 'none';
       updateSubsToggle();
 
       // Show/hide appropriate buttons
-      openTaskBtn.style.display = tab === 'tasks' ? 'inline-flex' : 'none';
+      openTaskBtn.style.display = tab !== 'memory' ? 'inline-flex' : 'none';
       openMemoryBtn.style.display = tab === 'memory' ? 'inline-flex' : 'none';
       saveBtn.style.display = tab === 'tasks' ? 'inline-flex' : 'none';
 
       // Update file path display
       if (tab === 'tasks') {
         filePathEl.textContent = taskFileHandle ? taskFileName : '';
+      } else if (tab === 'notes') {
+        filePathEl.textContent = projectRoot ? NOTES_FILE : '';
+        renderNotes();
       } else {
         filePathEl.textContent = memoryDirHandle ? memoryDirHandle.name : '';
       }
     }
 
     tasksTabBtn.addEventListener('click', () => switchMainTab('tasks'));
+    try { const t = localStorage.getItem('mainTab'); if (t === 'notes' || t === 'memory') setTimeout(() => switchMainTab(t)); } catch (e) {}
     memoryTabBtn.addEventListener('click', () => switchMainTab('memory'));
+    notesTabBtn.addEventListener('click', () => switchMainTab('notes'));
 
     // ============================================================
     // ===== TASKS FUNCTIONALITY =====
@@ -3329,11 +3438,514 @@
     window.openEditModal = openEditModal;
     window.filterMemoryDirectory = filterMemoryDirectory;
   
+    // ============================================================
+    // ===== NOTES (notes.json) =====
+    // ============================================================
+    // Coluna de cards à esquerda; clicar abre o editor grande (texto rico + links).
+    // notes.json (UTF-8): { "version": 1, "notes": [{ id, title, html, tasks, created, updated }] } — ordem do array = ordem da coluna.
+    // tasks = ids (coluna id do tasks.csv) das tasks vinculadas; o vínculo só existe no notes.json.
+    // O arquivo só é criado na primeira gravação; mudança por fora recarrega (exceto com o editor em uso).
+    const NOTES_FILE = 'notes.json';
+    const notesEmptyState = document.getElementById('notesEmptyState');
+    const notesLayout = document.getElementById('notesLayout');
+    const notesList = document.getElementById('notesList');
+    const notesCount = document.getElementById('notesCount');
+    const notesEditor = document.getElementById('notesEditor');
+    const notesSearch = document.getElementById('notesSearch');
+    const notesPanelBtn = document.getElementById('notesPanelBtn');
+    let lastNoteId = null; // volta do painel para a última nota aberta
+    let notesQuery = '';
+    let notesDir = null;
+    let notesFileHandle = null;
+    let notes = [];
+    let notesLastModified = 0;
+    let notesDirty = false;
+    let notesSaveTimeout = null;
+    let notesWriteChain = Promise.resolve();
+    let notesWatch = null;
+    let openNoteId = null;
+    try { openNoteId = localStorage.getItem('notesOpen'); } catch (e) {}
+
+    async function loadNotes(root) {
+      notesDir = root;
+      notesFileHandle = null;
+      notes = [];
+      notesLastModified = 0;
+      try {
+        notesFileHandle = await root.getFileHandle(NOTES_FILE);
+        const file = await notesFileHandle.getFile();
+        notesLastModified = file.lastModified;
+        notes = parseNotes(await file.text());
+      } catch (e) {
+        if (e.name !== 'NotFoundError') showStatus(NOTES_FILE + ': ' + e.message);
+      }
+      if (notesWatch) clearInterval(notesWatch);
+      notesWatch = setInterval(checkNotesExternal, 1000);
+      renderNotes();
+    }
+
+    function parseNotes(text) {
+      if (!text.trim()) return [];
+      const data = JSON.parse(text);
+      return (Array.isArray(data) ? data : data.notes || []).map(n => ({
+        id: String(n.id), title: n.title || '', html: sanitizeNoteHtml(n.html || ''),
+        tasks: Array.isArray(n.tasks) ? n.tasks.map(String) : [], created: n.created || '', updated: n.updated || n.created || '',
+      }));
+    }
+
+    function writeNotesFile() {
+      notesWriteChain = notesWriteChain.then(async () => {
+        if (!notesDir) return;
+        notesDirty = false;
+        try {
+          if (!notesFileHandle) notesFileHandle = await notesDir.getFileHandle(NOTES_FILE, { create: true });
+          const writable = await notesFileHandle.createWritable();
+          await writable.write(JSON.stringify({ version: 1, notes }, null, 2) + '\n');
+          await writable.close();
+          notesLastModified = (await notesFileHandle.getFile()).lastModified;
+          showStatus('Saved');
+        } catch (e) {
+          notesDirty = true;
+          showStatus('Save failed: ' + e.message);
+        }
+      });
+      return notesWriteChain;
+    }
+
+    function markNotesChanged() {
+      notesDirty = true;
+      if (notesSaveTimeout) clearTimeout(notesSaveTimeout);
+      notesSaveTimeout = setTimeout(writeNotesFile, 600);
+    }
+
+    async function checkNotesExternal() {
+      if (!notesFileHandle || notesDirty) return;
+      try {
+        const file = await notesFileHandle.getFile();
+        if (file.lastModified <= notesLastModified) return;
+        // Editor em uso: espera sair dele para não perder o que está sendo digitado
+        if (notesEditor.contains(document.activeElement)) return;
+        notesLastModified = file.lastModified;
+        notes = parseNotes(await file.text());
+        renderNotes();
+        showStatus('Reloaded ' + NOTES_FILE);
+      } catch (e) { console.log('Notes watch error:', e); }
+    }
+
+    // Só formatação básica e links sobrevivem (colagem de páginas web, arquivo editado por fora)
+    const NOTE_TAGS = new Set(['A', 'B', 'STRONG', 'I', 'EM', 'U', 'S', 'P', 'DIV', 'BR', 'UL', 'OL', 'LI', 'H1', 'H2', 'H3', 'BLOCKQUOTE', 'PRE', 'CODE', 'HR', 'SPAN']);
+    function sanitizeNoteHtml(html) {
+      const doc = new DOMParser().parseFromString('<div>' + html + '</div>', 'text/html');
+      const clean = node => {
+        [...node.childNodes].forEach(child => {
+          if (child.nodeType === Node.TEXT_NODE) return;
+          if (child.nodeType !== Node.ELEMENT_NODE || ['SCRIPT', 'STYLE', 'META', 'LINK', 'TITLE'].includes(child.tagName)) { child.remove(); return; }
+          clean(child);
+          if (!NOTE_TAGS.has(child.tagName)) { child.replaceWith(...child.childNodes); return; }
+          const href = child.tagName === 'A' ? child.getAttribute('href') || '' : '';
+          [...child.attributes].forEach(a => child.removeAttribute(a.name));
+          if (child.tagName === 'A') {
+            if (/^(https?:|mailto:)/i.test(href)) child.setAttribute('href', href);
+            else child.replaceWith(...child.childNodes);
+          }
+        });
+      };
+      const root = doc.body.firstChild;
+      clean(root);
+      return root.innerHTML;
+    }
+
+    function noteText(note) {
+      const div = document.createElement('div');
+      div.innerHTML = note.html.replace(/<(br|\/p|\/div|\/li|\/h\d)>/gi, '$& ');
+      return div.textContent.replace(/\s+/g, ' ').trim();
+    }
+    function noteLinkCount(note) { return (note.html.match(/<a\s/gi) || []).length; }
+    function formatNoteDate(iso) {
+      if (!iso) return '';
+      const d = new Date(iso);
+      return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }) + ' ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    }
+    function findNote(id) { return notes.find(n => n.id === id) || null; }
+    function isNoteEmpty(note) { return !note.title.trim() && !noteText(note) && !note.tasks.length; }
+
+    // ===== Vínculo nota -> task (pelo id estável do tasks.csv) =====
+    function allTaskList() { return sections.flatMap(sec => tasks[sec.id] || []); }
+    function taskByUid(uid) { return allTaskList().find(t => String(t.uid) === String(uid)) || null; }
+    function noteTaskChipsHtml(note, removable) {
+      return note.tasks.map(uid => {
+        const t = taskByUid(uid);
+        const color = t ? categoryColor(taskCategory(t)) : '';
+        const label = t ? '#' + uid + ' ' + t.title : '#' + uid + ' (não encontrada)';
+        return `<span class="note-task-chip${t ? (t.checked ? ' done' : '') : ' missing'}" data-uid="${escapeHtml(uid)}" style="--cat-color:${color}" title="${escapeHtml(label)} — abrir no Grid">
+          <span>${escapeHtml(label)}</span>${removable ? '<button class="unlink" title="Desvincular">×</button>' : ''}</span>`;
+      }).join('');
+    }
+    // Clicar no chip abre a task no Grid (card em edição)
+    function openTaskFromNote(uid) {
+      const t = taskByUid(uid);
+      if (!t) { showStatus('Task #' + uid + ' não encontrada no ' + TASKS_FILE); return; }
+      switchMainTab('tasks');
+      matrixOpen.add(priorityKey(t.title));
+      switchTaskView('matrix');
+      const chip = document.querySelector('.matrix-chip.open');
+      if (chip) chip.scrollIntoView({ block: 'center', inline: 'center' });
+      else showStatus('Task #' + uid + ' está oculta pelos filtros do Grid' + (t.checked ? ' (Done)' : ''));
+    }
+    function bindNoteTaskChips(container, note) {
+      container.querySelectorAll('.note-task-chip').forEach(chip => {
+        chip.addEventListener('click', e => {
+          e.stopPropagation();
+          if (e.target.closest('.unlink')) {
+            note.tasks = note.tasks.filter(u => u !== chip.dataset.uid);
+            note.updated = new Date().toISOString();
+            markNotesChanged();
+            renderNotes();
+          } else openTaskFromNote(chip.dataset.uid);
+        });
+      });
+    }
+
+    // ===== Busca: título, texto e tasks vinculadas; sem acento e sem caixa =====
+    function foldText(text) { return String(text).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); }
+    function noteMatches(note) {
+      if (!notesQuery.trim()) return true;
+      const hay = foldText([note.title, noteText(note), ...note.tasks.map(uid => { const t = taskByUid(uid); return '#' + uid + ' ' + (t ? t.title : ''); })].join(' '));
+      return foldText(notesQuery).split(/\s+/).filter(Boolean).every(w => hay.includes(w));
+    }
+    function visibleNotes() { return notes.filter(noteMatches); }
+    // Botão Painel: com nota aberta mostra o painel; no painel volta para a última nota aberta
+    notesPanelBtn.addEventListener('click', () => {
+      if (openNoteId) setOpenNote(null);
+      else if (findNote(lastNoteId)) setOpenNote(lastNoteId);
+    });
+    notesSearch.addEventListener('input', () => { notesQuery = notesSearch.value; renderNotes(); });
+    notesSearch.addEventListener('keydown', e => { if (e.key === 'Escape') { notesSearch.value = ''; notesQuery = ''; renderNotes(); } });
+
+    function setOpenNote(id) {
+      // Nota vazia (sem título nem texto) some ao sair dela
+      const prev = findNote(openNoteId);
+      if (prev && prev.id !== id && isNoteEmpty(prev)) { notes = notes.filter(n => n !== prev); markNotesChanged(); }
+      if (openNoteId && !id) lastNoteId = openNoteId;
+      openNoteId = id;
+      try { id ? localStorage.setItem('notesOpen', id) : localStorage.removeItem('notesOpen'); } catch (e) {}
+      renderNotes();
+    }
+
+    function newNote() {
+      notesQuery = notesSearch.value = '';
+      const now = new Date().toISOString();
+      const note = { id: Date.now().toString(36), title: '', html: '', tasks: [], created: now, updated: now };
+      notes.unshift(note);
+      setOpenNote(note.id);
+      notesEditor.querySelector('.notes-title')?.focus();
+    }
+
+    function deleteNote(note) {
+      if (!isNoteEmpty(note) && !confirm('Excluir a nota "' + (note.title || noteText(note).slice(0, 40)) + '"?')) return;
+      notes = notes.filter(n => n !== note);
+      markNotesChanged();
+      if (openNoteId === note.id) openNoteId = null;
+      renderNotes();
+    }
+
+    let noteDragId = null;
+    function renderNotes() {
+      const connected = !!notesDir;
+      notesEmptyState.style.display = connected ? 'none' : '';
+      notesLayout.classList.toggle('on', connected);
+      if (!connected) return;
+      if (activeMainTab === 'notes') filePathEl.textContent = NOTES_FILE;
+      const shown = visibleNotes();
+      notesCount.textContent = (notes.length === 1 ? '1 nota' : notes.length + ' notas') + (notesQuery.trim() ? ' · ' + shown.length + ' na busca' : '');
+      notesList.innerHTML = '';
+      const add = document.createElement('div');
+      add.className = 'matrix-add';
+      add.textContent = '+ nova nota';
+      add.addEventListener('click', newNote);
+      notesList.appendChild(add);
+      shown.forEach(note => notesList.appendChild(createNoteCard(note)));
+      if (!shown.length && notes.length) notesList.insertAdjacentHTML('beforeend', '<div class="notes-none">Nenhuma nota encontrada</div>');
+      renderNoteEditor();
+    }
+
+    function createNoteCard(note) {
+      const card = document.createElement('div');
+      card.className = 'matrix-chip note-card' + (note.id === openNoteId ? ' open' : '');
+      card.dataset.id = note.id;
+      card.draggable = true;
+      const text = noteText(note);
+      const links = noteLinkCount(note);
+      card.innerHTML = `<div class="matrix-chip-head">
+          <span class="note-card-title${note.title ? '' : ' untitled'}">${escapeHtml(note.title || 'Sem título')}</span>
+          <button class="matrix-chip-del" title="Excluir nota">🗑</button></div>
+        ${text ? `<div class="note-card-excerpt">${linkify(text.slice(0, 300))}</div>` : ''}
+        ${note.tasks.length ? `<div class="note-tasks">${noteTaskChipsHtml(note, false)}</div>` : ''}
+        <div class="note-card-meta">${formatNoteDate(note.updated)}${links ? ' · 🔗 ' + links : ''}</div>`;
+      card.addEventListener('click', e => { if (!e.target.closest('a')) setOpenNote(note.id); });
+      bindNoteTaskChips(card, note);
+      card.querySelector('.matrix-chip-del').addEventListener('click', e => { e.stopPropagation(); deleteNote(note); });
+      // Arrastar reordena a coluna (solta antes do card de destino)
+      card.addEventListener('dragstart', () => { noteDragId = note.id; });
+      card.addEventListener('dragend', () => { noteDragId = null; });
+      card.addEventListener('dragover', e => { if (noteDragId && noteDragId !== note.id) { e.preventDefault(); card.classList.add('drag-over'); } });
+      card.addEventListener('dragleave', () => card.classList.remove('drag-over'));
+      card.addEventListener('drop', e => {
+        e.preventDefault();
+        const moved = findNote(noteDragId);
+        if (!moved || moved === note) return;
+        notes = notes.filter(n => n !== moved);
+        notes.splice(notes.indexOf(note), 0, moved);
+        markNotesChanged();
+        renderNotes();
+      });
+      return card;
+    }
+
+    // Editor: re-renderiza só quando muda a nota aberta (digitar não reconstrói o DOM)
+    let editorNoteId = undefined;
+    function renderNoteEditor() {
+      const note = findNote(openNoteId);
+      if (!note) openNoteId = null;
+      notesPanelBtn.classList.toggle('on', !note);
+      notesPanelBtn.title = note ? 'Painel: resumo de todas as notas' : findNote(lastNoteId) ? 'Voltar para a nota "' + (findNote(lastNoteId).title || 'Sem título') + '"' : 'Painel: resumo de todas as notas';
+      if (!note) { editorNoteId = null; renderNotesPanel(); return; }
+      if (editorNoteId === openNoteId && notesEditor.firstChild) {
+        if (!notesEditor.contains(document.activeElement)) {
+          notesEditor.querySelector('.notes-title').value = note.title;
+          const body = notesEditor.querySelector('.notes-body');
+          if (body.innerHTML !== note.html) body.innerHTML = note.html;
+        }
+        renderNoteLinks(note);
+        return;
+      }
+      editorNoteId = openNoteId;
+      notesEditor.innerHTML = `<div class="notes-editor-head">
+          <input class="notes-title" placeholder="Título" spellcheck="false">
+          <button class="matrix-chip-close" title="Fechar">×</button></div>
+        <div class="notes-toolbar">
+          <button data-cmd="bold" title="Negrito (⌘B)"><b>B</b></button>
+          <button data-cmd="italic" title="Itálico (⌘I)"><i>I</i></button>
+          <button data-cmd="underline" title="Sublinhado (⌘U)"><u>U</u></button>
+          <button data-cmd="strikeThrough" title="Riscado"><s>S</s></button>
+          <span class="sep"></span>
+          <button data-block="H1" title="Título">H1</button>
+          <button data-block="H2" title="Subtítulo">H2</button>
+          <button data-block="P" title="Texto normal">¶</button>
+          <button data-cmd="insertUnorderedList" title="Lista">• Lista</button>
+          <button data-cmd="insertOrderedList" title="Lista numerada">1. Lista</button>
+          <button data-block="BLOCKQUOTE" title="Citação">❝</button>
+          <button data-block="PRE" title="Código">&lt;/&gt;</button>
+          <span class="sep"></span>
+          <button data-link="1" title="Inserir link (⌘K)">🔗 Link</button>
+          <button data-cmd="unlink" title="Remover link">Remover link</button>
+          <button data-cmd="removeFormat" title="Limpar formatação">Tx</button>
+          <span class="notes-meta"></span>
+        </div>
+        <div class="notes-links"></div>
+        <div class="notes-body" contenteditable="true" data-placeholder="Escreva aqui. URLs viram links; ⌘+clique abre o link."></div>`;
+      const titleEl = notesEditor.querySelector('.notes-title');
+      const body = notesEditor.querySelector('.notes-body');
+      const meta = notesEditor.querySelector('.notes-meta');
+      titleEl.value = note.title;
+      body.innerHTML = note.html;
+      const showMeta = () => { meta.textContent = 'editada ' + formatNoteDate(note.updated); };
+      showMeta();
+      renderNoteLinks(note);
+
+      const touch = () => {
+        note.updated = new Date().toISOString();
+        showMeta();
+        markNotesChanged();
+        // Atualiza só o card da nota aberta (sem reconstruir a coluna)
+        const old = notesList.querySelector(`.note-card[data-id="${CSS.escape(note.id)}"]`);
+        if (old) old.replaceWith(createNoteCard(note));
+      };
+      titleEl.addEventListener('input', () => { note.title = titleEl.value; touch(); });
+      titleEl.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); body.focus(); } });
+      const syncBody = () => { note.html = body.innerHTML === '<br>' ? '' : body.innerHTML; touch(); };
+      body.addEventListener('input', syncBody);
+      notesEditor.querySelector('.matrix-chip-close').addEventListener('click', () => setOpenNote(null));
+
+      notesEditor.querySelectorAll('.notes-toolbar button').forEach(btn => {
+        btn.addEventListener('mousedown', e => e.preventDefault()); // mantém a seleção no texto
+        btn.addEventListener('click', () => {
+          body.focus();
+          if (btn.dataset.cmd) document.execCommand(btn.dataset.cmd);
+          else if (btn.dataset.block) document.execCommand('formatBlock', false, btn.dataset.block);
+          else if (btn.dataset.link) insertNoteLink();
+          syncBody();
+        });
+      });
+
+      function insertNoteLink() {
+        const sel = window.getSelection();
+        const range = sel.rangeCount ? sel.getRangeAt(0) : null;
+        const current = range && range.startContainer.parentElement?.closest('a');
+        let url = prompt('URL do link:', current ? current.getAttribute('href') : 'https://');
+        if (!url || url === 'https://') return;
+        url = url.trim();
+        if (!/^(https?:|mailto:)/i.test(url)) url = 'https://' + url;
+        if (range) { sel.removeAllRanges(); sel.addRange(range); }
+        if (range && !range.collapsed) document.execCommand('createLink', false, url);
+        else document.execCommand('insertHTML', false, `<a href="${escapeHtml(url)}">${escapeHtml(url)}</a>&nbsp;`);
+      }
+
+      body.addEventListener('keydown', e => {
+        if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); insertNoteLink(); syncBody(); return; }
+        if (e.key === ' ' || e.key === 'Enter') autolinkBeforeCaret();
+      });
+      // ⌘/Ctrl+clique abre o link em nova aba (clique simples continua editando)
+      body.addEventListener('click', e => {
+        const a = e.target.closest('a');
+        if (a && (e.metaKey || e.ctrlKey)) { e.preventDefault(); window.open(a.href, '_blank', 'noopener'); }
+      });
+      body.addEventListener('mouseover', e => {
+        const a = e.target.closest('a');
+        if (a) a.title = a.href + ' — ⌘+clique para abrir';
+      });
+      // Colar: HTML limpo (só formatação básica e links); texto puro tem as URLs convertidas em links
+      body.addEventListener('paste', e => {
+        const html = e.clipboardData.getData('text/html');
+        const text = e.clipboardData.getData('text/plain');
+        const sel = window.getSelection();
+        e.preventDefault();
+        if (!html && /^(https?:\/\/|www\.)\S+$/i.test(text.trim()) && sel.rangeCount && !sel.getRangeAt(0).collapsed) {
+          const url = /^www\./i.test(text.trim()) ? 'https://' + text.trim() : text.trim();
+          document.execCommand('createLink', false, url);
+        } else if (html) {
+          document.execCommand('insertHTML', false, sanitizeNoteHtml(html));
+        } else {
+          document.execCommand('insertHTML', false, linkify(text).replace(/ class="matrix-link"| target="_blank"| rel="noopener noreferrer"/g, '').replace(/\r?\n/g, '<br>'));
+        }
+        syncBody();
+      });
+
+      // URL digitada vira link ao apertar espaço/Enter
+      function autolinkBeforeCaret() {
+        const sel = window.getSelection();
+        if (!sel.rangeCount || !sel.isCollapsed) return;
+        const node = sel.anchorNode;
+        if (!node || node.nodeType !== Node.TEXT_NODE || node.parentElement.closest('a')) return;
+        const before = node.data.slice(0, sel.anchorOffset);
+        const m = before.match(/(?:https?:\/\/|www\.)\S+$/i);
+        if (!m) return;
+        const start = before.length - m[0].length;
+        const urlNode = node.splitText(start);
+        const rest = urlNode.splitText(m[0].length);
+        const a = document.createElement('a');
+        a.href = /^www\./i.test(m[0]) ? 'https://' + m[0] : m[0];
+        urlNode.replaceWith(a);
+        a.appendChild(urlNode);
+        // Cursor no texto depois do link (fora do <a>, para o que vier a seguir não entrar no link)
+        const range = document.createRange();
+        range.setStart(rest, 0);
+        range.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        syncBody();
+      }
+    }
+
+    // Barra "Tasks:" do editor: chips das vinculadas + "+ vincular task" (busca por id ou título)
+    function renderNoteLinks(note) {
+      const bar = notesEditor.querySelector('.notes-links');
+      if (!bar || bar.querySelector('.note-link-picker')) return; // não fecha o seletor aberto
+      bar.innerHTML = `<div class="note-tasks"><span>Tasks:</span>${noteTaskChipsHtml(note, true)}<span class="note-link-add" title="Vincular a nota a uma task do ${TASKS_FILE}">+ vincular task</span></div>`;
+      bindNoteTaskChips(bar, note);
+      bar.querySelector('.note-link-add').addEventListener('click', () => openTaskPicker(note, bar));
+    }
+
+    function openTaskPicker(note, bar) {
+      const add = bar.querySelector('.note-link-add');
+      const picker = document.createElement('span');
+      picker.className = 'note-link-picker';
+      picker.innerHTML = '<input placeholder="Buscar task por id ou título…" spellcheck="false"><div class="note-link-results" style="display:none"></div>';
+      add.replaceWith(picker);
+      const input = picker.querySelector('input');
+      const results = picker.querySelector('.note-link-results');
+      let matches = [];
+      let sel = 0;
+      const close = () => { picker.remove(); renderNoteLinks(note); };
+      const pick = t => {
+        if (!note.tasks.includes(String(t.uid))) note.tasks.push(String(t.uid));
+        note.updated = new Date().toISOString();
+        markNotesChanged();
+        picker.remove();
+        renderNotes();
+      };
+      const update = () => {
+        const words = foldText(input.value).split(/\s+/).filter(Boolean);
+        // Tasks sem id ainda (recém-criadas, antes de gravar o tasks.csv) não entram: o vínculo é pelo id
+        matches = allTaskList()
+          .filter(t => t.uid && !note.tasks.includes(String(t.uid)))
+          .filter(t => { const hay = foldText('#' + t.uid + ' ' + t.title); return words.every(w => hay.includes(w)); })
+          .sort((a, b) => (a.checked - b.checked) || ((taskScore(b) ?? -1) - (taskScore(a) ?? -1)))
+          .slice(0, 10);
+        sel = 0;
+        results.style.display = matches.length ? '' : 'none';
+        results.innerHTML = matches.map((t, k) => `<div class="${k === sel ? 'sel' : ''}${t.checked ? ' done' : ''}" style="--cat-color:${categoryColor(taskCategory(t))}"><small>#${escapeHtml(t.uid)}</small>${escapeHtml(t.title)}</div>`).join('');
+        [...results.children].forEach((el, k) => el.addEventListener('mousedown', e => { e.preventDefault(); pick(matches[k]); }));
+      };
+      input.addEventListener('input', update);
+      input.addEventListener('keydown', e => {
+        if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close(); }
+        else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          if (!matches.length) return;
+          sel = (sel + (e.key === 'ArrowDown' ? 1 : matches.length - 1)) % matches.length;
+          [...results.children].forEach((el, k) => el.classList.toggle('sel', k === sel));
+        } else if (e.key === 'Enter') { e.preventDefault(); if (matches[sel]) pick(matches[sel]); }
+      });
+      input.addEventListener('blur', () => setTimeout(() => { if (picker.isConnected) close(); }, 150));
+      update();
+      input.focus();
+    }
+
+    // Modo painel: nenhuma nota aberta -> um card-resumo por nota (respeita a busca)
+    function renderNotesPanel() {
+      const shown = visibleNotes();
+      notesEditor.innerHTML = `<div class="notes-panel">
+          <div class="notes-panel-head"><h2>Painel</h2><span>${notesQuery.trim() ? shown.length + ' de ' + notes.length + ' notas na busca' : (notes.length === 1 ? '1 nota' : notes.length + ' notas')}</span></div>
+          <div class="notes-panel-grid"></div></div>`;
+      const grid = notesEditor.querySelector('.notes-panel-grid');
+      shown.forEach(note => {
+        const tile = document.createElement('div');
+        tile.className = 'note-tile';
+        const text = noteText(note);
+        const links = noteLinkCount(note);
+        tile.innerHTML = `<div class="note-tile-title${note.title ? '' : ' untitled'}">${escapeHtml(note.title || 'Sem título')}</div>
+          ${text ? `<div class="note-tile-excerpt">${linkify(noteTextLines(note).slice(0, 1200))}</div>` : ''}
+          ${note.tasks.length ? `<div class="note-tasks">${noteTaskChipsHtml(note, false)}</div>` : ''}
+          <div class="note-card-meta">${formatNoteDate(note.updated)}${links ? ' · 🔗 ' + links : ''}</div>`;
+        tile.addEventListener('click', e => { if (!e.target.closest('a')) setOpenNote(note.id); });
+        bindNoteTaskChips(tile, note);
+        grid.appendChild(tile);
+      });
+      if (!notesQuery.trim()) {
+        const add = document.createElement('div');
+        add.className = 'note-tile note-tile-add';
+        add.textContent = '+ nova nota';
+        add.addEventListener('click', newNote);
+        grid.appendChild(add);
+      } else if (!shown.length) {
+        grid.insertAdjacentHTML('beforeend', '<div class="notes-none">Nenhuma nota encontrada</div>');
+      }
+    }
+    // Texto com quebras de linha (para o resumo do painel manter a estrutura da nota)
+    function noteTextLines(note) {
+      const div = document.createElement('div');
+      div.innerHTML = note.html.replace(/<br\s*\/?>/gi, '\n').replace(/<\/(p|div|li|h\d|blockquote|pre)>/gi, '$&\n');
+      return div.textContent.replace(/\n{3,}/g, '\n\n').trim();
+    }
+
+    document.getElementById('openNotesBtnLarge').addEventListener('click', connectProject);
+
     // On load: auto-load if permission is still granted, otherwise arm the button
     (async () => {
       const root = await idbGet('projectRoot').catch(() => null);
       const label = root ? 'Abrir ' + root.name + '/' : 'Conectar pasta backlog/ (só na 1ª vez)';
-      ['openBtnLarge', 'openMemoryBtnLarge', 'openTaskBtn', 'openMemoryBtn'].forEach(id => {
+      ['openBtnLarge', 'openMemoryBtnLarge', 'openNotesBtnLarge', 'openTaskBtn', 'openMemoryBtn'].forEach(id => {
         const btn = document.getElementById(id);
         if (btn) btn.textContent = label;
       });
