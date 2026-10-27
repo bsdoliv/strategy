@@ -41,7 +41,7 @@ Rows of a section appear in board order; subtask rows come right after their tas
 
 ## Dashboard
 
-`dashboard.html` at the project root (`strategy/backlog/`) is the only copy (versioned in git). If it is missing, restore it with `git checkout -- dashboard.html`. It reads/writes `tasks.csv`, auto-saves, and watches for external changes.
+`dashboard.html` at the project root (`strategy/backlog/`) is the only copy (versioned in git). If it is missing, restore it with `git checkout -- dashboard.html`. It reads/writes `tasks.csv`, auto-saves, and watches for external changes. Its Notes tab keeps free-form notes in `notes.json` (separate file; a note can link to tasks by their `id`, stored only in `notes.json` — never add note data to `tasks.csv`).
 
 ## How to Interact
 

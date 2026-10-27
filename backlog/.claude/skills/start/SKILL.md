@@ -18,6 +18,7 @@ Check the working directory for:
 - `CLAUDE.md` — working memory
 - `.claude/memory/` — deep memory directory
 - `dashboard.html` — the visual UI
+- `notes.json` — notes from the dashboard's Notes tab (optional; created on the first saved note)
 
 ### 2. Create What's Missing
 
