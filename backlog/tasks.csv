@@ -158,6 +158,7 @@ id,parent,status,title,frente,today,attention,i,u,e,nota,done,tags
 133,,Active,Responder Rodolfo,ceo,,x,3,4,1,Resposta esfria se demorar; barato,x,
 130,,Active,Responder Pinelli,ceo,x,,3,4,1,Resposta esfria se demorar; barato,x,
 136,,Active,preparar com claude para encontro presencial / Chery,ceo,x,,3,4,2,Chery (Release PortAR); encontro marcado,,
+153,,Active,review links,explorar,,x,2,2,2,,,[auto=137:84:71]
 129,,Waiting On,remover timer da trading-settings api,platforms/oxpro,,x,4,3,2,Ligada a Safra Unknown (ajustar suspend / tradingsettings_api),,
 134,,Waiting On,Deploy CFX,produto/quartix-markets,,x,5,4,3,Sem deploy o release nao chega ao cliente; como Deploy quartix-markets / cfxui over cloudrun,,
 131,,Waiting On,Responder Geller / Chery,ceo,,,3,3,1,Chery; resposta barata,x,
