@@ -113,8 +113,6 @@ id,parent,status,title,frente,today,attention,i,u,e,nota,done,tags
 115,,Someday,OXPro / Later,platforms/oxpro,,,2,3,3,,,
 115.1,115,Someday,manual-quote,,,,,,,,,
 101,,Someday,"SRE / metaox: painel de monitoração, cron tasks, CI/CD",platforms/sre,,,3,3,4,Reduz trabalho manual e risco; delegável · WIP,,
-100,,Someday,Integração Banco Pine: auto-quote / quartix-markets / octaxpro,platforms/quartix-markets,,,5,4,4,"Receita nova com banco; já em WIP; depende do seu quant · WIP, receita",,
-100.1,100,Someday,solution design,,,,,,,,,
 112,,Someday,Design do oxpro sandbox sobre Cloud Run,platforms/sre,,,2,5,4,"Design exploratório; sem prazo · origem: SRE / metaox: painel de monitoração, cron tasks, CI/CD",,
 119,,Someday,profiling mex servicos financeiros,ceo,,,1,3,3,https://www.perplexity.ai/search/00cf1138-32eb-4d89-9141-c2e229b3d17a,,
 103,,Someday,Metaoxengine,platforms/sre,,,4,4,2,"Risco de perda de dados; barato · origem: SRE / metaox: painel de monitoração, cron tasks, CI/CD",,
@@ -155,18 +153,20 @@ id,parent,status,title,frente,today,attention,i,u,e,nota,done,tags
 147,,Someday,platform-cfx migrar operacao euro hbex para mesa quartix,produto/cfx,,x,4,3,3,Operacao/receita do cfx; esforco medio,,
 148,,Someday,marketing bloomberg benchmark,marketing,,x,2,1,3,https://www.linkedin.com/posts/integrated-earnings-tools-ugcPost-7518657401944846338-k_V2/?utm_source=share&utm_medium=member_desktop&rcm=ACoAAABmF_kBLhh-K6-QtfIk4SKp4DaqyfRVbGw,,[auto=56:51:53]
 151,,Someday,"Normalizar taglines em todas as midias, considerar nossos numeros do site",marketing,,,1,2,3,,,[auto=44:49:46]
+137,,Someday,Review feedback playbooks sdr/parceiro,ceo,,,4,3,2,"Frente comercial, ligada aos 10 melhores alvos https://claude.ai/chat/1bc184cc-7342-4d5d-871f-b629fd2368e6?artifact=86762f5b-50e2-4a1b-9ecc-972d5152a056 file:///Users/andredeoliveira/Downloads/sugestoes%20de%20ajustes-Playbooks.pdf",,[delayed=1]
 122,,Active,Aguardando Isabel retornar calendario/agenda publis,marketing,x,,2,3,1,"Marketing, mas bloqueia as publicacoes",x,
 133,,Active,Responder Rodolfo,ceo,,x,3,4,1,Resposta esfria se demorar; barato,x,
 130,,Active,Responder Pinelli,ceo,x,,3,4,1,Resposta esfria se demorar; barato,x,
-138,,Active,olhar posts empresas tech-finance ycombinator,ceo,x,x,2,2,1,Benchmark de posicionamento; barato,,
+136,,Active,preparar com claude para encontro presencial / Chery,ceo,x,,3,4,2,Chery (Release PortAR); encontro marcado,,
 129,,Waiting On,remover timer da trading-settings api,platforms/oxpro,,x,4,3,2,Ligada a Safra Unknown (ajustar suspend / tradingsettings_api),,
 134,,Waiting On,Deploy CFX,produto/quartix-markets,,x,5,4,3,Sem deploy o release nao chega ao cliente; como Deploy quartix-markets / cfxui over cloudrun,,
 131,,Waiting On,Responder Geller / Chery,ceo,,,3,3,1,Chery; resposta barata,x,
 135,,Waiting On,Bruno R2,ceo,,,2,2,1,Contexto pouco claro,x,
-136,,Waiting On,preparar com claude para encontro presencial / Chery,ceo,x,,3,4,2,Chery (Release PortAR); encontro marcado,,
-137,,Waiting On,Review feedback playbooks sdr/parceiro,ceo,x,,4,3,2,"Frente comercial, ligada aos 10 melhores alvos https://claude.ai/chat/1bc184cc-7342-4d5d-871f-b629fd2368e6?artifact=86762f5b-50e2-4a1b-9ecc-972d5152a056 file:///Users/andredeoliveira/Downloads/sugestoes%20de%20ajustes-Playbooks.pdf",,
-132,,Waiting On,Merges / Lucas,platforms/cfx,x,,4,4,3,"Como retorno do lucas (940), mais generica",,
 127,,Waiting On,Safra Now - timeout ngrok,platforms/oxpro,,,5,4,2,Safra Now (800) atrasada e com attention; duplica a subtarefa 1.1,,[delayed=1]
 150,,Waiting On,criar agent-farm pipeline para evolucoes clearfxai,platforms/cfx,,x,3,2,3,,,[auto=27:132:37]
 149,,Waiting On,tunel ngrok / artur / TLS,platforms/oxpro,,x,4,3,3,,,[auto=127:115:67]
-151,,Waiting On,rodrigo mahlmeister,explorar,,,1,1,2,(1) https://www.youtube.com/watch?v=WtA6Bj06t4k (2) https://x.com/ro_mahl (3) https://neofeed.com.br/finde/como-um-pesquisador-brasileiro-criou-um-algoritmo-que-simulou-e-acertou-o-resultado-do-1o-turno/ (4),,[auto=142:71:84]
+152,,Waiting On,rodrigo mahlmeister,explorar,,,1,1,2,(1) https://www.youtube.com/watch?v=WtA6Bj06t4k (2) https://x.com/ro_mahl (3) https://neofeed.com.br/finde/como-um-pesquisador-brasileiro-criou-um-algoritmo-que-simulou-e-acertou-o-resultado-do-1o-turno/ (4),,[auto=142:71:84]
+138,,Waiting On,olhar posts empresas tech-finance ycombinator,ceo,x,x,2,2,1,Benchmark de posicionamento; barato,,
+100,,Waiting On,Integração Banco Pine: auto-quote / quartix-markets / octaxpro,platforms/quartix-markets,x,x,5,4,4,"Receita nova com banco; já em WIP; depende do seu quant · WIP, receita",,
+100.1,100,Waiting On,solution design,,,,,,,,,
+132,,Waiting On,Merges / Lucas,platforms/cfx,x,,4,4,3,"Como retorno do lucas (940), mais generica",,[delayed=1]
