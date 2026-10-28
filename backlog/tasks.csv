@@ -81,10 +81,10 @@ id,parent,status,title,frente,today,attention,i,u,e,nota,done,tags
 66,,Someday,Chat prototype,platforms/cfx,,,2,1,2,"Só a avaliação no quartix-markets, que decide se o protótipo segue; barato",,
 66.1,66,Someday,Avaliar chat no quartix-markets,,,,,,,,,
 67,,Someday,octaxpro addon / excel-plugin,platforms/oxpro,,,3,1,3,Diferencial de produto; sem demanda urgente,,
-68,,Someday,Organizar repos,platforms/quartix-intel,,,2,2,2,Higiene de engenharia,,
-69,,Someday,marketdata,platforms/quartix-intel,,,2,2,2,Como o pai: higiene de engenharia · origem: Organizar repos,,
-70,,Someday,oxpro etc.,platforms/quartix-intel,,,2,2,2,Como o pai: higiene de engenharia · origem: Organizar repos,,
-71,,Someday,Research / opensource,explorar,,,1,1,3,Exploratório,,
+68,,Someday,Organizar repos,platforms/sre,,,3,3,3,Higiene de engenharia,,[auto=25:95:24]
+68.1,68,Someday,marketdata,,,,,,,,,
+68.2,68,Someday,oxpro,,,,,,,,,
+71,,Someday,Research / opensource,marketing,,,2,2,2,Exploratório,,[auto=59:54:47]
 72,,Someday,Transformar livro em skill,platforms/quartix-intel,,,1,1,2,https://chat.deepseek.com/a/chat/s/452ea6d4-1599-4b14-8cc4-499d32abd635,,
 72.1,72,Someday,notebooklm,,,,,,,,,
 72.2,72,Someday,"Pegar skills prontas, treinar notebooklm com um livro teste",,,,,,,,,
@@ -96,7 +96,6 @@ id,parent,status,title,frente,today,attention,i,u,e,nota,done,tags
 81,,Someday,Integração hedgeOS com nexus,release,,,1,4,4,Como o release: precisa estar pronto p/ a apresentação · origem: Release hedgeOS (Damke),,
 82,,Someday,Integração hedgeOS com port.ar,release,,,1,3,4,Parceiro com contexto pouco claro · origem: Release hedgeOS (Damke),,
 83,,Someday,Integração hedgeOS com plexus,release,,,1,4,4,Como o release: precisa estar pronto p/ a apresentação · origem: Release hedgeOS (Damke),,
-84,,Someday,Revisar taxonomia,explorar,,,2,2,2,"Base do quartix-intelligence, que está em modo exploratório · WIP, quartix-intelligence",,
 85,,Someday,Ask for strategic capital,ceo,,,1,3,4,"Fôlego financeiro e escala do time; processo longo, começar cedo (e-mail estilo Dropbox) · captação; ligado às Frentes Marcos I9DC",,
 86,,Someday,E-mail no estilo Dropbox,ceo,,,1,3,2,Primeiro passo barato da captação · origem: Ask for strategic capital,,
 87,,Someday,Convite Damke: apresentar hedgeOS,ceo,,,1,1,1,Abre a 1ª venda do hedgeOS; custo de uma mensagem; estava parado · estava em postponed,,
@@ -130,8 +129,7 @@ id,parent,status,title,frente,today,attention,i,u,e,nota,done,tags
 16.4,16,Someday,docstored (engine),,,,,,,,,
 125,,Someday,APURACAO / Earnings / CFXAI / Outubro,produto/cfx,,x,4,4,2,Apuracao mensal do partner: receita com prazo; como Tela de apuracao,,[victoria=1]
 123,,Someday,Solicitar VIC deixarmos a proposta tecnica (PINE) engatilhada,ceo,,x,4,4,1,Destrava a proposta Pine (840); custo de uma mensagem,x,[victoria=1]
-126,,Someday,evaluate prompt-engineering anthropic,explorar,,x,2,2,1,Exploratorio; barato · https://x.com/HeyShobhan/status/2112025721464029537/video/1,,
-118,,Someday,projeto linkedin-intel,platforms/quartix-intel,,x,5,3,3,,,
+126,,Someday,evaluate prompt-engineering anthropic,explorar,,x,2,1,2,Exploratorio; barato · https://x.com/HeyShobhan/status/2112025721464029537/video/1,,[auto=14:142:146]
 1,,Someday,Safra Now,platforms/oxpro,,x,5,3,3,,,
 1.1,1,Someday,timeout ngrok safra,,,,,,,,,
 1.2,1,Someday,Minimum spread,,,,,,,,,
@@ -146,7 +144,7 @@ id,parent,status,title,frente,today,attention,i,u,e,nota,done,tags
 140,,Someday,FIX vs API blog,ceo,,,2,1,2,Conteudo pontual de blog; material ja em strategy/ · https://www.linkedin.com/posts/algotrading_electronictrading-fixprotocol-apitrading-share-7503654734969421825-Vpp7/ content also available in strategy/linkedin/data,,
 141,,Someday,50 claude financial agents,ceo,,,2,1,2,Referencia p/ Marketing Agent / automacao de workflows · https://www.linkedin.com/posts/50-claude-agents-run-an-entire-finance-function-share-7494379863865438208-GzO5/,,
 142,,Someday,esse cara fala de forma interessante sobre opcoes e derivativos,explorar,,,1,1,1,Referencia exploratoria · https://rcodash.com.br/,,
-143,,Someday,how jane street hedge fund uses LLMs,explorar,,,1,1,1,Referencia exploratoria · https://www.linkedin.com/posts/linasbeliunas_instead-of-watching-another-netflix-series-ugcPost-7482875357667155969-9fJX/,,
+143,,Someday,how jane street hedge fund uses LLMs,explorar,,,1,1,2,Referencia exploratoria · https://www.linkedin.com/posts/linasbeliunas_instead-of-watching-another-netflix-series-ugcPost-7482875357667155969-9fJX/,,[auto=142:146:71]
 144,,Someday,benchmark plataforma credito de carbono,explorar,,,1,1,2,"Segmento credito de carbono, especulativo · (1) https://www.linkedin.com/posts/dan-parke_mercadodecarbono-creditosdecarbono-esg-share-7484994742934761472-aiGN/. (2) https://www.linkedin.com/posts/dan-parke_climateweeknyc-mercadodecarbono-carbonmarkets-share-7508562392990208000-XvKh/",,
 145,,Someday,calculadora de taxa anualizada versus mensal,explorar,,,1,1,1,Utilitario pequeno; pode virar conteudo · https://chatgpt.com/c/6a748838-4ae8-83e9-83ea-0bd062f9fad5,,
 146,,Someday,imgproxy olhar uso redis pubsub e lsyncd,explorar,,,2,1,2,Ligada a Document Workflows (estrategia rsync),,
@@ -154,11 +152,13 @@ id,parent,status,title,frente,today,attention,i,u,e,nota,done,tags
 148,,Someday,marketing bloomberg benchmark,marketing,,x,2,1,3,https://www.linkedin.com/posts/integrated-earnings-tools-ugcPost-7518657401944846338-k_V2/?utm_source=share&utm_medium=member_desktop&rcm=ACoAAABmF_kBLhh-K6-QtfIk4SKp4DaqyfRVbGw,,[auto=56:51:53]
 151,,Someday,"Normalizar taglines em todas as midias, considerar nossos numeros do site",marketing,,,1,2,3,,,[auto=44:49:46]
 137,,Someday,Review feedback playbooks sdr/parceiro,ceo,,,4,3,2,"Frente comercial, ligada aos 10 melhores alvos https://claude.ai/chat/1bc184cc-7342-4d5d-871f-b629fd2368e6?artifact=86762f5b-50e2-4a1b-9ecc-972d5152a056 file:///Users/andredeoliveira/Downloads/sugestoes%20de%20ajustes-Playbooks.pdf",,[delayed=1]
+152,,Someday,rodrigo mahlmeister,explorar,,x,1,1,2,,,[auto=142:71:84]
+153,,Someday,review links linkedin links,explorar,,x,2,1,2,,,[auto=118:84:146]
+84,,Someday,Revisar taxonomia,platforms/quartix-intel,,,2,1,3,"Base do quartix-intelligence, que está em modo exploratório · WIP, quartix-intelligence",,[auto=68:72:17]
 122,,Active,Aguardando Isabel retornar calendario/agenda publis,marketing,x,,2,3,1,"Marketing, mas bloqueia as publicacoes",x,
 133,,Active,Responder Rodolfo,ceo,,x,3,4,1,Resposta esfria se demorar; barato,x,
 130,,Active,Responder Pinelli,ceo,x,,3,4,1,Resposta esfria se demorar; barato,x,
 136,,Active,preparar com claude para encontro presencial / Chery,ceo,x,,3,4,2,Chery (Release PortAR); encontro marcado,,
-153,,Active,review links,explorar,,x,2,2,2,,,[auto=137:84:71]
 129,,Waiting On,remover timer da trading-settings api,platforms/oxpro,,x,4,3,2,Ligada a Safra Unknown (ajustar suspend / tradingsettings_api),,
 134,,Waiting On,Deploy CFX,produto/quartix-markets,,x,5,4,3,Sem deploy o release nao chega ao cliente; como Deploy quartix-markets / cfxui over cloudrun,,
 131,,Waiting On,Responder Geller / Chery,ceo,,,3,3,1,Chery; resposta barata,x,
@@ -166,7 +166,6 @@ id,parent,status,title,frente,today,attention,i,u,e,nota,done,tags
 127,,Waiting On,Safra Now - timeout ngrok,platforms/oxpro,,,5,4,2,Safra Now (800) atrasada e com attention; duplica a subtarefa 1.1,,[delayed=1]
 150,,Waiting On,criar agent-farm pipeline para evolucoes clearfxai,platforms/cfx,,x,3,2,3,,,[auto=27:132:37]
 149,,Waiting On,tunel ngrok / artur / TLS,platforms/oxpro,,x,4,3,3,,,[auto=127:115:67]
-152,,Waiting On,rodrigo mahlmeister,explorar,,,1,1,2,(1) https://www.youtube.com/watch?v=WtA6Bj06t4k (2) https://x.com/ro_mahl (3) https://neofeed.com.br/finde/como-um-pesquisador-brasileiro-criou-um-algoritmo-que-simulou-e-acertou-o-resultado-do-1o-turno/ (4),,[auto=142:71:84]
 138,,Waiting On,olhar posts empresas tech-finance ycombinator,ceo,x,x,2,2,1,Benchmark de posicionamento; barato,,
 100,,Waiting On,Integração Banco Pine: auto-quote / quartix-markets / octaxpro,platforms/quartix-markets,x,x,5,4,4,"Receita nova com banco; já em WIP; depende do seu quant · WIP, receita",,
 100.1,100,Waiting On,solution design,,,,,,,,,
