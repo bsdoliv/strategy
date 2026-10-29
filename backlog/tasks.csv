@@ -52,9 +52,8 @@ id,parent,status,title,frente,today,attention,i,u,e,nota,done,tags
 36,,Someday,Integração com Port.AR,ceo,,,1,1,3,Ligada ao hedgeOS; contexto pouco claro,,
 38,,Someday,Integração com bancos,platforms/cfx,,,2,3,4,Serviço de advisory; integração pesada · origem: clearfxai / quartix advisory,,[auto=36:83:24]
 39,,Someday,Automação de workflows,platforms/cfx,,,4,3,4,Serviço de advisory recorrente · origem: clearfxai / quartix advisory,,[auto=16:18:9]
-40,,Someday,chery,ceo,,,3,3,2,"Ligado a ""Release cherry / PortAR"" · origem: clearfxai / quartix advisory",,[auto=131:2:136]
 41,,Someday,Frentes Marcos I9DC,ceo,,,1,2,2,Frente estratégica; contexto pouco claro,,
-42,,Someday,MOU empresa nova / QUARTIX ADVISORY,ceo,,,1,3,2,Parceria/novo negócio pendente; estava parado · estava em postponed,,
+42,,Someday,MOU empresa nova / QUARTIX ADVISORY,ceo,,,1,1,2,Parceria/novo negócio pendente; estava parado · estava em postponed,,[auto=44:32:87]
 43,,Someday,Pitch e segmentos,marketing,,,1,3,3,Necessário para captação e para vender hedgeOS,,
 44,,Someday,Plataforma FP&A para empresas comex,marketing,,,1,3,3,Como o pai: necessário p/ captação e venda · origem: Pitch e segmentos,,
 45,,Someday,Enfoque ferramentas para execução,marketing,,,1,3,3,Como o pai: necessário p/ captação e venda · origem: Pitch e segmentos,,
@@ -97,7 +96,7 @@ id,parent,status,title,frente,today,attention,i,u,e,nota,done,tags
 82,,Someday,Integração hedgeOS com port.ar,release,,,1,3,4,Parceiro com contexto pouco claro · origem: Release hedgeOS (Damke),,
 83,,Someday,Integração hedgeOS com plexus,release,,,1,4,4,Como o release: precisa estar pronto p/ a apresentação · origem: Release hedgeOS (Damke),,
 85,,Someday,Ask for strategic capital,ceo,,,1,3,4,"Fôlego financeiro e escala do time; processo longo, começar cedo (e-mail estilo Dropbox) · captação; ligado às Frentes Marcos I9DC",,
-86,,Someday,E-mail no estilo Dropbox,ceo,,,1,3,2,Primeiro passo barato da captação · origem: Ask for strategic capital,,
+86,,Someday,E-mail no estilo Dropbox para I9DC / Marcos,ceo,,,2,2,2,Primeiro passo barato da captação · origem: Ask for strategic capital,,[auto=41:120:34]
 87,,Someday,Convite Damke: apresentar hedgeOS,ceo,,,1,1,1,Abre a 1ª venda do hedgeOS; custo de uma mensagem; estava parado · estava em postponed,,
 88,,Someday,Follow up Fernando Silveira,ceo,,,1,1,1,Conversa parada; esfria se demorar; custo mínimo · estava em postponed,,
 91,,Someday,Safra Later,platforms/oxpro,,,4,3,3,,,
@@ -121,7 +120,7 @@ id,parent,status,title,frente,today,attention,i,u,e,nota,done,tags
 103.4,103,Someday,crontasks ci/cd / desliga todo dia a principal as 19h30 liga as 7h30 - sobe a secundaria / testar primeiro em prodfibra,,,,,,,,,
 103.5,103,Someday,metaox-next como orquestrador dos pipelines de CI/CD,,,,,,,,,
 103.6,103,Someday,Metaoxengine - Trigger de VMs p/ build e deploy,,,,,,,,,
-117,,Someday,demandar 10 melhores alvos por categoria para encaminharmos ao fabricio e fogliano,ceo,,x,5,5,1,"solicitar a vic, utilizar essa conversa como ponto de partida https://claude.ai/chat/c1d36e4a-996b-4cea-ac17-3a53ecfc1705",,
+117,,Someday,demandar 10 melhores alvos por categoria para encaminharmos ao fabricio e fogliano,ceo,,,2,2,2,"solicitar a vic, utilizar essa conversa como ponto de partida https://claude.ai/chat/c1d36e4a-996b-4cea-ac17-3a53ecfc1705",,[delayed=1][auto=29:123:124]
 16,,Someday,Document Workflows,platforms/cfx,,x,4,3,5,"Engine + overhaul do data-store + layers + estratégia rsync; grande, sem prazo",,
 16.1,16,Someday,Overhaul do data-store de docs,,,,,,,,,
 16.2,16,Someday,"Data-store layers: (1) blobs, (2) metadados",,,,,,,,,
@@ -151,14 +150,20 @@ id,parent,status,title,frente,today,attention,i,u,e,nota,done,tags
 147,,Someday,platform-cfx migrar operacao euro hbex para mesa quartix,produto/cfx,,x,4,3,3,Operacao/receita do cfx; esforco medio,,
 148,,Someday,marketing bloomberg benchmark,marketing,,x,2,1,3,https://www.linkedin.com/posts/integrated-earnings-tools-ugcPost-7518657401944846338-k_V2/?utm_source=share&utm_medium=member_desktop&rcm=ACoAAABmF_kBLhh-K6-QtfIk4SKp4DaqyfRVbGw,,[auto=56:51:53]
 151,,Someday,"Normalizar taglines em todas as midias, considerar nossos numeros do site",marketing,,,1,2,3,,,[auto=44:49:46]
-137,,Someday,Review feedback playbooks sdr/parceiro,ceo,,,4,3,2,"Frente comercial, ligada aos 10 melhores alvos https://claude.ai/chat/1bc184cc-7342-4d5d-871f-b629fd2368e6?artifact=86762f5b-50e2-4a1b-9ecc-972d5152a056 file:///Users/andredeoliveira/Downloads/sugestoes%20de%20ajustes-Playbooks.pdf",,[delayed=1]
+137,,Someday,Review feedback playbooks sdr/parceiro,ceo,,,4,2,2,"Frente comercial, ligada aos 10 melhores alvos https://claude.ai/chat/1bc184cc-7342-4d5d-871f-b629fd2368e6?artifact=86762f5b-50e2-4a1b-9ecc-972d5152a056 file:///Users/andredeoliveira/Downloads/sugestoes%20de%20ajustes-Playbooks.pdf",,[delayed=1]
 152,,Someday,rodrigo mahlmeister,explorar,,x,1,1,2,,,[auto=142:71:84]
 153,,Someday,review links linkedin links,explorar,,x,2,1,2,,,[auto=118:84:146]
 84,,Someday,Revisar taxonomia,platforms/quartix-intel,,,2,1,3,"Base do quartix-intelligence, que está em modo exploratório · WIP, quartix-intelligence",,[auto=68:72:17]
+138,,Someday,olhar posts empresas tech-finance ycombinator,ceo,x,x,1,2,2,Benchmark de posicionamento; barato,,[auto=141:119:42]
 122,,Active,Aguardando Isabel retornar calendario/agenda publis,marketing,x,,2,3,1,"Marketing, mas bloqueia as publicacoes",x,
 133,,Active,Responder Rodolfo,ceo,,x,3,4,1,Resposta esfria se demorar; barato,x,
 130,,Active,Responder Pinelli,ceo,x,,3,4,1,Resposta esfria se demorar; barato,x,
-136,,Active,preparar com claude para encontro presencial / Chery,ceo,x,,3,4,2,Chery (Release PortAR); encontro marcado,,
+136,,Active,preparar com claude para encontro presencial / Chery,ceo,,,3,4,2,Chery (Release PortAR); encontro marcado,x,
+132,,Active,Merges / Lucas,platforms/cfx,x,,4,4,3,"Como retorno do lucas (940), mais generica",,[delayed=1]
+40,,Active,chery MOU,ceo,x,x,3,3,2,"Ligado a ""Release cherry / PortAR"" · origem: clearfxai / quartix advisory",,[victoria=1][auto=131:2:136]
+40.1,40,Active,proposta da parceria / ferramentas,,,,,,,,,
+154,,Active,chery proposta advisory,ceo,x,x,2,3,2,,,[auto=136:131:123]
+155,,Active,proposta tecnica / pine,ceo,x,x,4,4,1,,,[auto=123:131:135]
 129,,Waiting On,remover timer da trading-settings api,platforms/oxpro,,x,4,3,2,Ligada a Safra Unknown (ajustar suspend / tradingsettings_api),,
 134,,Waiting On,Deploy CFX,produto/quartix-markets,,x,5,4,3,Sem deploy o release nao chega ao cliente; como Deploy quartix-markets / cfxui over cloudrun,,
 131,,Waiting On,Responder Geller / Chery,ceo,,,3,3,1,Chery; resposta barata,x,
@@ -166,7 +171,6 @@ id,parent,status,title,frente,today,attention,i,u,e,nota,done,tags
 127,,Waiting On,Safra Now - timeout ngrok,platforms/oxpro,,,5,4,2,Safra Now (800) atrasada e com attention; duplica a subtarefa 1.1,,[delayed=1]
 150,,Waiting On,criar agent-farm pipeline para evolucoes clearfxai,platforms/cfx,,x,3,2,3,,,[auto=27:132:37]
 149,,Waiting On,tunel ngrok / artur / TLS,platforms/oxpro,,x,4,3,3,,,[auto=127:115:67]
-138,,Waiting On,olhar posts empresas tech-finance ycombinator,ceo,x,x,2,2,1,Benchmark de posicionamento; barato,,
-100,,Waiting On,Integração Banco Pine: auto-quote / quartix-markets / octaxpro,platforms/quartix-markets,x,x,5,4,4,"Receita nova com banco; já em WIP; depende do seu quant · WIP, receita",,
+100,,Waiting On,Integração Banco Pine: auto-quote / quartix-markets / octaxpro,platforms/quartix-markets,,x,5,4,4,"Receita nova com banco; já em WIP; depende do seu quant · WIP, receita",,
 100.1,100,Waiting On,solution design,,,,,,,,,
-132,,Waiting On,Merges / Lucas,platforms/cfx,x,,4,4,3,"Como retorno do lucas (940), mais generica",,[delayed=1]
+156,,Waiting On,assess the rates lab / maybe something to make nexus even more powerful,ceo,,x,1,1,2,https://www.therateslab.com/,,[auto=131:135:41]
