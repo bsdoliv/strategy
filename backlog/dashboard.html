@@ -984,6 +984,13 @@
     .notes-body pre { padding: 8px 10px; white-space: pre-wrap; }
     .notes-body code { padding: 1px 4px; }
     .notes-body a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+    /* Balão do link (clique num link do editor): Abrir · Editar · Remover */
+    .notes-editor { position: relative; }
+    .note-link-bubble { position: absolute; z-index: 30; display: flex; align-items: center; gap: 2px; max-width: 420px; padding: 4px 4px 4px 10px; font-size: 12px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 6px 20px var(--shadow-hover); }
+    .note-link-bubble .url { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-secondary); margin-right: 6px; }
+    .note-link-bubble button { flex: none; padding: 3px 8px; font-size: 12px; border: 1px solid transparent; background: transparent; color: var(--text-secondary); border-radius: 5px; cursor: pointer; }
+    .note-link-bubble button:hover { background: var(--bg-secondary); border-color: var(--border); color: var(--text-primary); }
+    .note-link-bubble button.open { color: var(--accent); font-weight: 600; }
     .notes-empty { margin: auto; }
     .notes-panel-btn { flex: none; font-size: 12px; font-weight: 600; padding: 4px 9px; border-radius: 6px; color: var(--text-secondary); }
     .notes-panel-btn.on { background: var(--accent); border-color: var(--accent); color: #fff; }
@@ -3743,7 +3750,7 @@
           <span class="notes-meta"></span>
         </div>
         <div class="notes-links"></div>
-        <div class="notes-body" contenteditable="true" data-placeholder="Escreva aqui. URLs viram links; ⌘+clique abre o link."></div>`;
+        <div class="notes-body" contenteditable="true" data-placeholder="Escreva aqui. URLs viram links; clique no link para abrir ou editar."></div>`;
       const titleEl = notesEditor.querySelector('.notes-title');
       const body = notesEditor.querySelector('.notes-body');
       const meta = notesEditor.querySelector('.notes-meta');
@@ -3795,15 +3802,52 @@
         if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); insertNoteLink(); syncBody(); return; }
         if (e.key === ' ' || e.key === 'Enter') autolinkBeforeCaret();
       });
-      // ⌘/Ctrl+clique abre o link em nova aba (clique simples continua editando)
+      // Clique num link mostra o balão (Abrir · Editar · Remover); ⌘/Ctrl+clique abre direto em nova aba
+      let bubble = null;
+      const hideLinkBubble = () => { if (bubble) { bubble.remove(); bubble = null; } };
+      function showLinkBubble(a) {
+        hideLinkBubble();
+        bubble = document.createElement('div');
+        bubble.className = 'note-link-bubble';
+        bubble.innerHTML = `<span class="url"></span><button class="open">Abrir ↗</button><button class="edit">Editar</button><button class="unlink">Remover</button>`;
+        bubble.querySelector('.url').textContent = a.href;
+        bubble.querySelector('.url').title = a.href;
+        bubble.addEventListener('mousedown', e => e.preventDefault()); // não tira o foco do texto
+        bubble.querySelector('.open').addEventListener('click', () => { window.open(a.href, '_blank', 'noopener'); hideLinkBubble(); });
+        bubble.querySelector('.edit').addEventListener('click', () => {
+          const old = a.getAttribute('href');
+          let url = prompt('URL do link:', old);
+          if (url === null) return;
+          url = url.trim();
+          if (!url) return;
+          if (!/^(https?:|mailto:)/i.test(url)) url = 'https://' + url;
+          if (a.textContent === old) a.textContent = url; // link que mostra a própria URL acompanha a edição
+          a.setAttribute('href', url);
+          a.removeAttribute('title');
+          syncBody();
+          showLinkBubble(a);
+        });
+        bubble.querySelector('.unlink').addEventListener('click', () => {
+          a.replaceWith(...a.childNodes);
+          body.normalize();
+          syncBody();
+          hideLinkBubble();
+        });
+        notesEditor.appendChild(bubble);
+        // Logo abaixo do link, sem passar da borda direita do editor
+        const box = notesEditor.getBoundingClientRect(), r = a.getBoundingClientRect();
+        bubble.style.top = (r.bottom - box.top + 4) + 'px';
+        bubble.style.left = Math.max(8, Math.min(r.left - box.left, box.width - bubble.offsetWidth - 8)) + 'px';
+      }
       body.addEventListener('click', e => {
         const a = e.target.closest('a');
-        if (a && (e.metaKey || e.ctrlKey)) { e.preventDefault(); window.open(a.href, '_blank', 'noopener'); }
+        if (a && (e.metaKey || e.ctrlKey)) { e.preventDefault(); window.open(a.href, '_blank', 'noopener'); hideLinkBubble(); return; }
+        if (a) showLinkBubble(a); else hideLinkBubble();
       });
-      body.addEventListener('mouseover', e => {
-        const a = e.target.closest('a');
-        if (a) a.title = a.href + ' — ⌘+clique para abrir';
-      });
+      body.addEventListener('input', hideLinkBubble);
+      body.addEventListener('scroll', hideLinkBubble);
+      body.addEventListener('blur', hideLinkBubble);
+      body.addEventListener('keydown', e => { if (e.key === 'Escape') hideLinkBubble(); });
       // Colar: HTML limpo (só formatação básica e links); texto puro tem as URLs convertidas em links
       body.addEventListener('paste', e => {
         const html = e.clipboardData.getData('text/html');
