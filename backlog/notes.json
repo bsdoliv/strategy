@@ -10,6 +10,14 @@
       "updated": "2026-10-30T14:16:48.122Z"
     },
     {
+      "id": "mvuz6nr0",
+      "title": "",
+      "html": "Fechado: Port.AR, com c√¢mbio pronto como terceiro produto. Gravei essa decis√£o e os crit√©rios de usabilidade que combinamos na mem√≥ria do projeto (.claude/memory/portar-cambio-pronto-vs-mercado.md, com uma linha no √≠ndice). Ainda n√£o est√° commitado.<br><br>Tr√™s pontos de usabilidade que esse produto tem e o NDF n√£o:<br><br>1. N√£o √© posi√ß√£o, √© hist√≥rico. C√¢mbio pronto liquida e acaba: n√£o tem posi√ß√£o aberta, nem MTM, nem varia√ß√£o do dia. Copiar a tela de Posi√ß√µes do NDF seria um erro. A tela principal √© uma lista de opera√ß√µes fechadas, cada uma comparada com o mercado. A aba de An√°lises fica com o ranking por banco e o resumo do per√≠odo. A pergunta do usu√°rio muda de \"quanto vale hoje\" para \"como fui\".<br><br>2. Taxa ou custo total. O contrato de c√¢mbio traz a taxa e tamb√©m o VET (Valor Efetivo Total), que soma tarifas e IOF. Um banco pode cotar uma taxa √≥tima e cobrar tarifa alta. Minha sugest√£o: comparar a taxa contra o mercado, porque √© isso que o mercado mede, e mostrar o VET ao lado como \"custo total\" quando houver. Misturar os dois num n√∫mero s√≥ confunde a leitura.<br><br>3. Como as opera√ß√µes entram. Este ponto define a ado√ß√£o. A tesouraria tem as opera√ß√µes espalhadas em boletas, extratos de banco e ERP. As op√ß√µes:<br>- importar CSV, com um modelo nosso;<br>- digitar uma por uma (data, banco, ponta, valor, taxa, hor√°rio opcional);<br>- os dois.<br><br>Para come√ßar, sugiro os dois: a digita√ß√£o serve para um teste r√°pido, e o CSV para o hist√≥rico.<br><br>Por qual desses voc√™ quer seguir? Pelo terceiro, eu come√ßaria definindo os campos m√≠nimos de uma opera√ß√£o.",
+      "tasks": [],
+      "created": "2026-10-30T12:55:45.081Z",
+      "updated": "2026-10-30T12:55:45.933Z"
+    },
+    {
       "id": "mvts3cvg",
       "title": "rates lab",
       "html": "<ul><li><a href=\"https://www.linkedin.com/company/the-rates-lab/home/\">https://www.linkedin.com/company/the-rates-lab/home/</a></li><li><a href=\"https://www.linkedin.com/in/hugo-castro-cfa/\">https://www.linkedin.com/in/hugo-castro-cfa/</a></li><li><a href=\"https://www.linkedin.com/in/debora-mm1911/\">https://www.linkedin.com/in/debora-mm1911/</a></li></ul>",
