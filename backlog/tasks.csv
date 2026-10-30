@@ -162,8 +162,8 @@ id,parent,status,title,frente,today,attention,i,u,e,nota,done,tags
 132,,Active,Merges / Lucas,platforms/cfx,x,,4,4,3,"Como retorno do lucas (940), mais generica",,[delayed=1]
 40,,Active,chery MOU,ceo,x,x,3,3,2,"Ligado a ""Release cherry / PortAR"" · origem: clearfxai / quartix advisory",,[victoria=1][auto=131:2:136]
 40.1,40,Active,proposta da parceria / ferramentas,,,,,,,,,
-154,,Active,chery proposta advisory,ceo,x,x,2,3,2,,,[auto=136:131:123]
-155,,Active,proposta tecnica / pine,ceo,x,x,4,4,1,,,[auto=123:131:135]
+154,,Active,chery proposta advisory,advisory,x,x,2,3,2,,,[auto=136:131:123]
+155,,Active,proposta tecnica / pine,ceo,x,x,4,4,1,,,[delayed=1][auto=123:131:135]
 129,,Waiting On,remover timer da trading-settings api,platforms/oxpro,,x,4,3,2,Ligada a Safra Unknown (ajustar suspend / tradingsettings_api),,
 134,,Waiting On,Deploy CFX,produto/quartix-markets,,x,5,4,3,Sem deploy o release nao chega ao cliente; como Deploy quartix-markets / cfxui over cloudrun,,
 131,,Waiting On,Responder Geller / Chery,ceo,,,3,3,1,Chery; resposta barata,x,
