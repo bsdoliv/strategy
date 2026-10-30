@@ -1,0 +1,113 @@
+Prompt para o Claude Code, aberto no diretório package/. Independente de outros prompts.
+
+Pré-requisito: o dashboard.html já tem a aba Notes (procure por `.notes-body` e `function renderNoteEditor`). Se não tiver, pare e avise que é preciso aplicar antes o prompt-notes.txt; não crie a aba Notes por conta própria.
+
+---
+
+Na aba Notes do dashboard (dashboard.html), clicar num link dentro do editor deve mostrar um balão com ações, no estilo do Google Docs. Hoje o corpo da nota é contenteditable: um clique simples só põe o cursor no link, e só ⌘/Ctrl+clique abre. Por isso os links parecem não funcionar.
+
+Decisões de produto (não mudar):
+- Clique simples num link do editor (.notes-body) mostra um balão logo abaixo do link, alinhado à esquerda dele, sem passar da borda direita do editor. Conteúdo do balão: a URL (cortada com reticências se for longa; o tooltip mostra a URL completa), depois os botões "Abrir ↗" (abre em nova aba, em laranja/accent), "Editar" e "Remover".
+- Editar: prompt com a URL atual. Cancelar ou deixar vazio não muda nada. URL sem esquema (http/https/mailto) ganha "https://". Se o texto do link era igual à URL antiga, o texto passa a ser a nova URL; senão, o texto fica como está. Grava a nota e reabre o balão com a URL nova.
+- Remover: tira o link e mantém o texto (o <a> é trocado pelos filhos dele). Grava a nota.
+- ⌘/Ctrl+clique continua abrindo o link direto, sem balão.
+- O balão some com: clique fora de um link dentro do corpo, Esc, digitação, rolagem do corpo e perda de foco do corpo (clicar fora do editor). Clicar nos botões do balão não tira o foco do texto.
+- Só um balão por vez. Ele vive dentro do .notes-editor, então trocar de nota (que reconstrói o editor) o remove.
+- Os links não ganham mais o atributo `title` "⌘+clique para abrir" (que era gravado no notes.json). O título antigo continua nas notas já salvas e é removido do link quando ele é editado pelo balão.
+- Cards da coluna e modo painel não mudam: lá os links já abrem com clique simples.
+
+Mudanças no dashboard.html:
+
+1. CSS: logo depois da regra `.notes-body a { ... }`, acrescentar exatamente:
+
+```css
+    /* Balão do link (clique num link do editor): Abrir · Editar · Remover */
+    .notes-editor { position: relative; }
+    .note-link-bubble { position: absolute; z-index: 30; display: flex; align-items: center; gap: 2px; max-width: 420px; padding: 4px 4px 4px 10px; font-size: 12px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 6px 20px var(--shadow-hover); }
+    .note-link-bubble .url { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-secondary); margin-right: 6px; }
+    .note-link-bubble button { flex: none; padding: 3px 8px; font-size: 12px; border: 1px solid transparent; background: transparent; color: var(--text-secondary); border-radius: 5px; cursor: pointer; }
+    .note-link-bubble button:hover { background: var(--bg-secondary); border-color: var(--border); color: var(--text-primary); }
+    .note-link-bubble button.open { color: var(--accent); font-weight: 600; }
+```
+
+Se alguma variável de cor (--bg-card, --border, --shadow-hover, --bg-secondary, --text-secondary, --text-primary, --accent) tiver outro nome no pacote, use a equivalente.
+
+2. JS, em renderNoteEditor: substituir o bloco do clique em link, que hoje é:
+
+```js
+      // ⌘/Ctrl+clique abre o link em nova aba (clique simples continua editando)
+      body.addEventListener('click', e => {
+        const a = e.target.closest('a');
+        if (a && (e.metaKey || e.ctrlKey)) { e.preventDefault(); window.open(a.href, '_blank', 'noopener'); }
+      });
+      body.addEventListener('mouseover', e => {
+        const a = e.target.closest('a');
+        if (a) a.title = a.href + ' — ⌘+clique para abrir';
+      });
+```
+
+por exatamente:
+
+```js
+      // Clique num link mostra o balão (Abrir · Editar · Remover); ⌘/Ctrl+clique abre direto em nova aba
+      let bubble = null;
+      const hideLinkBubble = () => { if (bubble) { bubble.remove(); bubble = null; } };
+      function showLinkBubble(a) {
+        hideLinkBubble();
+        bubble = document.createElement('div');
+        bubble.className = 'note-link-bubble';
+        bubble.innerHTML = `<span class="url"></span><button class="open">Abrir ↗</button><button class="edit">Editar</button><button class="unlink">Remover</button>`;
+        bubble.querySelector('.url').textContent = a.href;
+        bubble.querySelector('.url').title = a.href;
+        bubble.addEventListener('mousedown', e => e.preventDefault()); // não tira o foco do texto
+        bubble.querySelector('.open').addEventListener('click', () => { window.open(a.href, '_blank', 'noopener'); hideLinkBubble(); });
+        bubble.querySelector('.edit').addEventListener('click', () => {
+          const old = a.getAttribute('href');
+          let url = prompt('URL do link:', old);
+          if (url === null) return;
+          url = url.trim();
+          if (!url) return;
+          if (!/^(https?:|mailto:)/i.test(url)) url = 'https://' + url;
+          if (a.textContent === old) a.textContent = url; // link que mostra a própria URL acompanha a edição
+          a.setAttribute('href', url);
+          a.removeAttribute('title');
+          syncBody();
+          showLinkBubble(a);
+        });
+        bubble.querySelector('.unlink').addEventListener('click', () => {
+          a.replaceWith(...a.childNodes);
+          body.normalize();
+          syncBody();
+          hideLinkBubble();
+        });
+        notesEditor.appendChild(bubble);
+        // Logo abaixo do link, sem passar da borda direita do editor
+        const box = notesEditor.getBoundingClientRect(), r = a.getBoundingClientRect();
+        bubble.style.top = (r.bottom - box.top + 4) + 'px';
+        bubble.style.left = Math.max(8, Math.min(r.left - box.left, box.width - bubble.offsetWidth - 8)) + 'px';
+      }
+      body.addEventListener('click', e => {
+        const a = e.target.closest('a');
+        if (a && (e.metaKey || e.ctrlKey)) { e.preventDefault(); window.open(a.href, '_blank', 'noopener'); hideLinkBubble(); return; }
+        if (a) showLinkBubble(a); else hideLinkBubble();
+      });
+      body.addEventListener('input', hideLinkBubble);
+      body.addEventListener('scroll', hideLinkBubble);
+      body.addEventListener('blur', hideLinkBubble);
+      body.addEventListener('keydown', e => { if (e.key === 'Escape') hideLinkBubble(); });
+```
+
+O código usa o que já existe em renderNoteEditor: `body` (o .notes-body), `notesEditor` e `syncBody`. Se tiverem outro nome no pacote, adapte a chamada, não a decisão. Se o bloco antigo estiver um pouco diferente, substitua o equivalente (o listener de click com metaKey/ctrlKey e o mouseover que grava o title).
+
+3. Placeholder do corpo da nota: trocar `data-placeholder="Escreva aqui. URLs viram links; ⌘+clique abre o link."` por `data-placeholder="Escreva aqui. URLs viram links; clique no link para abrir ou editar."`.
+
+Documentação do pacote:
+- CLAUDE.md, seção Dashboard, na descrição da aba Notes: onde diz que ⌘+clique abre o link, trocar por "clique num link mostra um balão (URL · Abrir ↗ · Editar · Remover; some com Esc, digitação, rolagem ou clique fora) e ⌘+clique abre direto".
+- README.md: se a aba Notes for descrita em Uso e citar o ⌘+clique, atualizar da mesma forma.
+
+Teste (obrigatório, nunca sobre os arquivos reais):
+- Copiar dashboard.html para um diretório temporário e injetar, antes de </body>, um <script> que monte um diretório simulado em memória ({ name, getFileHandle(nome, {create}) }, com um handle que tenha getFile() -> { lastModified, text() } e createWritable() -> { write, close }) contendo um notes.json com uma nota cujo html é `<p>veja <a href="https://example.com/abc">este link</a> aqui</p>`; chamar loadNotes(dir), switchMainTab('notes') e setOpenNote(<id da nota>); trocar window.open por uma função que guarda as URLs.
+- Conferir, disparando MouseEvent('click', {bubbles: true}) no <a>: aparece um .note-link-bubble com a URL https://example.com/abc e `top` definido; "Abrir ↗" chama window.open com essa URL e fecha o balão; com window.prompt simulado devolvendo 'novo.com/x', "Editar" muda o href para https://novo.com/x e mantém o texto "este link"; "Remover" deixa `<p>veja este link aqui</p>`; um click com metaKey: true no link abre direto sem criar balão; clique no corpo fora do link fecha o balão; depois de >1 s o notes.json simulado tem o html final.
+- Rodar com Chrome headless --dump-dom (no macOS, sem `timeout`: perl -e 'alarm 30; exec @ARGV' ...). Validar a sintaxe extraindo o <script> e rodando `node --check`.
+
+Não fazer commit.
