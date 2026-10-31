@@ -160,7 +160,7 @@ id,parent,status,title,frente,today,attention,i,u,e,nota,done,tags
 130,,Active,Responder Pinelli,ceo,x,,3,4,1,Resposta esfria se demorar; barato,x,
 136,,Active,preparar com claude para encontro presencial / Chery,ceo,,,3,4,2,Chery (Release PortAR); encontro marcado,x,
 132,,Active,Merges / Lucas,platforms/cfx,x,,4,4,3,"Como retorno do lucas (940), mais generica",,[delayed=1]
-40,,Active,chery MOU,ceo,x,x,3,3,2,"Ligado a ""Release cherry / PortAR"" · origem: clearfxai / quartix advisory",,[victoria=1][auto=131:2:136]
+40,,Active,chery MOU,ceo,x,x,3,3,2,"Ligado a ""Release cherry / PortAR"" · origem: clearfxai / quartix advisory",x,[victoria=1][auto=131:2:136]
 40.1,40,Active,proposta da parceria / ferramentas,,,,,,,,,
 154,,Active,chery proposta advisory,advisory,x,x,2,3,2,,,[auto=136:131:123]
 155,,Active,proposta tecnica / pine,ceo,x,x,4,4,1,,,[delayed=1][auto=123:131:135]
@@ -175,3 +175,4 @@ id,parent,status,title,frente,today,attention,i,u,e,nota,done,tags
 100,,Waiting On,Integração Banco Pine: auto-quote / quartix-markets / octaxpro,platforms/quartix-markets,,x,5,4,4,"Receita nova com banco; já em WIP; depende do seu quant · WIP, receita",,
 100.1,100,Waiting On,solution design,,,,,,,,,
 156,,Waiting On,assess the rates lab / maybe something to make nexus even more powerful,ceo,,x,1,1,2,https://www.therateslab.com/,,[auto=131:135:41]
+157,,Waiting On,email SICREDI,ceo,,,3,2,3,,,[victoria=1][auto=20:133:130]
